@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Sobre mí{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- Título principal -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-dark">
+            <i class="bi bi-person-circle text-primary"></i> Sobre mí
+        </h1>
+        <p class="text-muted fs-5">
+            Una mirada más cercana a mi camino y mis pasiones.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <!-- Card principal -->
+            <div class="p-5 bg-white rounded-3 shadow-sm border">
+
+                <h2 class="h3 fw-bold text-dark mb-3">
+                    <i class="bi bi-stars text-primary"></i> ¿Quién soy?
+                </h2>
+
+                <p class="fs-5 text-muted">
+                    Soy Angel, Ingeniero de Datos Full-Stack con enfoque en la creación de soluciones 
+                    completas: pipelines de datos, modelos de machine learning y APIs listas para producción.
+                    Me gusta unir lo técnico con lo práctico: que cada sistema que construyo sirva para resolver
+                    un problema real.
+                </p>
+
+                <p class="fs-5 text-muted">
+                    Si algo me define, es que **amo aprender**. Constantemente exploro nuevas herramientas,
+                    arquitecturas, frameworks y tendencias. Creo firmemente que la mejor ventaja en tecnología
+                    es la curiosidad, y la mía nunca descansa.
+                </p>
+
+                <!-- Línea separadora -->
+                <hr class="my-4">
+
+                <h2 class="h4 fw-bold text-dark mb-3">
+                    <i class="bi bi-lightning-charge-fill text-warning"></i> Lo que me mueve
+                </h2>
+
+                <ul class="fs-5 text-muted">
+                    <li>Convertir datos en soluciones útiles y escalables.</li>
+                    <li>Diseñar sistemas limpios, mantenibles y elegantes.</li>
+                    <li>Aprender tecnologías nuevas cada semana.</li>
+                    <li>Resolver problemas complejos de forma simple.</li>
+                    <li>Construir proyectos que puedan crecer y mejorar con el tiempo.</li>
+                </ul>
+
+                <hr class="my-4">
+
+                <h2 class="h4 fw-bold text-dark mb-3">
+                    <i class="bi bi-code-slash text-primary"></i> Tecnologías que utilizo
+                </h2>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Data Engineering</h5>
+                        <ul class="text-muted">
+                            <li>Python, Pandas, SQL</li>
+                            <li>ETL Pipelines</li>
+                            <li>Azure (Storage, Functions, SQL, DevOps)</li>
+                            <li>Modelado de datos</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Data Science</h5>
+                        <ul class="text-muted">
+                            <li>Scikit-Learn</li>
+                            <li>Modelos predictivos</li>
+                            <li>Análisis exploratorio</li>
+                            <li>Power BI y visualizaciones</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Desarrollo Web</h5>
+                        <ul class="text-muted">
+                            <li>Flask (APIs, Auth, Routing)</li>
+                            <li>Bootstrap + HTML/CSS</li>
+                            <li>UI limpia y responsiva</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Software & Herramientas</h5>
+                        <ul class="text-muted">
+                            <li>Git & GitHub</li>
+                            <li>Docker</li>
+                            <li>Linux</li>
+                            <li>VSCode</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <h2 class="h4 fw-bold text-dark mb-3">
+                    <i class="bi bi-rocket-takeoff text-success"></i> Mi meta
+                </h2>
+
+                <p class="fs-5 text-muted">
+                    Quiero integrarme a un equipo donde pueda contribuir con mis habilidades, seguir
+                    aprendiendo cada día y construir soluciones que de verdad importen.  
+                    Para mí, crecer profesionalmente es un viaje constante, y estoy listo para el siguiente paso.
+                </p>
+
+                <div class="mt-4 text-center">
+                    <a href="{{ url_for('main.contact') }}" class="btn btn-primary btn-lg shadow-sm">
+                        <i class="bi bi-envelope-fill"></i> Contáctame
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

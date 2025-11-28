@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+<!-- Hero principal -->
+<div class="p-5 mb-4 bg-light rounded-3 border shadow-sm">
+    <div class="container-fluid py-5 text-center text-lg-start">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+
+                <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary mb-3">
+                    <i class="bi bi-database-fill"></i> Ingeniero de Datos Full-Stack
+                </span>
+
+                <h1 class="display-4 fw-bold text-dark">Hola, soy Angel</h1>
+
+                <p class="col-lg-10 fs-4 text-secondary">
+                    Ingeniero de Datos Full-Stack (Pipelines, ML & APIs)
+                </p>
+
+                <p class="lead text-muted">
+                    Combino ingeniería, ciencia de datos y desarrollo backend para construir
+                    soluciones completas: desde el pipeline que transforma los datos, hasta el
+                    modelo que predice y la API que lo entrega al mundo.  
+                    <strong class="text-dark">Mi pasión es crear sistemas que convierten información en valor real.</strong>
+                </p>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
+                    <a href="{{ url_for('projects.projects_home') }}" class="btn btn-primary btn-lg px-4 me-md-2 shadow-sm">
+                        <i class="bi bi-folder-check"></i> Ver Mis Proyectos
+                    </a>
+                    <a href="" class="btn btn-outline-dark btn-lg px-4">
+                        Contáctame
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-5 d-none d-lg-block">
+                <img src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                     class="d-block mx-lg-auto img-fluid rounded shadow-lg" 
+                     alt="Coding Illustration" loading="lazy">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tres áreas: Data Engineering - Data Science - Web Dev -->
+<div class="row align-items-md-stretch mt-5">
+    <div class="col-md-4 mb-4">
+      <div class="h-100 p-5 text-bg-dark rounded-3 shadow-sm">
+        <h2 class="h4 mb-3"><i class="bi bi-database-fill-gear text-warning"></i> Ingeniería de Datos</h2>
+        <p>Experiencia diseñando pipelines ETL, modelado de datos y optimización de consultas SQL en entornos cloud como Azure.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="h-100 p-5 bg-white border rounded-3 shadow-sm">
+        <h2 class="h4 mb-3 text-primary"><i class="bi bi-graph-up-arrow"></i> Data Science</h2>
+        <p>Creación de modelos predictivos con Python (Scikit-Learn, Pandas) y visualización de historias de datos con Power BI.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="h-100 p-5 text-bg-primary rounded-3 shadow-sm bg-gradient">
+        <h2 class="h4 mb-3"><i class="bi bi-laptop"></i> Desarrollo Web</h2>
+        <p>Desarrollo backend robusto utilizando Flask (Python) y APIs RESTful, con integración de frontend moderno.</p>
+      </div>
+    </div>
+</div>
+
+
+{% endblock %}
