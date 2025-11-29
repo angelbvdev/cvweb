@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 from app.models import Project as Proyecto #Alias en español porque si no me lío jaja
+from app.extensions import db
 
 # --- Blueprint ---
 bp = Blueprint('projects', __name__, template_folder='templates')
@@ -29,6 +30,7 @@ def project_detail(project_id):
     
     return render_template(
         'project_detail.html', 
-        title=proyecto.titulo, # Nota: Accedemos a los atributos como objetos, no diccionarios
+        title=proyecto.title, # Nota: Accedemos a los atributos como objetos, no diccionarios
         proyecto=proyecto
     )
+

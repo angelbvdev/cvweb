@@ -23,6 +23,11 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_USERNAME')
     
     # 4. Otros Parámetros
     ADMINS = ['angelbv.dev@gmail.com']
+
+    # 5. Configuración de Subidas de Archivos
+    UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'app/static/uploads')
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024 # 16 MB límite de subida

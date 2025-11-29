@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5 col-lg-4">
+        
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5">
+                
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-shield-lock-fill fs-3"></i>
+                    </div>
+                    <h2 class="fw-bold text-dark">Admin Access</h2>
+                    <p class="text-muted small">Ingresa tus credenciales para gestionar el portafolio.</p>
+                </div>
+
+                <form method="POST">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Usuario</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-person-fill"></i>
+                            </span>
+                            <input type="text" name="username" class="form-control bg-light border-start-0 ps-0" placeholder="Administrador" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small text-secondary">Contraseña</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-key-fill"></i>
+                            </span>
+                            <input type="password" name="password" class="form-control bg-light border-start-0 ps-0" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary py-2 fw-bold rounded-3 shadow-sm transition-btn">
+                            Entrar al Dashboard <i class="bi bi-arrow-right-short"></i>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+            
+            <div class="card-footer bg-white border-0 text-center py-3 rounded-bottom-4">
+                <small class="text-muted">
+                    <i class="bi bi-arrow-left"></i> 
+                    <a href="{{ url_for('main.index') }}" class="text-decoration-none text-secondary fw-bold">Volver al inicio</a>
+                </small>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* Hace que el input y el icono parezcan una sola pieza gris */
+    .form-control:focus, .input-group-text {
+        border-color: #dee2e6; 
+        box-shadow: none; /* Quita el brillo azul por defecto de Bootstrap */
+    }
+    .input-group:focus-within {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15); /* Sombra suave azul al escribir */
+        border-radius: 0.375rem;
+    }
+    .form-control.bg-light:focus {
+        background-color: #fff !important; /* Se pone blanco al escribir */
+    }
+</style>
+{% endblock %}

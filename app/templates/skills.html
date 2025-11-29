@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Habilidades{% endblock %}
+
+{% block content %}
+<div class="row mb-5 text-center">
+    <div class="col-lg-8 mx-auto">
+        <h1 class="display-4 fw-bold">Mis Habilidades</h1>
+        <p class="lead text-muted">Un resumen de mi stack tecnológico y herramientas que uso día a día.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for category, items in skills.items() %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h3 class="h5 fw-bold text-primary mb-0">
+                    {% if category == 'Lenguajes' %}<i class="bi bi-code-square me-2"></i>
+                    {% elif category == 'Data Science & AI' %}<i class="bi bi-graph-up-arrow me-2"></i>
+                    {% else %}<i class="bi bi-tools me-2"></i>{% endif %}
+                    {{ category }}
+                </h3>
+            </div>
+            <div class="card-body">
+                {% for skill in items %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-medium">{{ skill.name }}</span>
+                        <small class="text-muted">{{ skill.level }}%</small>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-primary" role="progressbar" 
+                             style="width: {{ skill.level }}%" 
+                             aria-valuenow="{{ skill.level }}" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card bg-light border-0 p-4">
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <span class="badge bg-dark p-3 rounded-pill">Español (Nativo)</span>
+                <span class="badge bg-success p-3 rounded-pill">Inglés (Intermedio - B1/B2)</span>
+                <span class="badge bg-danger p-3 rounded-pill">Japonés (Aprendiendo - JLPT N5)</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
