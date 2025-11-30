@@ -5,7 +5,6 @@
 {% block content %}
 <div class="row g-0">
     
-    <!-- SIDEBAR -->
     <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="min-height: 90vh; border-right: 1px solid #dee2e6;">
         <div class="position-sticky pt-4 px-3">
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-3 text-muted text-uppercase small fw-bold">
@@ -42,10 +41,8 @@
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="col-md-9 ms-sm-auto col-lg-10 px-md-5 py-4">
         
-        <!-- Header -->
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
             <div>
                 <h1 class="h2 fw-bold">Proyectos</h1>
@@ -61,7 +58,6 @@
             </div>
         </div>
 
-        <!-- KPI Simple -->
         <div class="row mb-4">
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm border-start border-4 border-primary">
@@ -80,7 +76,6 @@
             </div>
         </div>
 
-        <!-- Tabla de Proyectos -->
         <div class="card shadow-sm border-0 rounded-3">
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -100,7 +95,6 @@
                                 <td class="ps-4">
                                     <div class="fw-bold text-dark">{{ project.title }}</div>
                                     <div class="small text-muted font-monospace">{{ project.slug }}</div>
-                                    <!-- Indicador visual si tiene imágenes -->
                                     {% if project.images %}
                                     <span class="badge bg-light text-secondary border mt-1"><i class="bi bi-images me-1"></i> {{ project.images|length }} fotos</span>
                                     {% endif %}
@@ -127,12 +121,23 @@
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="btn-group">
-                                        <!-- Botón Editar (Placeholder) -->
-                                        <button type="button" class="btn btn-sm btn-outline-secondary border-0" title="Editar">
+                                        <button type="button" 
+                                                class="btn btn-sm btn-outline-secondary border-0" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editProjectModal"
+                                                data-id="{{ project.id }}"
+                                                data-title="{{ project.title }}"
+                                                data-slug="{{ project.slug }}"
+                                                data-category="{{ project.category_slug }}"
+                                                data-tech="{{ project.technologies }}"
+                                                data-desc="{{ project.description }}"
+                                                data-long="{{ project.long_description or '' }}"
+                                                data-github="{{ project.github_url or '' }}"
+                                                data-web="{{ project.website_url or '' }}"
+                                                title="Editar">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         
-                                        <!-- Botón Eliminar (Funcional) -->
                                         <form action="{{ url_for('auth.delete_project', id=project.id) }}" method="POST" class="d-inline" onsubmit="return confirm('⚠ ¿Estás seguro de eliminar el proyecto: {{ project.title }}?\n\nEsta acción no se puede deshacer.');">
                                             <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Eliminar">
                                                 <i class="bi bi-trash"></i>
@@ -160,8 +165,6 @@
     </div>
 </div>
 
-<!-- MODAL CREAR PROYECTO -->
-<!-- IMPORTANTE: enctype="multipart/form-data" es necesario para subir archivos -->
 <div class="modal fade" id="newProjectModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -194,7 +197,6 @@
                             <input type="text" name="technologies" class="form-control" placeholder="Ej: Python, SQL, Azure">
                         </div>
                         
-                        <!-- SECCIÓN DE IMÁGENES -->
                         <div class="col-12">
                             <label class="form-label small fw-bold">Imágenes del Proyecto</label>
                             <input type="file" name="images" class="form-control" multiple accept="image/*">
@@ -227,4 +229,103 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="editProjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Editar Proyecto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProjectForm" method="POST" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Título</label>
+                            <input type="text" name="title" id="edit-title" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Slug (URL)</label>
+                            <input type="text" name="slug" id="edit-slug" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Categoría</label>
+                            <select name="category" id="edit-category" class="form-select">
+                                <option value="web-dev">Desarrollo Web</option>
+                                <option value="data-science">Data Science</option>
+                                <option value="data-engineer">Data Engineer</option>
+                                <option value="other">Otro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Stack Tecnológico</label>
+                            <input type="text" name="technologies" id="edit-tech" class="form-control">
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Agregar más imágenes</label>
+                            <input type="file" name="images" class="form-control" multiple accept="image/*">
+                            <div class="form-text text-muted">Las imágenes actuales se mantendrán. Las que subas aquí se añadirán.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Descripción Corta</label>
+                            <input type="text" name="description" id="edit-desc" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Contenido Detallado</label>
+                            <textarea name="long_description" id="edit-long" class="form-control" rows="5"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">GitHub URL</label>
+                            <input type="url" name="github_url" id="edit-github" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Demo URL</label>
+                            <input type="url" name="website_url" id="edit-web" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 px-0 pb-0 mt-3">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var editModal = document.getElementById('editProjectModal')
+    editModal.addEventListener('show.bs.modal', function (event) {
+        // Botón que activó el modal
+        var button = event.relatedTarget
+        
+        // Extraer info de los atributos data-*
+        var id = button.getAttribute('data-id')
+        var title = button.getAttribute('data-title')
+        var slug = button.getAttribute('data-slug')
+        var category = button.getAttribute('data-category')
+        var tech = button.getAttribute('data-tech')
+        var desc = button.getAttribute('data-desc')
+        var long = button.getAttribute('data-long')
+        var github = button.getAttribute('data-github')
+        var web = button.getAttribute('data-web')
+
+        // Actualizar la acción del formulario
+        var form = document.getElementById('editProjectForm')
+        form.action = "{{ url_for('auth.edit_project', id=0) }}".replace('0', id)
+
+        // Rellenar los inputs
+        document.getElementById('edit-title').value = title
+        document.getElementById('edit-slug').value = slug
+        document.getElementById('edit-category').value = category
+        document.getElementById('edit-tech').value = tech
+        document.getElementById('edit-desc').value = desc
+        document.getElementById('edit-long').value = long
+        document.getElementById('edit-github').value = github
+        document.getElementById('edit-web').value = web
+    })
+</script>
+
 {% endblock %}

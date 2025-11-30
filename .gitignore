@@ -19,3 +19,4 @@ alembic.ini
 *.sublime-workspace
 .idea/
 *.swp
+uploads/

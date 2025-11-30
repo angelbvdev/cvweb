@@ -138,3 +138,45 @@ def delete_project(id):
         print(e)
 
     return redirect(url_for('auth.dashboard'))
+
+
+@bp.route('/edit_project/<int:id>', methods=['POST'])
+@login_required
+def edit_project(id):
+    project = Project.query.get_or_404(id)
+    
+    try:
+        # 1. Actualizar datos de texto
+        project.title = request.form.get('title')
+        project.slug = request.form.get('slug')
+        project.category_slug = request.form.get('category')
+        project.technologies = request.form.get('technologies')
+        project.description = request.form.get('description')
+        project.long_description = request.form.get('long_description')
+        project.github_url = request.form.get('github_url')
+        project.website_url = request.form.get('website_url')
+
+        # 2. Procesar NUEVAS imágenes (si las hay)
+        files = request.files.getlist('images') 
+        for file in files:
+            if file and file.filename != '':
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                
+                new_image = ProjectImage(
+                    project_id=project.id, 
+                    image_path=filename,
+                    caption=project.title
+                )
+                db.session.add(new_image)
+        
+        db.session.commit()
+        flash(f'El proyecto "{project.title}" ha sido actualizado.', 'success')
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al editar: {str(e)}', 'danger')
+        print(e)
+
+    return redirect(url_for('auth.dashboard'))
