@@ -37,8 +37,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Uploads
-app/static/uploads/
+# Uploads (see app/static/uploads/.gitignore)
 
 # Editors / OS
 .vscode/

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, timezone
 import os
 from uuid import uuid4
 
@@ -78,6 +78,37 @@ def _upsert_tags(tag_string: str):
             db.session.add(tag)
         tags.append(tag)
     return tags
+
+
+def _parse_optional_publish_datetime(value: str):
+    value = (value or "").strip()
+    if not value:
+        return None
+    try:
+        if "T" in value:
+            dt = datetime.fromisoformat(value)
+        else:
+            d = date.fromisoformat(value)
+            dt = datetime(d.year, d.month, d.day)
+    except ValueError:
+        return None
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+    return dt
+
+
+def _preserve_time_if_date_only(input_value: str, parsed_dt: datetime | None, existing_dt: datetime | None):
+    if not parsed_dt or not existing_dt:
+        return parsed_dt
+    if "T" in (input_value or ""):
+        return parsed_dt
+    return parsed_dt.replace(
+        hour=existing_dt.hour,
+        minute=existing_dt.minute,
+        second=existing_dt.second,
+        microsecond=existing_dt.microsecond,
+    )
+
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -161,9 +192,15 @@ def create_blog_post():
     meta_title = (request.form.get('meta_title') or '').strip() or None
     meta_description = (request.form.get('meta_description') or '').strip() or None
     is_published = request.form.get('is_published') == 'on'
+    published_at_input = (request.form.get('published_at') or '').strip()
 
     if not title or not slug or not content:
         flash('Title, slug, and content are required.', 'danger')
+        return redirect(url_for('auth.blog'))
+
+    custom_published_at = _parse_optional_publish_datetime(published_at_input)
+    if is_published and published_at_input and not custom_published_at:
+        flash('Published date must be in YYYY-MM-DD format.', 'danger')
         return redirect(url_for('auth.blog'))
 
     post = BlogPost(
@@ -174,7 +211,7 @@ def create_blog_post():
         meta_title=meta_title,
         meta_description=meta_description,
         is_published=is_published,
-        published_at=datetime.utcnow() if is_published else None,
+        published_at=(custom_published_at or datetime.utcnow()) if is_published else None,
     )
     post.tags = _upsert_tags(tags_string)
 
@@ -220,10 +257,17 @@ def edit_blog_post(id):
     meta_title = (request.form.get('meta_title') or '').strip() or None
     meta_description = (request.form.get('meta_description') or '').strip() or None
     is_published = request.form.get('is_published') == 'on'
+    published_at_input = (request.form.get('published_at') or '').strip()
 
     if not title or not slug or not content:
         flash('Title, slug, and content are required.', 'danger')
         return redirect(url_for('auth.blog'))
+
+    custom_published_at = _parse_optional_publish_datetime(published_at_input)
+    if is_published and published_at_input and not custom_published_at:
+        flash('Published date must be in YYYY-MM-DD format.', 'danger')
+        return redirect(url_for('auth.blog'))
+    custom_published_at = _preserve_time_if_date_only(published_at_input, custom_published_at, post.published_at)
 
     post.title = title
     post.slug = slug
@@ -233,8 +277,11 @@ def edit_blog_post(id):
     post.meta_description = meta_description
     post.tags = _upsert_tags(tags_string)
     post.is_published = is_published
-    if is_published and not post.published_at:
-        post.published_at = datetime.utcnow()
+    if is_published:
+        if custom_published_at:
+            post.published_at = custom_published_at
+        elif not post.published_at:
+            post.published_at = datetime.utcnow()
     if not is_published:
         post.published_at = None
 
@@ -294,6 +341,7 @@ def create_project():
     long_description = request.form.get('long_description')
     github_url = request.form.get('github_url')
     website_url = request.form.get('website_url')
+    published_at_input = (request.form.get('published_at') or '').strip()
 
     # 2. Crear el objeto Proyecto
     new_project = Project(
@@ -308,6 +356,13 @@ def create_project():
     )
 
     try:
+        custom_published_at = _parse_optional_publish_datetime(published_at_input)
+        if published_at_input and not custom_published_at:
+            flash('Published date must be in YYYY-MM-DD format.', 'danger')
+            return redirect(url_for('auth.dashboard'))
+        if custom_published_at:
+            new_project.created_at = custom_published_at
+
         # 3. Guardamos el proyecto PRIMERO para generar el ID
         db.session.add(new_project)
         db.session.commit() 
@@ -386,6 +441,12 @@ def edit_project(id):
     project = Project.query.get_or_404(id)
     
     try:
+        published_at_input = (request.form.get('published_at') or '').strip()
+        custom_published_at = _parse_optional_publish_datetime(published_at_input)
+        if published_at_input and not custom_published_at:
+            flash('Published date must be in YYYY-MM-DD format.', 'danger')
+            return redirect(url_for('auth.dashboard'))
+
         # 1. Actualizar datos de texto
         project.title = request.form.get('title')
         project.slug = request.form.get('slug')
@@ -395,6 +456,8 @@ def edit_project(id):
         project.long_description = request.form.get('long_description')
         project.github_url = request.form.get('github_url')
         project.website_url = request.form.get('website_url')
+        if custom_published_at:
+            project.created_at = _preserve_time_if_date_only(published_at_input, custom_published_at, project.created_at)
 
         # 2. Procesar NUEVAS imágenes (si las hay)
         files = request.files.getlist('images') 

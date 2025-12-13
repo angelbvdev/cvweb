@@ -259,6 +259,7 @@
                           data-long="{{ project.long_description or '' }}"
                           data-github="{{ project.github_url or '' }}"
                           data-web="{{ project.website_url or '' }}"
+                          data-published-at="{{ project.created_at.strftime('%Y-%m-%d') }}"
                           onclick="openEditFromButton(this)">
                     <i class="bi bi-pencil-fill text-xs"></i>
                   </button>
@@ -325,6 +326,10 @@
     <label class="space-y-2 text-sm font-medium text-slate-300">
       <span>Tech stack</span>
       <input type="text" name="technologies" id="{{ 'edit' if is_edit else 'new' }}-tech" placeholder="e.g., Python, SQL, React" class="input bg-slate-800/50 border border-slate-700/50">
+    </label>
+    <label class="space-y-2 text-sm font-medium text-slate-300">
+      <span>Published date (optional)</span>
+      <input type="date" name="published_at" id="{{ 'edit' if is_edit else 'new' }}-published-at" class="input bg-slate-800/50 border border-slate-700/50">
     </label>
   </div>
 
@@ -439,13 +444,14 @@
     }
   }
 
-  function openEdit(id, title, slug, category, tech, desc, longDesc, github, web) {
+  function openEdit(id, title, slug, category, tech, desc, longDesc, github, web, publishedAt) {
     const form = document.getElementById('editProjectForm');
     form.action = "{{ url_for('auth.edit_project', id=0) }}".replace('0', id);
     document.getElementById('edit-title').value = title;
     document.getElementById('edit-slug').value = slug;
     document.getElementById('edit-category').value = category;
     document.getElementById('edit-tech').value = tech;
+    document.getElementById('edit-published-at').value = publishedAt || '';
     document.getElementById('edit-desc').value = desc;
     document.getElementById('edit-long').value = longDesc || '';
     document.getElementById('edit-github').value = github || '';
@@ -463,7 +469,8 @@
       button.dataset.desc || '',
       button.dataset.long || '',
       button.dataset.github || '',
-      button.dataset.web || ''
+      button.dataset.web || '',
+      button.dataset.publishedAt || ''
     );
   }
 

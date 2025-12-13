@@ -128,6 +128,7 @@
                         data-meta-title="{{ (post.meta_title or '') if blog_meta_ready else '' }}"
                         data-meta-description="{{ (post.meta_description or '') if blog_meta_ready else '' }}"
                         data-published="{{ '1' if post.is_published else '0' }}"
+                        data-published-at="{{ post.published_at.strftime('%Y-%m-%d') if post.published_at else '' }}"
                         {% if blog_meta_ready %}onclick="openEditPostFromButton(this)"{% else %}disabled{% endif %}>
                   <i class="bi bi-pencil"></i>
                 </button>
@@ -211,6 +212,11 @@
           <textarea name="content" rows="10" class="input" required></textarea>
         </label>
 
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Published date (optional)</span>
+          <input type="date" name="published_at" class="input">
+        </label>
+
         <label class="inline-flex items-center gap-2 text-sm text-slate-200">
           <input type="checkbox" name="is_published" class="accent-text">
           Publish now
@@ -278,6 +284,11 @@
           <textarea name="content" id="edit-post-content" rows="10" class="input" required></textarea>
         </label>
 
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Published date (optional)</span>
+          <input type="date" name="published_at" id="edit-post-published-at" class="input">
+        </label>
+
         <label class="inline-flex items-center gap-2 text-sm text-slate-200">
           <input type="checkbox" name="is_published" id="edit-post-published" class="accent-text">
           Published
@@ -327,6 +338,7 @@
     document.getElementById('edit-post-meta-title').value = button.dataset.metaTitle || '';
     document.getElementById('edit-post-meta-description').value = button.dataset.metaDescription || '';
     document.getElementById('edit-post-published').checked = button.dataset.published === '1';
+    document.getElementById('edit-post-published-at').value = button.dataset.publishedAt || '';
     togglePanel('editPostPanel', true);
   }
 
