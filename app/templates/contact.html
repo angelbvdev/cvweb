@@ -1,89 +1,144 @@
 {% extends 'base.html' %}
 
-{% block title %}Contacto{% endblock %}
+{% block title %}Contact - Angel Burgos{% endblock %}
 
 {% block content %}
-<section class="text-center space-y-3 mb-10">
-  <p class="text-sm uppercase tracking-[0.35em] text-slate-500">Contacto</p>
-  <h1 class="text-4xl font-bold text-white">¿Colaboremos?</h1>
-  <p class="text-slate-300 text-lg">Oportunidades laborales, proyectos o ideas: responde rápido.</p>
+
+<section class="text-center space-y-6 mb-12 pt-10 animate-fade-in-up">
+  <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium">
+    <i class="bi bi-chat-left-dots"></i> Let’s talk
+  </div>
+  
+  <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">
+    Let’s build something <span class="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">great</span>
+  </h1>
+  
+  <p class="text-slate-400 text-lg max-w-xl mx-auto">
+    Hiring for Data Engineering, DevOps, or Backend (Python/Flask)?
+    Share the role details and I’ll reply as soon as possible.
+  </p>
 </section>
 
-<div class="grid lg:grid-cols-5 gap-8">
+<div class="grid lg:grid-cols-5 gap-8 pb-20 max-w-6xl mx-auto">
+  
   <div class="lg:col-span-3">
-    <div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 shadow-xl shadow-black/20">
-      <h3 class="text-2xl font-semibold text-white mb-6">Envíame un mensaje</h3>
-      <form action="" method="POST" class="space-y-4">
-        <div class="grid md:grid-cols-2 gap-4">
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Nombre</span>
-            <input type="text" id="name" name="name" placeholder="Tu nombre" required
-                   class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-slate-100 focus:outline-none focus:border-lime-400/60 focus:ring-2 focus:ring-lime-400/30">
-          </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Email</span>
-            <input type="email" id="email" name="email" placeholder="tucorreo@ejemplo.com" required
-                   class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-slate-100 focus:outline-none focus:border-lime-400/60 focus:ring-2 focus:ring-lime-400/30">
-          </label>
+    <div class="card p-8 border border-slate-800 bg-slate-900 shadow-xl relative overflow-hidden group">
+      <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50"></div>
+
+      <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+        Send me a message
+      </h3>
+      <p class="text-slate-400 text-sm mb-6">I typically respond within 24–48 hours.</p>
+      
+      <form action="" method="POST" class="space-y-5" id="contactForm">
+        <div class="grid md:grid-cols-2 gap-5">
+          <div class="space-y-2">
+            <label for="name" class="text-sm font-medium text-slate-300">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name" required
+                   class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all duration-300">
+          </div>
+          <div class="space-y-2">
+            <label for="email" class="text-sm font-medium text-slate-300">Email</label>
+            <input type="email" id="email" name="email" placeholder="hello@example.com" required
+                   class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all duration-300">
+          </div>
         </div>
-        <label class="space-y-2 text-sm text-slate-200">
-          <span>Asunto</span>
-          <input type="text" id="subject" name="subject" placeholder="¿Sobre qué quieres hablar?" required
-                 class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-slate-100 focus:outline-none focus:border-lime-400/60 focus:ring-2 focus:ring-lime-400/30">
-        </label>
-        <label class="space-y-2 text-sm text-slate-200">
-          <span>Mensaje</span>
-          <textarea id="message" name="message" rows="5" placeholder="Cuéntame más..." required
-                    class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-slate-100 focus:outline-none focus:border-lime-400/60 focus:ring-2 focus:ring-lime-400/30"></textarea>
-        </label>
-        <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold shadow-lg shadow-lime-500/25">
-          <i class="bi bi-send-fill"></i> Enviar mensaje
+        
+        <div class="space-y-2">
+          <label for="subject" class="text-sm font-medium text-slate-300">Subject</label>
+          <input type="text" id="subject" name="subject" placeholder="Collaboration, freelance, question?" required
+                 class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all duration-300">
+        </div>
+        
+        <div class="space-y-2">
+          <label for="message" class="text-sm font-medium text-slate-300">Message</label>
+          <textarea id="message" name="message" rows="6" placeholder="Tell me the details..." required
+                    class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all duration-300 resize-none"></textarea>
+        </div>
+        
+        <button type="submit" id="submitBtn" class="btn btn-primary w-full md:w-auto px-8 py-3 flex items-center justify-center gap-2 group-hover:shadow-indigo-500/20 group-hover:shadow-lg transition-all">
+          <span>Send message</span> <i class="bi bi-send-fill transition-transform group-hover:translate-x-1"></i>
         </button>
       </form>
     </div>
   </div>
 
   <div class="lg:col-span-2">
-    <div class="rounded-3xl border border-emerald-500/30 bg-emerald-500/5 p-8 text-white shadow-xl shadow-emerald-500/10 h-full">
-      <h3 class="text-2xl font-semibold mb-3">Información de contacto</h3>
-      <p class="text-slate-200/80 mb-6">Disponible para proyectos y oportunidades laborales.</p>
+    <div class="h-full rounded-2xl p-8 bg-gradient-to-br from-indigo-900/40 to-slate-900 border border-indigo-500/20 relative overflow-hidden flex flex-col justify-between">
+      
+      <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div class="space-y-4">
-        <div class="flex items-center gap-3">
-          <span class="h-12 w-12 grid place-items-center rounded-2xl bg-slate-900/70 border border-slate-800 text-lime-200 text-xl">
-            <i class="bi bi-geo-alt-fill"></i>
-          </span>
-          <div>
-            <p class="font-semibold">Ubicación</p>
-            <p class="text-slate-300 text-sm">Guasave, Sinaloa, México</p>
+      <div>
+        <h3 class="text-xl font-bold text-white mb-2">Contact information</h3>
+        <p class="text-indigo-200 text-sm mb-8 leading-relaxed">
+          I’m always open to discussing new projects, creative ideas, or mentoring opportunities.
+        </p>
+
+        <div class="space-y-6">
+          <div class="flex items-start gap-4 group">
+            <span class="h-12 w-12 shrink-0 grid place-items-center rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xl transition-colors group-hover:bg-indigo-500 group-hover:text-white">
+              <i class="bi bi-geo-alt-fill"></i>
+            </span>
+            <div>
+              <p class="font-semibold text-white">Location</p>
+              <p class="text-slate-400 text-sm">Guasave, Sinaloa, Mexico</p>
+              <div class="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span class="relative flex h-1.5 w-1.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
+                Open to work
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="h-12 w-12 grid place-items-center rounded-2xl bg-slate-900/70 border border-slate-800 text-lime-200 text-xl">
-            <i class="bi bi-envelope-fill"></i>
-          </span>
-          <div>
-            <p class="font-semibold">Email</p>
-            <p class="text-slate-300 text-sm">angelbv.dev@gmail.com</p>
+
+          <div class="flex items-start gap-4 group">
+            <span class="h-12 w-12 shrink-0 grid place-items-center rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xl transition-colors group-hover:bg-indigo-500 group-hover:text-white">
+              <i class="bi bi-envelope-fill"></i>
+            </span>
+            <div>
+              <p class="font-semibold text-white">Direct email</p>
+              <a href="mailto:angelbv.dev@gmail.com" class="text-slate-400 text-sm hover:text-white transition-colors">
+                angelbv.dev@gmail.com
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="mt-6">
-        <h4 class="text-sm uppercase tracking-wide text-slate-300 mb-3">Sígueme</h4>
+      <div class="mt-12 pt-6 border-t border-indigo-500/20">
+        <h4 class="text-xs uppercase tracking-widest text-indigo-300 mb-4 font-semibold">Follow me</h4>
         <div class="flex gap-3">
-          <a href="https://www.linkedin.com/in/angel-aldair-burgos-valenzuela-150889381" class="h-10 w-10 grid place-items-center rounded-xl border border-slate-700 bg-slate-900/70 text-slate-100 hover:border-lime-400/50 transition">
-            <i class="bi bi-linkedin"></i>
+          <a href="https://www.linkedin.com/in/angel-aldair-burgos-valenzuela-150889381" target="_blank" class="h-10 w-10 rounded-lg bg-slate-800 border border-slate-700 grid place-items-center text-slate-400 hover:bg-[#0077b5] hover:text-white hover:border-[#0077b5] transition-all duration-300">
+            <i class="bi bi-linkedin text-lg"></i>
           </a>
-          <a href="https://github.com/angelbvdev" class="h-10 w-10 grid place-items-center rounded-xl border border-slate-700 bg-slate-900/70 text-slate-100 hover:border-lime-400/50 transition">
-            <i class="bi bi-github"></i>
+          <a href="https://github.com/angelbvdev" target="_blank" class="h-10 w-10 rounded-lg bg-slate-800 border border-slate-700 grid place-items-center text-slate-400 hover:bg-white hover:text-black hover:border-white transition-all duration-300">
+            <i class="bi bi-github text-lg"></i>
           </a>
-          <a href="https://x.com/AngelbvDev" class="h-10 w-10 grid place-items-center rounded-xl border border-slate-700 bg-slate-900/70 text-slate-100 hover:border-lime-400/50 transition">
-            <i class="bi bi-twitter"></i>
+          <a href="https://x.com/AngelbvDev" target="_blank" class="h-10 w-10 rounded-lg bg-slate-800 border border-slate-700 grid place-items-center text-slate-400 hover:bg-black hover:text-white hover:border-slate-600 transition-all duration-300">
+            <i class="bi bi-twitter-x text-lg"></i>
           </a>
         </div>
       </div>
+
     </div>
   </div>
 </div>
+
+<script>
+  // Small UX touch while sending
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    
+    
+    const btn = document.getElementById('submitBtn');
+    const originalContent = btn.innerHTML;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<span class="animate-spin inline-block mr-2 border-2 border-current border-t-transparent rounded-full h-4 w-4"></span> Sending...';
+    btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+  
+  });
+</script>
+
 {% endblock %}

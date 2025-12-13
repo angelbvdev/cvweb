@@ -1,45 +1,45 @@
 {% extends "base.html" %}
 
-{% block title %}Iniciar Sesión{% endblock %}
+{% block title %}Sign in{% endblock %}
 
 {% block content %}
 <div class="grid place-items-center min-h-[70vh]">
   <div class="w-full max-w-md">
-    <div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 shadow-xl shadow-black/25">
+    <div class="card p-8">
       <div class="text-center space-y-2 mb-6">
-        <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-lime-400/15 border border-lime-300/40 text-lime-200 text-2xl">
+        <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-400/15 border border-sky-300/40 accent-text text-2xl">
           <i class="bi bi-shield-lock-fill"></i>
         </span>
         <h2 class="text-2xl font-bold text-white">Admin Access</h2>
-        <p class="text-sm text-slate-300">Ingresa tus credenciales para gestionar el portafolio.</p>
+        <p class="text-sm text-slate-300">Enter your credentials to manage the portfolio.</p>
       </div>
 
       <form method="POST" class="space-y-4">
         <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Usuario</span>
-          <div class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 focus-within:border-lime-400/60 focus-within:ring-2 focus-within:ring-lime-400/30">
+          <span>Username</span>
+          <div class="input-group">
             <i class="bi bi-person-fill text-slate-400"></i>
-            <input type="text" name="username" placeholder="Administrador" required class="bg-transparent flex-1 outline-none text-slate-100">
+            <input type="text" name="username" placeholder="Admin" required class="bg-transparent flex-1 outline-none text-slate-100">
           </div>
         </label>
 
         <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Contraseña</span>
-          <div class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 focus-within:border-lime-400/60 focus-within:ring-2 focus-within:ring-lime-400/30">
+          <span>Password</span>
+          <div class="input-group">
             <i class="bi bi-key-fill text-slate-400"></i>
             <input type="password" name="password" placeholder="••••••••" required class="bg-transparent flex-1 outline-none text-slate-100">
           </div>
         </label>
 
-        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold shadow-lg shadow-lime-500/25">
-          Entrar al Dashboard <i class="bi bi-arrow-right-short"></i>
+        <button type="submit" class="btn btn-primary w-full">
+          Go to dashboard <i class="bi bi-arrow-right-short"></i>
         </button>
       </form>
     </div>
 
     <div class="text-center mt-4 text-slate-400">
-      <a href="{{ url_for('main.index') }}" class="inline-flex items-center gap-2 text-sm hover:text-white transition">
-        <i class="bi bi-arrow-left"></i> Volver al inicio
+      <a href="{{ url_for('main.index') }}" class="inline-flex items-center gap-2 text-sm footer-link">
+        <i class="bi bi-arrow-left"></i> Back to home
       </a>
     </div>
   </div>

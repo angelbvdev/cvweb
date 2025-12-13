@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Bienvenido{% endblock %} - Angel Burgos</title>
+    <title>{% block title %}Welcome{% endblock %} - Angel Burgos</title>
 
     <script>
       (function () {
@@ -18,11 +18,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   </head>
-  <body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-    <header class="sticky top-0 z-30 backdrop-blur bg-slate-950/80 border-b border-slate-900">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+  <body class="min-h-screen flex flex-col font-sans">
+    <header class="sticky top-0 z-30 backdrop-blur app-header">
+      <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
         <a href="{{ url_for('main.index') }}" class="flex items-center gap-3 group">
-          <span class="grid place-items-center h-12 w-12 rounded-2xl bg-gradient-to-br from-lime-400/20 via-emerald-400/15 to-cyan-400/15 border border-lime-400/30 text-lime-200 text-xl shadow-lg shadow-lime-500/10 group-hover:scale-105 transition-transform">
+          <span class="brand-badge group-hover:scale-105">
             <i class="bi bi-code-slash"></i>
           </span>
           <div>
@@ -32,35 +32,37 @@
         </a>
 
         <div class="flex items-center gap-2 md:order-3">
-          <button id="theme-toggle" type="button" class="inline-flex items-center justify-center h-11 w-11 rounded-xl border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition" title="Cambiar tema" aria-label="Cambiar tema">
-            <i id="theme-icon" class="bi bi-sun text-xl text-slate-100"></i>
+          <button id="theme-toggle" type="button" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
+            <i id="theme-icon" class="bi bi-sun text-xl"></i>
           </button>
-          <button id="menu-toggle" type="button" class="md:hidden inline-flex items-center justify-center h-11 w-11 rounded-xl border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition" aria-label="Abrir menú">
-            <i class="bi bi-list text-2xl text-slate-100"></i>
+          <button id="menu-toggle" type="button" class="md:hidden icon-btn" aria-label="Open menu">
+            <i class="bi bi-list text-2xl"></i>
           </button>
         </div>
 
         <nav id="main-nav" class="hidden md:flex items-center gap-2 text-sm font-medium">
-          <a href="{{ url_for('main.index') }}" class="px-4 py-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition">Inicio</a>
-          <a href="{{ url_for('main.about') }}" class="px-4 py-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition">Sobre Mí</a>
-          <a href="{{ url_for('projects.projects_home') }}" class="px-4 py-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition">Proyectos</a>
-          <a href="{{ url_for('main.contact') }}" class="px-4 py-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition">Contacto</a>
-          <a href="{{ url_for('main.skills') }}" class="px-4 py-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition">Skills</a>
+          <a href="{{ url_for('main.index') }}" class="nav-link">Home</a>
+          <a href="{{ url_for('main.about') }}" class="nav-link">About</a>
+          <a href="{{ url_for('projects.projects_home') }}" class="nav-link">Projects</a>
+          <a href="{{ url_for('blog.index') }}" class="nav-link">Blog</a>
+          <a href="{{ url_for('main.resume') }}" class="nav-link">Resume</a>
+          <a href="{{ url_for('main.contact') }}" class="nav-link">Contact</a>
         </nav>
       </div>
 
       <div id="mobile-nav" class="md:hidden hidden px-4 pb-4">
-        <div class="flex flex-col gap-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
-          <a href="{{ url_for('main.index') }}" class="px-4 py-3 rounded-xl hover:bg-slate-800 transition">Inicio</a>
-          <a href="{{ url_for('main.about') }}" class="px-4 py-3 rounded-xl hover:bg-slate-800 transition">Sobre Mí</a>
-          <a href="{{ url_for('projects.projects_home') }}" class="px-4 py-3 rounded-xl hover:bg-slate-800 transition">Proyectos</a>
-          <a href="{{ url_for('main.contact') }}" class="px-4 py-3 rounded-xl hover:bg-slate-800 transition">Contacto</a>
-          <a href="{{ url_for('main.skills') }}" class="px-4 py-3 rounded-xl hover:bg-slate-800 transition">Skills</a>
+        <div class="card p-4 flex flex-col gap-2">
+          <a href="{{ url_for('main.index') }}" class="nav-link">Home</a>
+          <a href="{{ url_for('main.about') }}" class="nav-link">About</a>
+          <a href="{{ url_for('projects.projects_home') }}" class="nav-link">Projects</a>
+          <a href="{{ url_for('blog.index') }}" class="nav-link">Blog</a>
+          <a href="{{ url_for('main.resume') }}" class="nav-link">Resume</a>
+          <a href="{{ url_for('main.contact') }}" class="nav-link">Contact</a>
         </div>
       </div>
     </header>
 
-    <div class="max-w-5xl w-full mx-auto px-4 sm:px-6 pt-6 space-y-4">
+    <div class="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-4">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, message in messages %}
@@ -76,7 +78,7 @@
                 {% if category in ['success'] %}✅{% elif category in ['warning'] %}⚠️{% elif category in ['danger', 'error'] %}⛔{% else %}💡{% endif %}
               </span>
               <div class="flex-1 leading-relaxed">{{ message }}</div>
-              <button type="button" class="text-slate-300 hover:text-white" onclick="this.parentElement.remove()">✕</button>
+              <button type="button" class="footer-link" onclick="this.parentElement.remove()">✕</button>
             </div>
           {% endfor %}
         {% endif %}
@@ -84,18 +86,18 @@
     </div>
 
     <main class="flex-1 w-full">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+      <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {% block content %}{% endblock %}
       </div>
     </main>
 
-    <footer class="mt-auto border-t border-slate-900 bg-slate-950/90">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-slate-400">
-        <p>© 2025 Angel Burgos · Construido con Python & Flask</p>
+    <footer class="mt-auto app-footer">
+      <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-sm muted">
+        <p>© 2025 Angel Burgos · Built with Python & Flask</p>
         <div class="flex items-center gap-4 text-lg">
-          <a href="https://www.linkedin.com/in/angel-aldair-burgos-valenzuela-150889381" class="hover:text-white transition"><i class="bi bi-linkedin"></i></a>
-          <a href="https://github.com/angelbvdev" class="hover:text-white transition"><i class="bi bi-github"></i></a>
-          <a href="{{ url_for('main.contact') }}" class="hover:text-white transition"><i class="bi bi-envelope-fill"></i></a>
+          <a href="https://www.linkedin.com/in/angel-aldair-burgos-valenzuela-150889381" class="footer-link"><i class="bi bi-linkedin"></i></a>
+          <a href="https://github.com/angelbvdev" class="footer-link"><i class="bi bi-github"></i></a>
+          <a href="{{ url_for('main.contact') }}" class="footer-link"><i class="bi bi-envelope-fill"></i></a>
         </div>
       </div>
     </footer>
@@ -130,10 +132,10 @@
         themeIcon.classList.remove('bi-sun', 'bi-moon');
         if (theme === 'light') {
           themeIcon.classList.add('bi-moon');
-          themeIcon.title = 'Cambiar a oscuro';
+          themeIcon.title = 'Switch to dark';
         } else {
           themeIcon.classList.add('bi-sun');
-          themeIcon.title = 'Cambiar a claro';
+          themeIcon.title = 'Switch to light';
         }
       }
 

@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block title %}Blog Admin{% endblock %}
+
+{% block content %}
+
+<section class="max-w-6xl mx-auto space-y-8">
+  <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <div class="space-y-3">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium">
+        <i class="bi bi-journal-text"></i> Blog Admin
+      </div>
+      <h1 class="text-4xl font-bold text-white tracking-tight">Blog</h1>
+      <p class="text-slate-400 text-lg">Create posts and upload a cover image.</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <a class="btn btn-secondary" href="{{ url_for('blog.index') }}" target="_blank">
+        <i class="bi bi-box-arrow-up-right"></i> Open blog
+      </a>
+      <button class="btn btn-primary" type="button" onclick="togglePanel('newPostPanel', true)">
+        <i class="bi bi-plus-lg"></i> New post
+      </button>
+    </div>
+  </header>
+
+  <div class="card overflow-hidden">
+    <div class="px-5 py-4 border-b border-slate-800">
+      <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div class="input-group max-w-xl">
+          <i class="bi bi-search text-slate-400"></i>
+          <input id="postSearch" type="search" class="bg-transparent flex-1 outline-none text-slate-100"
+                 placeholder="Search title, slug..." autocomplete="off">
+          <button id="clearPostSearch" type="button" class="icon-btn icon-btn-sm" title="Clear search" aria-label="Clear search">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="statusFilter" class="input max-w-xs">
+            <option value="all">All</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+          <span id="postsCount" class="text-sm text-slate-400">Showing {{ posts|length }} of {{ posts|length }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-900 border-b border-slate-800 text-slate-400 uppercase tracking-wide">
+          <tr>
+            <th class="text-left px-5 py-3">Title / Slug</th>
+            <th class="text-left px-5 py-3">Status</th>
+            <th class="text-left px-5 py-3">Cover</th>
+            <th class="text-left px-5 py-3">Created</th>
+            <th class="text-right px-5 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="postsTbody" class="divide-y divide-slate-800 text-slate-100">
+          {% for post in posts %}
+          <tr class="hover:bg-slate-900/60 post-row"
+              data-title="{{ post.title }}"
+              data-slug="{{ post.slug }}"
+              data-status="{{ 'published' if post.is_published else 'draft' }}">
+            <td class="px-5 py-3">
+              <div class="font-semibold">{{ post.title }}</div>
+              <div class="text-xs text-slate-400 font-mono">/{{ post.slug }}</div>
+            </td>
+            <td class="px-5 py-3">
+              {% if post.is_published %}
+                <span class="tag border-emerald-500/30 bg-emerald-500/10 text-emerald-200">Published</span>
+              {% else %}
+                <span class="tag border-slate-700 bg-slate-900/40 text-slate-300">Draft</span>
+              {% endif %}
+            </td>
+            <td class="px-5 py-3">
+              {% if post.cover_image_path %}
+                <span class="tag">Yes</span>
+              {% else %}
+                <span class="text-slate-400">—</span>
+              {% endif %}
+            </td>
+            <td class="px-5 py-3 text-slate-300">
+              {{ post.created_at.strftime('%d %b, %Y') }}
+            </td>
+            <td class="px-5 py-3 text-right">
+              <div class="inline-flex gap-2">
+                {% if post.is_published %}
+                  <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" target="_blank" class="icon-btn icon-btn-sm" title="View">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                  </a>
+                {% else %}
+                  <span class="icon-btn icon-btn-sm opacity-50 cursor-not-allowed" title="Publish to view">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                  </span>
+                {% endif %}
+
+                <button type="button"
+                        class="icon-btn icon-btn-sm"
+                        title="Edit"
+                        data-id="{{ post.id }}"
+                        data-title="{{ post.title }}"
+                        data-slug="{{ post.slug }}"
+                        data-excerpt="{{ post.excerpt or '' }}"
+                        data-content="{{ post.content }}"
+                        data-published="{{ '1' if post.is_published else '0' }}"
+                        onclick="openEditPostFromButton(this)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+
+                <form action="{{ url_for('auth.delete_blog_post', id=post.id) }}" method="POST" onsubmit="return confirm('Delete {{ post.title }}? This action cannot be undone.');">
+                  <button type="submit" class="icon-btn icon-btn-sm icon-btn-danger" title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr id="emptyPostsRow">
+            <td colspan="5" class="px-5 py-10 text-center text-slate-400">
+              No posts yet. Create your first one.
+            </td>
+          </tr>
+          {% endfor %}
+          <tr id="noPostMatchesRow" class="hidden">
+            <td colspan="5" class="px-5 py-10 text-center text-slate-400">
+              No matching posts. Try clearing filters or search.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div id="newPostPanel" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+  <div class="panel max-w-4xl w-full overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 text-white">
+      <div>
+        <h3 class="text-xl font-semibold">New post</h3>
+        <p class="text-sm text-slate-400">You can upload a cover image (PNG/JPG/WEBP/GIF).</p>
+      </div>
+      <button type="button" class="text-2xl" onclick="togglePanel('newPostPanel', false)">✕</button>
+    </div>
+    <div class="p-6">
+      <form action="{{ url_for('auth.create_blog_post') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Title</span>
+            <input type="text" name="title" id="new-post-title" class="input" required>
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Slug (URL)</span>
+            <input type="text" name="slug" id="new-post-slug" class="input" required>
+          </label>
+        </div>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Excerpt</span>
+          <input type="text" name="excerpt" class="input" placeholder="1–2 lines summary (optional)">
+        </label>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Cover image</span>
+          <input type="file" name="cover_image" accept="image/*" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100">
+        </label>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Content</span>
+          <textarea name="content" rows="10" class="input" required></textarea>
+        </label>
+
+        <label class="inline-flex items-center gap-2 text-sm text-slate-200">
+          <input type="checkbox" name="is_published" class="accent-text">
+          Publish now
+        </label>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="togglePanel('newPostPanel', false)">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="editPostPanel" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+  <div class="panel max-w-4xl w-full overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 text-white">
+      <div>
+        <h3 class="text-xl font-semibold">Edit post</h3>
+        <p class="text-sm text-slate-400">Uploading a new cover image will replace the old one.</p>
+      </div>
+      <button type="button" class="text-2xl" onclick="togglePanel('editPostPanel', false)">✕</button>
+    </div>
+    <div class="p-6">
+      <form id="editPostForm" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Title</span>
+            <input type="text" name="title" id="edit-post-title" class="input" required>
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Slug (URL)</span>
+            <input type="text" name="slug" id="edit-post-slug" class="input" required>
+          </label>
+        </div>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Excerpt</span>
+          <input type="text" name="excerpt" id="edit-post-excerpt" class="input" placeholder="1–2 lines summary (optional)">
+        </label>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Cover image</span>
+          <input type="file" name="cover_image" accept="image/*" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100">
+        </label>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Content</span>
+          <textarea name="content" id="edit-post-content" rows="10" class="input" required></textarea>
+        </label>
+
+        <label class="inline-flex items-center gap-2 text-sm text-slate-200">
+          <input type="checkbox" name="is_published" id="edit-post-published" class="accent-text">
+          Published
+        </label>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="togglePanel('editPostPanel', false)">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function togglePanel(id, show) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (show) {
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+    } else {
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+    }
+  }
+
+  function slugify(value) {
+    return (value || '')
+      .toString()
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 120);
+  }
+
+  function openEditPostFromButton(button) {
+    const form = document.getElementById('editPostForm');
+    form.action = "{{ url_for('auth.edit_blog_post', id=0) }}".replace('0', button.dataset.id);
+    document.getElementById('edit-post-title').value = button.dataset.title || '';
+    document.getElementById('edit-post-slug').value = button.dataset.slug || '';
+    document.getElementById('edit-post-excerpt').value = button.dataset.excerpt || '';
+    document.getElementById('edit-post-content').value = button.dataset.content || '';
+    document.getElementById('edit-post-published').checked = button.dataset.published === '1';
+    togglePanel('editPostPanel', true);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const tbody = document.getElementById('postsTbody');
+    const rows = Array.from(document.querySelectorAll('.post-row'));
+    const total = rows.length;
+    const searchInput = document.getElementById('postSearch');
+    const clearSearch = document.getElementById('clearPostSearch');
+    const statusFilter = document.getElementById('statusFilter');
+    const postsCount = document.getElementById('postsCount');
+    const noMatchesRow = document.getElementById('noPostMatchesRow');
+
+    const newTitle = document.getElementById('new-post-title');
+    const newSlug = document.getElementById('new-post-slug');
+    if (newTitle && newSlug) {
+      let slugTouched = false;
+      newSlug.addEventListener('input', () => (slugTouched = newSlug.value.trim().length > 0));
+      newTitle.addEventListener('input', () => {
+        if (slugTouched) return;
+        newSlug.value = slugify(newTitle.value);
+      });
+    }
+
+    function matches(row) {
+      const q = (searchInput?.value || '').toLowerCase().trim();
+      const status = statusFilter?.value || 'all';
+      const title = (row.dataset.title || '').toLowerCase();
+      const slug = (row.dataset.slug || '').toLowerCase();
+      const rowStatus = row.dataset.status || 'draft';
+
+      if (status !== 'all' && rowStatus !== status) return false;
+      if (!q) return true;
+      return title.includes(q) || slug.includes(q);
+    }
+
+    function apply() {
+      let shown = 0;
+      for (const row of rows) {
+        const ok = matches(row);
+        row.classList.toggle('hidden', !ok);
+        if (ok) shown++;
+      }
+      if (postsCount) postsCount.textContent = `Showing ${shown} of ${total}`;
+      if (noMatchesRow) noMatchesRow.classList.toggle('hidden', shown !== 0);
+    }
+
+    searchInput?.addEventListener('input', apply);
+    statusFilter?.addEventListener('change', apply);
+    clearSearch?.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      apply();
+      searchInput?.focus();
+    });
+
+    apply();
+  });
+</script>
+
+{% endblock %}

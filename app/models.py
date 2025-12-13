@@ -4,6 +4,12 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+post_tags = db.Table(
+    "post_tags",
+    db.Column("post_id", db.Integer, db.ForeignKey("blog_posts.id"), primary_key=True),
+    db.Column("tag_id", db.Integer, db.ForeignKey("blog_tags.id"), primary_key=True),
+)
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -56,3 +62,36 @@ class ProjectCode(db.Model):
     file_name = db.Column(db.String(100)) # Ej: "app.py"
     code_snippet = db.Column(db.Text)
     language = db.Column(db.String(50)) # Ej: "python", "javascript"
+
+
+class BlogTag(db.Model):
+    __tablename__ = "blog_tags"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True, nullable=False, index=True)
+    slug = db.Column(db.String(80), unique=True, nullable=False, index=True)
+
+    def __repr__(self):
+        return f"<BlogTag {self.slug}>"
+
+
+class BlogPost(db.Model):
+    __tablename__ = "blog_posts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    excerpt = db.Column(db.String(300))
+    content = db.Column(db.Text, nullable=False)
+    cover_image_path = db.Column(db.String(255))
+
+    is_published = db.Column(db.Boolean, default=False, nullable=False, index=True)
+    published_at = db.Column(db.DateTime)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    tags = db.relationship("BlogTag", secondary=post_tags, lazy="joined")
+
+    def __repr__(self):
+        return f"<BlogPost {self.slug}>"

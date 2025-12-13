@@ -1,77 +1,126 @@
 {% extends "base.html" %}
 
-{% block title %}Proyectos{% endblock %}
+{% block title %}Projects - Angel Burgos{% endblock %}
 
 {% block content %}
 
-<section class="text-center space-y-3 mb-10">
-  <p class="text-sm uppercase tracking-[0.35em] text-slate-500">Portafolio</p>
-  <h1 class="text-4xl font-bold text-white">Mis Proyectos</h1>
-  <p class="text-slate-300 max-w-2xl mx-auto">Filtra por categoría, stack o busca directamente lo que necesitas.</p>
+<section class="text-center space-y-6 mb-12 pt-10 animate-fade-in-up">
+  <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium">
+    <i class="bi bi-folder-check"></i> Professional Portfolio
+  </div>
+  
+  <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">
+    Selected <span class="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Projects</span>
+  </h1>
+  
+  <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+    A hiring-focused selection of work. Each project highlights the problem, approach, and the impact delivered.
+  </p>
 </section>
 
-<div class="max-w-3xl mx-auto mb-6 relative">
-  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
-    <i class="bi bi-search"></i>
-  </span>
-  <input id="searchInput" type="text" placeholder="Buscar por nombre, descripción o tecnología..."
-         class="w-full rounded-2xl border border-slate-800 bg-slate-900/70 text-slate-100 pl-11 pr-4 py-3 shadow-inner shadow-black/20 focus:outline-none focus:border-lime-400/60 focus:ring-2 focus:ring-lime-400/30">
+<div class="max-w-6xl mx-auto mb-10 space-y-8">
+  
+  <div class="relative max-w-xl mx-auto group">
+    <div class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-lg blur opacity-25 group-focus-within:opacity-75 transition duration-500"></div>
+    <div class="relative flex items-center bg-slate-900 rounded-lg">
+      <span class="pl-4 text-slate-500 group-focus-within:text-indigo-400 transition-colors">
+        <i class="bi bi-search text-lg"></i>
+      </span>
+      <input id="searchInput" type="text" 
+             placeholder="Search by name, technology (e.g., Python, Docker)..."
+             class="w-full bg-transparent border-0 text-white placeholder-slate-500 focus:ring-0 py-3 pl-3 pr-4 focus:outline-none">
+    </div>
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-2" id="filters">
+    <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/25" 
+            data-category="all">
+      All
+    </button>
+    <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-600 hover:text-white" 
+            data-category="web-dev">
+      Web Development
+    </button>
+    <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-600 hover:text-white" 
+            data-category="data-science">
+      Data Science
+    </button>
+    <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-600 hover:text-white" 
+            data-category="data-engineer">
+      Data Engineer
+    </button>
+    <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-600 hover:text-white" 
+            data-category="other">
+      Other
+    </button>
+  </div>
 </div>
 
-<div class="flex flex-wrap justify-center gap-3 mb-10" id="filters">
-  <button class="filter-btn px-4 py-2 rounded-xl border border-lime-300/50 bg-lime-400/20 text-lime-100" data-category="all">Todos</button>
-  <button class="filter-btn px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-300/40" data-category="web-dev">Desarrollo Web</button>
-  <button class="filter-btn px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-300/40" data-category="data-science">Data Science</button>
-  <button class="filter-btn px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-300/40" data-category="data-engineer">Data Engineer</button>
-  <button class="filter-btn px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-300/40" data-category="other">Otros</button>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projectGrid">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20" id="projectGrid">
   {% for p in proyectos %}
-  <article class="project-item group rounded-2xl border border-slate-800 bg-slate-900/70 shadow-lg shadow-black/15 overflow-hidden transition" 
+  <article class="project-item group relative flex flex-col h-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-indigo-500/30 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1" 
            data-category="{{ p.category_slug }}"
            data-tags="{{ p.technologies }}"
            data-title="{{ p.title | lower }}"
            data-description="{{ p.description | lower }}">
-    <div class="h-52 bg-slate-900 overflow-hidden">
+    
+    <div class="relative h-56 overflow-hidden bg-slate-800">
       {% if p.images|length > 0 %}
         <img src="{{ url_for('static', filename='uploads/' ~ p.images[0].image_path) }}"
              alt="{{ p.title }}"
-             class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+             class="w-full h-full object-cover transition duration-700 group-hover:scale-110 group-hover:rotate-1">
+        <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
+            <span class="px-4 py-2 bg-indigo-600 text-white rounded-full text-sm font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+              View details
+            </span>
+        </div>
       {% else %}
-        <div class="h-full w-full grid place-items-center text-slate-500">
-          <div class="text-center">
-            <i class="bi bi-image text-3xl"></i>
-            <p class="text-sm mt-1">Sin imagen</p>
-          </div>
+        <div class="h-full w-full flex flex-col items-center justify-center text-slate-600 bg-slate-800/50">
+          <i class="bi bi-code-square text-4xl mb-2"></i>
+          <span class="text-sm">Code only</span>
         </div>
       {% endif %}
+      
+      <div class="absolute top-4 right-4">
+        <span class="px-2 py-1 rounded-md bg-slate-900/80 backdrop-blur border border-slate-700 text-xs font-semibold text-white uppercase tracking-wider shadow-sm">
+          {{ p.category_slug | replace('-', ' ') }}
+        </span>
+      </div>
     </div>
 
-    <div class="p-5 space-y-3">
-      <div class="flex items-start justify-between gap-2">
-        <h3 class="text-xl font-semibold text-white">{{ p.title }}</h3>
-        <span class="text-xs uppercase tracking-wide text-slate-400">{{ p.category_slug }}</span>
-      </div>
-      <p class="text-sm text-slate-300 leading-relaxed">{{ p.description }}</p>
+    <div class="p-6 flex flex-col flex-grow">
+      <h3 class="text-xl font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">{{ p.title }}</h3>
+      <p class="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-3">
+        {{ p.description }}
+      </p>
 
-      {% if p.technologies %}
-      <div class="flex flex-wrap gap-2">
-        {% for tech in p.technologies.split(',') %}
-          <span class="px-3 py-1 rounded-full text-xs border border-slate-800 bg-slate-950/60 text-slate-200">{{ tech.strip() }}</span>
-        {% endfor %}
+      <div class="mt-auto pt-4 border-t border-slate-800/50">
+        {% if p.technologies %}
+        <div class="flex flex-wrap gap-2 mb-4">
+          {% for tech in p.technologies.split(',') %}
+            <span class="px-2 py-1 rounded text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700">
+              {{ tech.strip() }}
+            </span>
+          {% endfor %}
+        </div>
+        {% endif %}
+        
+        <a href="{{ url_for('projects.project_detail', project_id=p.id) }}" class="absolute inset-0 z-10" aria-label="View project {{ p.title }}"></a>
       </div>
-      {% endif %}
-    </div>
-
-    <div class="px-5 pb-5">
-      <a href="{{ url_for('projects.project_detail', project_id=p.id) }}"
-         class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold py-3 shadow-lg shadow-lime-500/20 transition hover:-translate-y-[1px]">
-        Ver Proyecto <i class="bi bi-arrow-right-short text-lg"></i>
-      </a>
     </div>
   </article>
   {% endfor %}
+</div>
+
+<div id="noResults" class="hidden text-center py-20">
+  <div class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-slate-800 text-slate-500 mb-4">
+    <i class="bi bi-search text-2xl"></i>
+  </div>
+  <h3 class="text-xl font-semibold text-white mb-2">No projects found</h3>
+  <p class="text-slate-400">Try adjusting the filters or searching with a different term.</p>
+  <button id="clearFilters" class="mt-6 text-indigo-400 hover:text-indigo-300 underline underline-offset-4">
+    Clear filters
+  </button>
 </div>
 
 <script>
@@ -79,43 +128,79 @@
     const searchInput = document.getElementById("searchInput");
     const filterButtons = document.querySelectorAll(".filter-btn");
     const projectItems = document.querySelectorAll(".project-item");
-    const activeClasses = ["border-lime-300/50","bg-lime-400/20","text-lime-100"];
-    const baseClasses = ["border-slate-800","text-slate-200","bg-transparent"];
+    const noResults = document.getElementById("noResults");
+    const clearFiltersBtn = document.getElementById("clearFilters");
+    
     let currentCategory = "all";
+
+    // Classes for active/inactive states
+    const activeClasses = ["bg-indigo-600", "border-indigo-500", "text-white", "shadow-lg", "shadow-indigo-500/25"];
+    const inactiveClasses = ["bg-slate-800", "border-slate-700", "text-slate-400", "hover:border-slate-600", "hover:text-white"];
+
+    function updateButtonStyles(selectedBtn) {
+      filterButtons.forEach(btn => {
+        if (btn === selectedBtn) {
+            btn.classList.remove(...inactiveClasses);
+            btn.classList.add(...activeClasses);
+        } else {
+            btn.classList.remove(...activeClasses);
+            btn.classList.add(...inactiveClasses);
+        }
+      });
+    }
 
     filterButtons.forEach(btn => {
       btn.addEventListener("click", () => {
-        filterButtons.forEach(b => {
-          b.classList.remove(...activeClasses);
-          if (!b.classList.contains("border-slate-800")) b.classList.add("border-slate-800");
-          if (!b.classList.contains("text-slate-200")) b.classList.add("text-slate-200");
-          b.classList.remove("bg-lime-400/20");
-        });
-        btn.classList.remove(...baseClasses);
-        btn.classList.add(...activeClasses);
+        updateButtonStyles(btn);
         currentCategory = btn.dataset.category;
         filtrar();
       });
     });
 
     searchInput.addEventListener("input", () => filtrar());
+    
+    // Clear filters button from empty state
+    if(clearFiltersBtn){
+        clearFiltersBtn.addEventListener("click", () => {
+            searchInput.value = "";
+            currentCategory = "all";
+            // Virtual click on the "All" button
+            filterButtons[0].click();
+        });
+    }
 
     function filtrar() {
       const q = searchInput.value.toLowerCase();
+      let visibleCount = 0;
+
       projectItems.forEach(item => {
         const title = (item.dataset.title || "").toLowerCase();
         const description = (item.dataset.description || "").toLowerCase();
         const tags = (item.dataset.tags || "").toLowerCase();
         const category = item.dataset.category;
+        
         const matchText = title.includes(q) || description.includes(q) || tags.includes(q);
         const matchCategory = currentCategory === "all" || category === currentCategory;
+
         if (matchText && matchCategory) {
           item.classList.remove("hidden");
-          item.style.opacity = "1";
+          // Small entrance animation
+          item.animate([
+            { opacity: 0, transform: 'translateY(10px)' },
+            { opacity: 1, transform: 'translateY(0)' }
+          ], { duration: 300, fill: 'forwards' });
+          visibleCount++;
         } else {
           item.classList.add("hidden");
         }
       });
+
+      // Empty state handling
+      if (visibleCount === 0) {
+        noResults.classList.remove("hidden");
+      } else {
+        noResults.classList.add("hidden");
+      }
     }
   });
 </script>

@@ -16,7 +16,7 @@ def projects_home():
     
     return render_template(
         'projects.html', 
-        title='Mis Proyectos', 
+        title='Projects',
         proyectos=proyectos
     )
 
@@ -33,4 +33,3 @@ def project_detail(project_id):
         title=proyecto.title, # Nota: Accedemos a los atributos como objetos, no diccionarios
         proyecto=proyecto
     )
-

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Resume - Angel Burgos{% endblock %}
+
+{% block content %}
+
+<section class="max-w-4xl mx-auto space-y-8">
+  <header class="space-y-3">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium">
+      <i class="bi bi-file-earmark-text"></i> Resume
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Resume</h1>
+    <p class="text-slate-400 text-lg leading-relaxed">
+      Download the PDF resume or contact me directly. If the file isn’t available yet, this page stays as the fallback.
+    </p>
+  </header>
+
+  <div class="card p-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+    <div class="space-y-1">
+      <p class="text-white font-semibold">Prefer a PDF?</p>
+      <p class="text-slate-400 text-sm">Download the latest version of my resume.</p>
+    </div>
+    <div class="flex gap-2">
+      <a class="btn btn-primary" href="{{ url_for('main.download_cv') }}">
+        <i class="bi bi-download"></i> Download PDF
+      </a>
+      <a class="btn btn-secondary" href="{{ url_for('main.contact') }}">
+        <i class="bi bi-envelope"></i> Contact
+      </a>
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="card p-6 space-y-2">
+      <p class="text-xs uppercase tracking-widest text-slate-500 font-semibold">Target Roles</p>
+      <p class="text-slate-200">Data Engineer</p>
+      <p class="text-slate-200">DevOps Engineer</p>
+      <p class="text-slate-200">Backend Engineer (Flask)</p>
+    </div>
+    <div class="card p-6 space-y-2">
+      <p class="text-xs uppercase tracking-widest text-slate-500 font-semibold">Core Skills</p>
+      <p class="text-slate-200">ETL & pipelines</p>
+      <p class="text-slate-200">Docker & Linux</p>
+      <p class="text-slate-200">CI/CD & deployment</p>
+    </div>
+    <div class="card p-6 space-y-2">
+      <p class="text-xs uppercase tracking-widest text-slate-500 font-semibold">Availability</p>
+      <p class="text-slate-200">Open to full-time</p>
+      <p class="text-slate-200">Open to contract</p>
+      <p class="text-slate-200">Remote / On-site</p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+

@@ -1,135 +1,301 @@
 {% extends "base.html" %}
 
-{% block title %}Panel de Control{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="grid lg:grid-cols-[260px,1fr] gap-6">
-  <aside class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 h-fit shadow-lg shadow-black/20">
-    <div class="space-y-2 mb-6">
-      <p class="text-xs uppercase tracking-[0.25em] text-slate-500">Administración</p>
-      <p class="text-lg font-semibold text-white">Dashboard</p>
+{# --- Main Layout Grid --- #}
+<div class="grid lg:grid-cols-[280px_1fr] gap-8 relative items-start">
+
+  {# --- Sidebar --- #}
+  <aside class="card p-6 h-fit sticky top-6 bg-slate-900/80 backdrop-blur-md border border-slate-800/60 shadow-xl shadow-black/20 z-10">
+    <div class="space-y-3 mb-8">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-300">
+          <i class="bi bi-grid-1x2-fill text-xl"></i>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-[0.25em] text-slate-500 font-semibold">Administration</p>
+          <p class="text-xl font-bold text-white tracking-tight">Dashboard</p>
+        </div>
+      </div>
     </div>
+
     <nav class="space-y-2">
-      <a class="flex items-center gap-3 px-3 py-2 rounded-xl bg-lime-500/15 border border-lime-400/40 text-lime-100 font-semibold" href="#">
-        <i class="bi bi-layers-fill"></i> Proyectos
+      <a class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 shadow-lg shadow-indigo-500/10"
+         data-active="true" href="#">
+        <i class="bi bi-layers-fill text-lg"></i> Projects
       </a>
-      <span class="flex items-center gap-3 px-3 py-2 rounded-xl border border-slate-800 text-slate-500">
-        <i class="bi bi-mortarboard-fill"></i> Habilidades
+      <span class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 cursor-not-allowed opacity-70"
+            data-active="false">
+        <i class="bi bi-mortarboard-fill text-lg"></i> Skills
       </span>
-      <span class="flex items-center gap-3 px-3 py-2 rounded-xl border border-slate-800 text-slate-500">
-        <i class="bi bi-file-text-fill"></i> Blog
-      </span>
+      <a class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
+         href="{{ url_for('auth.blog') }}">
+        <i class="bi bi-file-text-fill text-lg"></i> Blog
+      </a>
     </nav>
 
-    <div class="mt-6 border-t border-slate-800 pt-4">
-      <a class="flex items-center gap-3 px-3 py-2 rounded-xl border border-rose-500/40 text-rose-100 hover:bg-rose-500/10 transition" href="{{ url_for('auth.logout') }}">
-        <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+    <div class="mt-8 border-t border-slate-800/60 pt-6">
+      <a class="flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-rose-500/30 text-rose-200/80 hover:bg-rose-500/10 hover:text-rose-100 hover:border-rose-500/60 transition-all duration-200 group"
+         href="{{ url_for('auth.logout') }}">
+        <i class="bi bi-box-arrow-left group-hover:-translate-x-1 transition-transform"></i> Sign out
       </a>
     </div>
   </aside>
 
-  <section class="space-y-6">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  {# --- Main Content Area --- #}
+  <section class="space-y-8">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-white">Proyectos</h1>
-        <p class="text-slate-400">Gestiona tu portafolio desde aquí.</p>
+        <h1 class="text-4xl font-extrabold text-white tracking-tight">Projects</h1>
+        <p class="text-slate-400 mt-2 text-lg">Overview and management of your portfolio.</p>
       </div>
-      <div class="flex gap-2">
-        <a href="{{ url_for('main.index') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-400/60 transition">
-          <i class="bi bi-eye"></i> Ver sitio público
+      <div class="flex flex-wrap gap-3">
+        <a href="{{ url_for('main.index') }}" target="_blank" class="btn btn-secondary px-5 py-2.5 flex items-center gap-2">
+          <i class="bi bi-eye"></i> Public Site
         </a>
-        <button type="button" onclick="togglePanel('newProjectPanel', true)" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold shadow-lg shadow-lime-500/20">
-          <i class="bi bi-plus-lg"></i> Nuevo proyecto
+        <button type="button" onclick="togglePanel('newProjectPanel', true)" class="btn btn-primary px-5 py-2.5 flex items-center gap-2 shadow-lg shadow-indigo-500/20">
+          <i class="bi bi-plus-lg text-lg font-bold"></i> New Project
         </button>
       </div>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-4">
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg shadow-black/20 flex items-center justify-between">
-        <div>
-          <p class="text-xs uppercase tracking-wide text-slate-400">Total publicados</p>
-          <p class="text-3xl font-bold text-white">{{ projects|length }}</p>
+    {# --- Stats Cards --- #}
+    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
+      <div class="card p-5 flex items-center justify-between relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div class="relative z-10">
+          <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Total projects</p>
+          <p class="text-4xl font-extrabold text-white">{{ stats.total }}</p>
         </div>
-        <i class="bi bi-folder-check text-3xl text-lime-200"></i>
+        <div class="h-14 w-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-300 relative z-10">
+          <i class="bi bi-folder-check text-2xl"></i>
+        </div>
+      </div>
+
+      <div class="card p-5 flex items-center justify-between relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div class="relative z-10">
+          <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">With GitHub</p>
+          <p class="text-4xl font-extrabold text-white">{{ stats.with_github }}</p>
+        </div>
+        <div class="h-14 w-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-300 relative z-10">
+          <i class="bi bi-github text-2xl"></i>
+        </div>
+      </div>
+
+      <div class="card p-5 flex items-center justify-between relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div class="relative z-10">
+          <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Live demos</p>
+          <p class="text-4xl font-extrabold text-white">{{ stats.with_demo }}</p>
+        </div>
+        <div class="h-14 w-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-300 relative z-10">
+          <i class="bi bi-globe2 text-2xl"></i>
+        </div>
+      </div>
+
+      <div class="card p-5 flex items-center justify-between relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div class="relative z-10">
+          <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">With images</p>
+          <p class="text-4xl font-extrabold text-white">{{ stats.with_images }}</p>
+        </div>
+        <div class="h-14 w-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-300 relative z-10">
+          <i class="bi bi-images text-2xl"></i>
+        </div>
       </div>
     </div>
 
-    <div class="rounded-2xl border border-slate-800 bg-slate-900/70 shadow-xl shadow-black/25 overflow-hidden">
+    {# --- Data Table Section --- #}
+    <div class="card overflow-hidden border border-slate-800/60 shadow-xl shadow-black/20">
+      <div class="p-5 border-b border-slate-800/60 bg-slate-900/50">
+        <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div class="flex flex-col md:flex-row gap-3 md:items-center flex-1">
+            <div class="input-group max-w-md w-full bg-slate-800/50 border border-slate-700/50">
+              <i class="bi bi-search text-slate-400"></i>
+              <input id="projectSearch" type="search" class="bg-transparent flex-1 outline-none text-slate-100 placeholder:text-slate-500"
+                     placeholder="Search title, slug, tech..." autocomplete="off">
+              <span class="hidden sm:block text-xs text-slate-500 border border-slate-700/50 rounded px-1.5 py-0.5 mr-2">Ctrl K</span>
+              <button id="clearSearch" type="button" class="icon-btn icon-btn-sm hover:bg-slate-700/50 text-slate-400" title="Clear search" aria-label="Clear search">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+
+            <div class="flex gap-3">
+              <select id="categoryFilter" class="input bg-slate-800/50 border border-slate-700/50 text-sm py-2">
+                <option value="all">All categories ({{ stats.total }})</option>
+                <option value="web-dev">Web Dev ({{ category_counts.get('web-dev', 0) }})</option>
+                <option value="data-science">Data Science ({{ category_counts.get('data-science', 0) }})</option>
+                <option value="data-engineer">Data Engineer ({{ category_counts.get('data-engineer', 0) }})</option>
+                <option value="other">Other ({{ category_counts.get('other', 0) }})</option>
+              </select>
+
+              <select id="sortSelect" class="input bg-slate-800/50 border border-slate-700/50 text-sm py-2">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="title_asc">Title A → Z</option>
+                <option value="title_desc">Title Z → A</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between xl:justify-end">
+            <div class="flex flex-wrap gap-2">
+              {% set toggle_base = "chip border border-slate-700/50 bg-slate-800/30 text-slate-400 hover:text-slate-200 hover:border-slate-600 transition-all" %}
+              <button type="button" class="{{ toggle_base }}" data-filter-toggle="hasGithub" data-active="false">
+                <i class="bi bi-github"></i> GitHub
+              </button>
+              <button type="button" class="{{ toggle_base }}" data-filter-toggle="hasDemo" data-active="false">
+                <i class="bi bi-globe2"></i> Demo
+              </button>
+              <button type="button" class="{{ toggle_base }}" data-filter-toggle="hasImages" data-active="false">
+                <i class="bi bi-images"></i> Images
+              </button>
+            </div>
+
+            <div class="flex items-center gap-3 pl-4 sm:border-l border-slate-800/50">
+              <span id="resultsCount" class="text-sm text-slate-400 font-medium whitespace-nowrap">Let's load data...</span>
+              <button id="exportCsv" type="button" class="btn btn-secondary btn-sm flex items-center gap-2 bg-slate-800/50 border border-slate-700/50 hover:bg-slate-800 hover:border-slate-600 text-slate-300">
+                <i class="bi bi-filetype-csv text-lg"></i> Export
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative h-0 z-20">
+          <p id="clipboardStatus" class="absolute top-2 right-0 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-lg text-sm font-medium hidden shadow-lg transition-all"></p>
+        </div>
+      </div>
+
       <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-          <thead class="bg-slate-900 border-b border-slate-800 text-slate-400 uppercase tracking-wide">
+        <table class="min-w-full text-sm text-left">
+          <thead class="bg-slate-900/50 text-slate-400 uppercase tracking-wider font-semibold text-xs border-b border-slate-800/60">
             <tr>
-              <th class="text-left px-5 py-3">Título / Slug</th>
-              <th class="text-left px-5 py-3">Categoría</th>
-              <th class="text-left px-5 py-3">Links</th>
-              <th class="text-left px-5 py-3">Fecha</th>
-              <th class="text-right px-5 py-3">Acciones</th>
+              <th class="px-6 py-4 rounded-tl-lg">Project Details</th>
+              <th class="px-6 py-4">Category</th>
+              <th class="px-6 py-4 text-center">Resources</th>
+              <th class="px-6 py-4">Created</th>
+              <th class="px-6 py-4 text-right rounded-tr-lg">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-800 text-slate-100">
+          <tbody id="projectsTbody" class="divide-y divide-slate-800/50 text-slate-200">
             {% for project in projects %}
-            <tr class="hover:bg-slate-900/60">
-              <td class="px-5 py-3">
-                <div class="font-semibold">{{ project.title }}</div>
-                <div class="text-xs text-slate-400 font-mono">{{ project.slug }}</div>
-                {% if project.images %}
-                <span class="inline-flex items-center gap-1 mt-1 text-xs px-2 py-1 rounded-full border border-slate-800 text-slate-300">
-                  <i class="bi bi-images"></i> {{ project.images|length }} fotos
-                </span>
-                {% endif %}
+            <tr class="hover:bg-slate-800/30 transition-colors duration-150 ease-in-out project-row group"
+                data-title="{{ project.title }}"
+                data-slug="{{ project.slug }}"
+                data-category="{{ project.category_slug }}"
+                data-tech="{{ project.technologies or '' }}"
+                data-created="{{ project.created_at.timestamp()|int }}"
+                data-has-github="{{ '1' if project.github_url else '0' }}"
+                data-has-demo="{{ '1' if project.website_url else '0' }}"
+                data-has-images="{{ '1' if project.images else '0' }}">
+              <td class="px-6 py-4">
+                <div class="flex flex-col">
+                  <span class="font-bold text-base text-white mb-0.5 group-hover:text-indigo-300 transition-colors">{{ project.title }}</span>
+                  <span class="text-xs text-slate-500 font-mono mb-2">/{{ project.slug }}</span>
+                  {% if project.images %}
+                  <span class="inline-flex items-center w-fit gap-1.5 text-xs font-medium px-2.5 py-1 rounded-md bg-slate-800/60 text-slate-300 border border-slate-700/50">
+                    <i class="bi bi-images text-indigo-300/70"></i> {{ project.images|length }} image{{ 's' if project.images|length > 1 }}
+                  </span>
+                  {% else %}
+                  <span class="inline-flex items-center w-fit gap-1.5 text-xs font-medium px-2.5 py-1 rounded-md bg-slate-900/50 text-slate-500 border border-slate-800/50 italic">
+                    <i class="bi bi-image"></i> No images
+                  </span>
+                  {% endif %}
+                </div>
               </td>
-              <td class="px-5 py-3">
+              <td class="px-6 py-4">
                 {% if 'data' in project.category_slug %}
-                  <span class="px-3 py-1 rounded-full text-xs border border-cyan-400/40 bg-cyan-400/10 text-cyan-100">Data Science</span>
+                  <span class="tag bg-blue-500/10 text-blue-300 border-blue-500/20">Data Science</span>
                 {% elif 'web' in project.category_slug %}
-                  <span class="px-3 py-1 rounded-full text-xs border border-lime-400/40 bg-lime-400/10 text-lime-100">Web Dev</span>
+                  <span class="tag bg-cyan-500/10 text-cyan-300 border-cyan-500/20">Web Dev</span>
+                {% elif 'engineer' in project.category_slug %}
+                  <span class="tag bg-indigo-500/10 text-indigo-300 border-indigo-500/20">Data Eng</span>
                 {% else %}
-                  <span class="px-3 py-1 rounded-full text-xs border border-slate-700 text-slate-200">{{ project.category_slug }}</span>
+                  <span class="tag">{{ project.category_slug|replace('-', ' ')|title }}</span>
                 {% endif %}
               </td>
-              <td class="px-5 py-3 space-x-2 text-lg text-slate-300">
-                {% if project.github_url %}
-                  <a href="{{ project.github_url }}" target="_blank" class="hover:text-white"><i class="bi bi-github"></i></a>
-                {% endif %}
-                {% if project.website_url %}
-                  <a href="{{ project.website_url }}" target="_blank" class="hover:text-white"><i class="bi bi-globe"></i></a>
-                {% endif %}
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-center gap-3 text-xl">
+                  {% if project.github_url %}
+                  <a href="{{ project.github_url }}" target="_blank" class="text-slate-400 hover:text-white hover:scale-110 transition-all" title="GitHub Repository"><i class="bi bi-github"></i></a>
+                  {% else %}
+                  <span class="text-slate-700 cursor-not-allowed"><i class="bi bi-github"></i></span>
+                  {% endif %}
+
+                  {% if project.website_url %}
+                  <a href="{{ project.website_url }}" target="_blank" class="text-slate-400 hover:text-indigo-300 hover:scale-110 transition-all" title="Live Demo"><i class="bi bi-globe2"></i></a>
+                  {% else %}
+                  <span class="text-slate-700 cursor-not-allowed"><i class="bi bi-globe2"></i></span>
+                  {% endif %}
+                </div>
               </td>
-              <td class="px-5 py-3 text-slate-300">
-                {{ project.created_at.strftime('%d %b, %Y') }}
+              <td class="px-6 py-4 text-slate-400 whitespace-nowrap font-medium">
+                {{ project.created_at.strftime('%b %d, %Y') }}
               </td>
-              <td class="px-5 py-3 text-right">
-                <div class="inline-flex gap-2">
+              <td class="px-6 py-4 text-right relative">
+                <div class="inline-flex items-center gap-1 p-1 rounded-lg bg-slate-900/50 border border-slate-800/50 shadow-sm">
+                  <a href="{{ url_for('projects.project_detail', project_id=project.id) }}" target="_blank"
+                     class="icon-btn icon-btn-sm hover:bg-slate-700/50 text-slate-300" title="View Project Page">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                  </a>
                   <button type="button"
-                          class="px-3 py-2 rounded-xl border border-slate-700 text-slate-100 hover:border-lime-400/50"
+                          class="icon-btn icon-btn-sm hover:bg-slate-700/50 text-slate-300"
+                          title="Copy public link"
+                          data-copy-text="{{ url_for('projects.project_detail', project_id=project.id, _external=True) }}">
+                    <i class="bi bi-link-45deg text-lg"></i>
+                  </button>
+                  <div class="w-px h-5 bg-slate-700/50 mx-1"></div>
+                  <button type="button"
+                          class="icon-btn icon-btn-sm hover:bg-indigo-500/20 hover:text-indigo-300 text-slate-300"
+                          title="Edit Project"
                           data-id="{{ project.id }}"
                           data-title="{{ project.title }}"
                           data-slug="{{ project.slug }}"
                           data-category="{{ project.category_slug }}"
-                          data-tech="{{ project.technologies }}"
+                          data-tech="{{ project.technologies or '' }}"
                           data-desc="{{ project.description }}"
                           data-long="{{ project.long_description or '' }}"
                           data-github="{{ project.github_url or '' }}"
                           data-web="{{ project.website_url or '' }}"
                           onclick="openEditFromButton(this)">
-                    <i class="bi bi-pencil"></i>
+                    <i class="bi bi-pencil-fill text-xs"></i>
                   </button>
-                  <form action="{{ url_for('auth.delete_project', id=project.id) }}" method="POST" onsubmit="return confirm('¿Eliminar {{ project.title }}? Esta acción es irreversible.');">
-                    <button type="submit" class="px-3 py-2 rounded-xl border border-rose-500/60 text-rose-100 hover:bg-rose-500/10">
-                      <i class="bi bi-trash"></i>
+                  <form action="{{ url_for('auth.delete_project', id=project.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete {{ project.title }}? This action cannot be undone.');">
+                    <button type="submit" class="icon-btn icon-btn-sm hover:bg-rose-500/20 hover:text-rose-300 text-slate-400" title="Delete Project">
+                      <i class="bi bi-trash3-fill text-xs"></i>
                     </button>
                   </form>
                 </div>
               </td>
             </tr>
             {% else %}
-            <tr>
-              <td colspan="5" class="px-5 py-10 text-center text-slate-400">
-                No has subido ningún proyecto aún.
-                <button class="ml-2 text-lime-200 underline" onclick="togglePanel('newProjectPanel', true)">Crear el primero</button>
+            <tr id="emptyProjectsRow">
+              <td colspan="5" class="px-6 py-16 text-center text-slate-400 bg-slate-900/50">
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <i class="bi bi-folder-x text-5xl text-slate-600 mb-2"></i>
+                  <p class="text-lg font-semibold text-slate-300">No projects found.</p>
+                  <p>You haven't uploaded any projects yet.</p>
+                  <button class="mt-4 btn btn-primary btn-sm" onclick="togglePanel('newProjectPanel', true)">
+                    <i class="bi bi-plus-lg"></i> Create your first project
+                  </button>
+                </div>
               </td>
             </tr>
             {% endfor %}
+            <tr id="noMatchesRow" class="hidden">
+              <td colspan="5" class="px-6 py-16 text-center text-slate-400 bg-slate-900/50">
+                <div class="flex flex-col items-center justify-center gap-2">
+                  <i class="bi bi-search text-4xl text-slate-600 mb-2"></i>
+                  <p class="text-lg font-semibold text-slate-300">No matching projects.</p>
+                  <p>Try adjusting your filters or search query.</p>
+                  <button id="clearSearchBtn" type="button" class="mt-4 btn btn-secondary btn-sm">
+                    Clear filters
+                  </button>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -137,143 +303,128 @@
   </section>
 </div>
 
-<!-- Panel nuevo proyecto -->
-<div id="newProjectPanel" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-40">
-  <div class="max-w-4xl w-full rounded-3xl border border-slate-800 bg-slate-950/90 shadow-2xl shadow-black/40 overflow-hidden">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 text-white">
-      <h3 class="text-xl font-semibold">Nuevo Proyecto</h3>
-      <button type="button" class="text-2xl" onclick="togglePanel('newProjectPanel', false)">✕</button>
+{% macro project_form_fields(is_edit=False) %}
+  <div class="grid md:grid-cols-2 gap-6">
+    <label class="space-y-2 text-sm font-medium text-slate-300">
+      <span>Title <span class="text-rose-400">*</span></span>
+      <input type="text" name="title" id="{{ 'edit' if is_edit else 'new' }}-title" class="input bg-slate-800/50 border border-slate-700/50 font-medium" required placeholder="e.g., Portfolio Redesign">
+    </label>
+    <label class="space-y-2 text-sm font-medium text-slate-300">
+      <span>Slug (URL) <span class="text-rose-400">*</span></span>
+      <input type="text" name="slug" id="{{ 'edit' if is_edit else 'new' }}-slug" placeholder="portfolio-redesign" class="input bg-slate-800/50 border border-slate-700/50 font-mono text-sm" required>
+    </label>
+    <label class="space-y-2 text-sm font-medium text-slate-300">
+      <span>Category</span>
+      <select name="category" id="{{ 'edit' if is_edit else 'new' }}-category" class="input bg-slate-800/50 border border-slate-700/50">
+        <option value="web-dev">Web Development</option>
+        <option value="data-science">Data Science</option>
+        <option value="data-engineer">Data Engineer</option>
+        <option value="other">Other</option>
+      </select>
+    </label>
+    <label class="space-y-2 text-sm font-medium text-slate-300">
+      <span>Tech stack</span>
+      <input type="text" name="technologies" id="{{ 'edit' if is_edit else 'new' }}-tech" placeholder="e.g., Python, SQL, React" class="input bg-slate-800/50 border border-slate-700/50">
+    </label>
+  </div>
+
+  <label class="space-y-2 text-sm font-medium text-slate-300 block">
+    <span>{{ 'Add more images' if is_edit else 'Project images' }}</span>
+    <div class="relative">
+      <input type="file" name="images" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+      <div class="w-full rounded-xl border-2 border-dashed border-slate-700/50 bg-slate-800/30 px-6 py-8 text-center transition-all hover:bg-slate-800/50 hover:border-indigo-500/30">
+        <i class="bi bi-cloud-arrow-up text-3xl text-slate-500 mb-2"></i>
+        <p class="text-slate-300 font-medium">Click to upload or drag and drop</p>
+        <p class="text-xs text-slate-500 mt-1">PNG, JPG (Max 2MB per file)</p>
+        {% if is_edit %}<p class="text-xs text-indigo-300 mt-3 font-medium">Existing images will remain.</p>{% endif %}
+      </div>
     </div>
-    <div class="p-6">
-      <form action="{{ url_for('auth.create_project') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-        <div class="grid md:grid-cols-2 gap-4">
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Título</span>
-            <input type="text" name="title" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
-          </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Slug (URL)</span>
-            <input type="text" name="slug" placeholder="mi-proyecto-increible" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
-          </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Categoría</span>
-            <select name="category" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
-              <option value="web-dev">Desarrollo Web</option>
-              <option value="data-science">Data Science</option>
-              <option value="data-engineer">Data Engineer</option>
-              <option value="other">Otro</option>
-            </select>
-          </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Stack Tecnológico</span>
-            <input type="text" name="technologies" placeholder="Ej: Python, SQL, Azure" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
-          </label>
-        </div>
+  </label>
 
-        <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Imágenes del Proyecto</span>
-          <input type="file" name="images" multiple accept="image/*" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100">
-          <span class="text-xs text-slate-400">Selecciona una o varias imágenes (JPG, PNG).</span>
-        </label>
+  <label class="space-y-2 text-sm font-medium text-slate-300 block">
+    <span>Short description <span class="text-rose-400">*</span></span>
+    <input type="text" name="description" id="{{ 'edit' if is_edit else 'new' }}-desc" class="input bg-slate-800/50 border border-slate-700/50" required placeholder="A brief summary for cards (1-2 sentences)">
+  </label>
 
-        <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Descripción Corta</span>
-          <input type="text" name="description" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
-        </label>
+  <label class="space-y-2 text-sm font-medium text-slate-300 block">
+    <span>Detailed content</span>
+    <textarea name="long_description" id="{{ 'edit' if is_edit else 'new' }}-long" rows="6" class="input bg-slate-800/50 border border-slate-700/50 font-mono text-sm" placeholder="Markdown or plain text supported..."></textarea>
+  </label>
 
-        <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Contenido Detallado</span>
-          <textarea name="long_description" rows="5" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" placeholder="Soporta texto simple por ahora..."></textarea>
-        </label>
+  <div class="grid md:grid-cols-2 gap-6 pb-2">
+    <label class="space-y-2 text-sm font-medium text-slate-300">
+      <span><i class="bi bi-github"></i> GitHub URL</span>
+      <input type="url" name="github_url" id="{{ 'edit' if is_edit else 'new' }}-github" class="input bg-slate-800/50 border border-slate-700/50" placeholder="https://github.com/username/repo">
+    </label>
+    <label class="space-y-2 text-sm font-medium text-slate-300">
+      <span><i class="bi bi-globe2"></i> Demo URL</span>
+      <input type="url" name="website_url" id="{{ 'edit' if is_edit else 'new' }}-web" class="input bg-slate-800/50 border border-slate-700/50" placeholder="https://myproject.com">
+    </label>
+  </div>
+{% endmacro %}
 
-        <div class="grid md:grid-cols-2 gap-4">
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>GitHub URL</span>
-            <input type="url" name="github_url" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
-          </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Demo URL</span>
-            <input type="url" name="website_url" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
-          </label>
-        </div>
-
-        <div class="flex justify-end gap-2 pt-2">
-          <button type="button" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-200" onclick="togglePanel('newProjectPanel', false)">Cancelar</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold shadow-lg shadow-lime-500/20">Guardar Proyecto</button>
+<div id="newProjectPanel" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50 transition-all">
+  <div class="panel max-w-4xl w-full overflow-hidden bg-slate-900/90 border border-slate-800/60 shadow-2xl shadow-black/50 rounded-2xl scale-95 transition-transform duration-200 ease-out" style="animation: modalPopup 0.2s forwards;">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-slate-800/60 bg-slate-900 text-white">
+      <div>
+        <h3 class="text-2xl font-bold tracking-tight">New Project</h3>
+        <p class="text-sm text-slate-400">Add a new item to your portfolio.</p>
+      </div>
+      <button type="button" class="icon-btn text-slate-400 hover:text-white hover:bg-slate-800" onclick="togglePanel('newProjectPanel', false)">
+        <i class="bi bi-x-lg text-lg"></i>
+      </button>
+    </div>
+    <div class="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar">
+      <form action="{{ url_for('auth.create_project') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        {{ project_form_fields(is_edit=False) }}
+        <div class="flex justify-end gap-3 pt-6 border-t border-slate-800/50">
+          <button type="button" class="btn btn-secondary" onclick="togglePanel('newProjectPanel', false)">Cancel</button>
+          <button type="submit" class="btn btn-primary shadow-lg shadow-indigo-500/20">Create Project</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-<!-- Panel editar proyecto -->
-<div id="editProjectPanel" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-40">
-  <div class="max-w-4xl w-full rounded-3xl border border-slate-800 bg-slate-950/90 shadow-2xl shadow-black/40 overflow-hidden">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 text-white">
-      <h3 class="text-xl font-semibold">Editar Proyecto</h3>
-      <button type="button" class="text-2xl" onclick="togglePanel('editProjectPanel', false)">✕</button>
+<div id="editProjectPanel" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50 transition-all">
+  <div class="panel max-w-4xl w-full overflow-hidden bg-slate-900/90 border border-slate-800/60 shadow-2xl shadow-black/50 rounded-2xl scale-95 transition-transform duration-200 ease-out" style="animation: modalPopup 0.2s forwards;">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-slate-800/60 bg-slate-900 text-white">
+      <div>
+        <h3 class="text-2xl font-bold tracking-tight">Edit Project</h3>
+        <p class="text-sm text-slate-400">Update existing project details.</p>
+      </div>
+      <button type="button" class="icon-btn text-slate-400 hover:text-white hover:bg-slate-800" onclick="togglePanel('editProjectPanel', false)">
+        <i class="bi bi-x-lg text-lg"></i>
+      </button>
     </div>
-    <div class="p-6">
-      <form id="editProjectForm" method="POST" enctype="multipart/form-data" class="space-y-4">
-        <div class="grid md:grid-cols-2 gap-4">
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Título</span>
-            <input type="text" name="title" id="edit-title" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
-          </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Slug (URL)</span>
-            <input type="text" name="slug" id="edit-slug" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
-          </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Categoría</span>
-            <select name="category" id="edit-category" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
-              <option value="web-dev">Desarrollo Web</option>
-              <option value="data-science">Data Science</option>
-              <option value="data-engineer">Data Engineer</option>
-              <option value="other">Otro</option>
-            </select>
-          </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Stack Tecnológico</span>
-            <input type="text" name="technologies" id="edit-tech" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
-          </label>
-        </div>
-
-        <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Agregar más imágenes</span>
-          <input type="file" name="images" multiple accept="image/*" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100">
-          <span class="text-xs text-slate-400">Las imágenes actuales se mantendrán. Las que subas aquí se añadirán.</span>
-        </label>
-
-        <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Descripción Corta</span>
-          <input type="text" name="description" id="edit-desc" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
-        </label>
-
-        <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Contenido Detallado</span>
-          <textarea name="long_description" id="edit-long" rows="5" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60"></textarea>
-        </label>
-
-        <div class="grid md:grid-cols-2 gap-4">
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>GitHub URL</span>
-            <input type="url" name="github_url" id="edit-github" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
-          </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Demo URL</span>
-            <input type="url" name="website_url" id="edit-web" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
-          </label>
-        </div>
-
-        <div class="flex justify-end gap-2 pt-2">
-          <button type="button" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-200" onclick="togglePanel('editProjectPanel', false)">Cancelar</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold shadow-lg shadow-lime-500/20">Guardar Cambios</button>
+    <div class="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar">
+      <form id="editProjectForm" method="POST" enctype="multipart/form-data" class="space-y-6">
+        {{ project_form_fields(is_edit=True) }}
+        <div class="flex justify-end gap-3 pt-6 border-t border-slate-800/50">
+          <button type="button" class="btn btn-secondary" onclick="togglePanel('editProjectPanel', false)">Cancel</button>
+          <button type="submit" class="btn btn-primary shadow-lg shadow-indigo-500/20">Save Changes</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+
+<style>
+  @keyframes modalPopup {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.5); border-radius: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.8); border-radius: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 1); }
+
+  .chip-active {
+    background-color: rgba(var(--primary-rgb, 99, 102, 241), 0.15) !important;
+    color: rgb(var(--primary-400, 129, 140, 248)) !important;
+    border-color: rgba(var(--primary-rgb, 99, 102, 241), 0.3) !important;
+  }
+</style>
 
 <script>
   function togglePanel(id, show) {
@@ -324,6 +475,238 @@
       });
     }
   });
+
+  function safeLower(value) {
+    return (value || '').toString().toLowerCase();
+  }
+
+  function showClipboardStatus(text) {
+    const el = document.getElementById('clipboardStatus');
+    if (!el) return;
+    el.textContent = text;
+    el.classList.remove('hidden');
+    window.clearTimeout(showClipboardStatus._t);
+    showClipboardStatus._t = window.setTimeout(() => el.classList.add('hidden'), 1800);
+  }
+
+  async function copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      showClipboardStatus('Copied to clipboard.');
+    } catch {
+      window.prompt('Copy this link:', text);
+    }
+  }
+
+  function rowToProject(row) {
+    return {
+      el: row,
+      title: row.dataset.title || '',
+      slug: row.dataset.slug || '',
+      category: row.dataset.category || '',
+      tech: row.dataset.tech || '',
+      created: Number(row.dataset.created || 0),
+      hasGithub: row.dataset.hasGithub === '1',
+      hasDemo: row.dataset.hasDemo === '1',
+      hasImages: row.dataset.hasImages === '1',
+    };
+  }
+
+  function getVisibleRows(tbody) {
+    return Array.from(tbody.querySelectorAll('.project-row')).filter(r => !r.classList.contains('hidden'));
+  }
+
+  function buildCsv(rows) {
+    const header = ['title', 'slug', 'category', 'created_at', 'has_github', 'has_demo', 'has_images'];
+    const lines = [header.join(',')];
+    for (const row of rows) {
+      const p = rowToProject(row);
+      const created = new Date(p.created * 1000).toISOString();
+      const values = [
+        p.title,
+        p.slug,
+        p.category,
+        created,
+        p.hasGithub ? 'yes' : 'no',
+        p.hasDemo ? 'yes' : 'no',
+        p.hasImages ? 'yes' : 'no',
+      ].map(v => `"${String(v).replace(/"/g, '""')}"`);
+      lines.push(values.join(','));
+    }
+    return lines.join('\n');
+  }
+
+  function downloadFile(filename, contents, mime) {
+    const blob = new Blob([contents], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function initDashboardEnhancements() {
+    const tbody = document.getElementById('projectsTbody');
+    if (!tbody) return;
+
+    const newTitle = document.getElementById('new-title');
+    const newSlug = document.getElementById('new-slug');
+
+    const searchInput = document.getElementById('projectSearch');
+    const clearSearch = document.getElementById('clearSearch');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const sortSelect = document.getElementById('sortSelect');
+    const resultsCount = document.getElementById('resultsCount');
+    const exportCsv = document.getElementById('exportCsv');
+    const noMatchesRow = document.getElementById('noMatchesRow');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+    const toggles = Array.from(document.querySelectorAll('[data-filter-toggle]'));
+    const rows = Array.from(tbody.querySelectorAll('.project-row'));
+    const total = rows.length;
+
+    function slugify(value) {
+      return (value || '')
+        .toString()
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 80);
+    }
+
+    if (newTitle && newSlug) {
+      let slugTouched = false;
+      newSlug.addEventListener('input', () => {
+        slugTouched = newSlug.value.trim().length > 0;
+      });
+      newTitle.addEventListener('input', () => {
+        if (slugTouched) return;
+        newSlug.value = slugify(newTitle.value);
+      });
+    }
+
+    if (total === 0) {
+      if (resultsCount) resultsCount.textContent = 'Showing 0 of 0';
+      if (exportCsv) exportCsv.disabled = true;
+      if (noMatchesRow) noMatchesRow.classList.add('hidden');
+      return;
+    }
+
+    function toggleFilter(btn) {
+      const current = btn.getAttribute('data-active') === 'true';
+      const next = !current;
+      btn.setAttribute('data-active', next ? 'true' : 'false');
+      btn.classList.toggle('chip-active', next);
+    }
+
+    function getActiveToggles() {
+      const out = { hasGithub: false, hasDemo: false, hasImages: false };
+      for (const btn of toggles) {
+        if (btn.getAttribute('data-active') !== 'true') continue;
+        out[btn.dataset.filterToggle] = true;
+      }
+      return out;
+    }
+
+    function matches(row) {
+      const q = safeLower(searchInput?.value || '').trim();
+      const category = (categoryFilter?.value || 'all').trim();
+      const active = getActiveToggles();
+      const p = rowToProject(row);
+
+      if (category !== 'all' && p.category !== category) return false;
+      if (active.hasGithub && !p.hasGithub) return false;
+      if (active.hasDemo && !p.hasDemo) return false;
+      if (active.hasImages && !p.hasImages) return false;
+
+      if (!q) return true;
+      const haystack = safeLower(`${p.title} ${p.slug} ${p.category} ${p.tech}`);
+      return haystack.includes(q);
+    }
+
+    function applySort() {
+      const mode = sortSelect?.value || 'newest';
+      const visible = getVisibleRows(tbody);
+      visible.sort((a, b) => {
+        const pa = rowToProject(a);
+        const pb = rowToProject(b);
+        if (mode === 'oldest') return pa.created - pb.created;
+        if (mode === 'title_asc') return pa.title.localeCompare(pb.title);
+        if (mode === 'title_desc') return pb.title.localeCompare(pa.title);
+        return pb.created - pa.created;
+      });
+      for (const row of visible) tbody.appendChild(row);
+    }
+
+    function apply() {
+      let shown = 0;
+      for (const row of rows) {
+        const ok = matches(row);
+        row.classList.toggle('hidden', !ok);
+        if (ok) shown++;
+      }
+      if (resultsCount) resultsCount.textContent = `Showing ${shown} of ${total}`;
+      if (noMatchesRow) noMatchesRow.classList.toggle('hidden', shown !== 0);
+      applySort();
+    }
+
+    for (const btn of toggles) {
+      btn.addEventListener('click', () => {
+        toggleFilter(btn);
+        apply();
+      });
+    }
+
+    searchInput?.addEventListener('input', apply);
+    categoryFilter?.addEventListener('change', apply);
+    sortSelect?.addEventListener('change', applySort);
+
+    clearSearch?.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      apply();
+      searchInput?.focus();
+    });
+
+    clearSearchBtn?.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      if (categoryFilter) categoryFilter.value = 'all';
+      for (const btn of toggles) {
+        btn.setAttribute('data-active', 'false');
+        btn.classList.remove('chip-active');
+      }
+      apply();
+      searchInput?.focus();
+    });
+
+    exportCsv?.addEventListener('click', () => {
+      const visible = getVisibleRows(tbody);
+      const csv = buildCsv(visible);
+      downloadFile('projects.csv', csv, 'text/csv;charset=utf-8');
+    });
+
+    tbody.addEventListener('click', (event) => {
+      const btn = event.target.closest('[data-copy-text]');
+      if (!btn) return;
+      event.preventDefault();
+      copyToClipboard(btn.dataset.copyText || '');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchInput?.focus();
+      }
+    });
+
+    apply();
+  }
+
+  document.addEventListener('DOMContentLoaded', initDashboardEnhancements);
 </script>
 
 {% endblock %}

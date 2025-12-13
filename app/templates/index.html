@@ -1,94 +1,130 @@
 {% extends "base.html" %}
 
-{% block title %}Portafolio - Angel Burgos{% endblock %}
+{% block title %}Portfolio - Angel Burgos{% endblock %}
 
 {% block content %}
 
-<section class="grid lg:grid-cols-2 gap-12 items-center">
-  <div class="space-y-6">
-    <span class="inline-flex items-center gap-2 rounded-full border border-lime-500/40 bg-lime-500/10 px-4 py-2 text-sm font-semibold text-lime-200 shadow-lg shadow-lime-500/15">
-      <i class="bi bi-terminal-fill"></i> DevOps · Data Driven Developer
-    </span>
+<section class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-10 lg:py-16">
+  
+  <div class="space-y-8 animate-fade-in-up">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+      </span>
+      Open to work · Data Engineering · DevOps
+    </div>
 
-    <h1 class="text-4xl sm:text-5xl font-bold leading-tight text-white">
-      Transformo datos complejos en <span class="text-lime-300">software robusto</span>
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white tracking-tight">
+      Build reliable data pipelines <br class="hidden lg:block"/>
+      <span class="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">and production systems</span>
     </h1>
 
-    <p class="text-lg text-slate-300 leading-relaxed max-w-xl">
-      Ingeniero en Sistemas que diseña arquitecturas completas en Python: pipelines de datos, modelos ML y APIs escalables
-      conteinerizadas con Docker y entregadas a producción sin drama.
+    <p class="text-lg text-slate-400 leading-relaxed max-w-xl">
+      I help teams ship faster and run safer: clean ETLs, measurable data flows, containerized deployments, and
+      <strong class="text-slate-200">Python</strong> backends that are ready for production.
     </p>
 
-    <div class="flex flex-col sm:flex-row gap-3">
-      <a href="{{ url_for('projects.projects_home') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-lime-400 via-emerald-400 to-cyan-400 text-slate-950 font-semibold shadow-xl shadow-lime-500/25 hover:translate-y-[-1px] transition">
-        <i class="bi bi-code-square"></i> Ver portafolio
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a href="{{ url_for('main.contact') }}" 
+         class="btn btn-secondary px-6 py-3 rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+        <i class="bi bi-chat-text mr-2"></i> Contact
       </a>
-      <a href="{{ url_for('main.contact') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-slate-800 text-white hover:border-lime-400/60 hover:text-lime-100 transition">
-        Hablemos
+      <a href="{{ url_for('main.resume') }}"
+         class="btn btn-primary group relative overflow-hidden px-6 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/25">
+        <span class="relative z-10 flex items-center gap-2">
+          Download resume <i class="bi bi-download"></i>
+        </span>
+      </a>
+      <a href="{{ url_for('projects.projects_home') }}"
+         class="btn btn-secondary px-6 py-3 rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+        <i class="bi bi-folder2-open mr-2"></i> View projects
       </a>
     </div>
 
-    <div class="pt-4 border-t border-slate-800 flex flex-wrap items-center gap-4 text-slate-300">
-      <span class="text-xs uppercase tracking-[0.35em] text-slate-500">Stack</span>
-      <span class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800"><i class="bi bi-filetype-py text-amber-300"></i> Python</span>
-      <span class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800"><i class="bi bi-box-seam text-sky-300"></i> Docker</span>
-      <span class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800"><i class="bi bi-cloud-check text-emerald-300"></i> Cloud</span>
-      <span class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800"><i class="bi bi-database-fill text-indigo-300"></i> SQL/NoSQL</span>
-      <span class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800"><i class="bi bi-server text-rose-300"></i> Nginx/Linux</span>
+    <div class="pt-6 border-t border-slate-800/60">
+      <p class="text-xs uppercase tracking-widest text-slate-500 mb-4 font-semibold">Core Stack</p>
+      <div class="flex flex-wrap gap-3">
+        <span class="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 text-sm flex items-center gap-2 hover:border-amber-500/50 hover:text-amber-300 transition-colors cursor-default">
+          <i class="bi bi-filetype-py"></i> Python
+        </span>
+        <span class="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 text-sm flex items-center gap-2 hover:border-sky-500/50 hover:text-sky-300 transition-colors cursor-default">
+          <i class="bi bi-box-seam"></i> Docker
+        </span>
+        <span class="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 text-sm flex items-center gap-2 hover:border-indigo-500/50 hover:text-indigo-300 transition-colors cursor-default">
+          <i class="bi bi-database-fill"></i> SQL/NoSQL
+        </span>
+        <span class="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 text-sm flex items-center gap-2 hover:border-rose-500/50 hover:text-rose-300 transition-colors cursor-default">
+          <i class="bi bi-server"></i> Nginx/Linux
+        </span>
+      </div>
     </div>
   </div>
 
-  <div class="relative">
-    <div class="absolute inset-0 bg-gradient-to-br from-lime-400/10 via-emerald-400/5 to-cyan-500/10 blur-3xl"></div>
-    <div class="relative rounded-3xl border border-slate-800 overflow-hidden shadow-2xl shadow-black/30">
-      <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Angel Developer Profile" class="w-full h-full object-cover">
-      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent"></div>
-      <div class="absolute bottom-0 left-0 right-0 p-5 flex items-center justify-between text-sm text-slate-100">
-        <div class="flex items-center gap-2">
-          <span class="h-10 w-10 rounded-full bg-slate-900/70 border border-slate-800 grid place-items-center text-lime-300">
-            <i class="bi bi-shield-check"></i>
-          </span>
-          <div>
-            <p class="font-semibold">Arquitecturas listas para prod</p>
-            <p class="text-slate-300 text-xs">Observabilidad · CI/CD · Seguridad base</p>
+  <div class="relative group perspective-1000">
+    <div class="absolute -inset-1 bg-gradient-to-r from-sky-500 to-indigo-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+    
+    <div class="relative rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden shadow-2xl">
+      <div class="absolute inset-0 bg-indigo-900/10 mix-blend-overlay z-10"></div>
+      
+      <img src="https://plus.unsplash.com/premium_photo-1661872817492-fd0c30404d74?q=80&w=1487&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+           alt="Angel Aldair Burgos - Software Engineer" 
+           class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105">
+      
+      <div class="absolute bottom-4 left-4 right-4 z-20">
+        <div class="bg-slate-900/90 backdrop-blur-md border border-slate-700/50 p-4 rounded-xl flex items-center justify-between shadow-lg">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-lg bg-green-500/10 border border-green-500/20 grid place-items-center text-green-400">
+              <i class="bi bi-check-lg text-lg"></i>
+            </div>
+            <div>
+              <p class="text-white font-medium text-sm">Currently interviewing</p>
+              <p class="text-slate-400 text-xs">Full-time · Contract · Remote</p>
+            </div>
           </div>
         </div>
-        <span class="inline-flex items-center gap-2 text-lime-200"><i class="bi bi-lightning-charge"></i> Up-time first</span>
       </div>
     </div>
   </div>
 </section>
 
-<section class="grid md:grid-cols-3 gap-6 mt-12">
-  <article class="h-full rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-lg shadow-black/15">
-    <div class="flex items-center justify-center h-12 w-12 rounded-xl bg-lime-400/10 border border-lime-400/40 text-lime-200 text-xl mb-4">
-      <i class="bi bi-database-gear"></i>
-    </div>
-    <h3 class="text-xl font-semibold mb-2">Data Engineering & Science</h3>
-    <p class="text-slate-300 leading-relaxed">
-      Flujos ETL automatizados, limpieza y análisis de datos en SQL/NoSQL y modelos predictivos listos para integrarse a negocio.
-    </p>
-  </article>
+<section class="mt-20 lg:mt-32">
+  <div class="text-center max-w-2xl mx-auto mb-12">
+    <h2 class="text-3xl font-bold text-white mb-4">My Technical Stack</h2>
+    <p class="text-slate-400">A hybrid blend of data engineering and modern web infrastructure.</p>
+  </div>
 
-  <article class="h-full rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-lg shadow-black/15">
-    <div class="flex items-center justify-center h-12 w-12 rounded-xl bg-cyan-400/10 border border-cyan-400/40 text-cyan-200 text-xl mb-4">
-      <i class="bi bi-laptop"></i>
-    </div>
-    <h3 class="text-xl font-semibold mb-2">Full Stack & Backend</h3>
-    <p class="text-slate-300 leading-relaxed">
-      APIs RESTful con Flask, autenticación y frontends ligeros. Entrego plataformas, no solo endpoints.
-    </p>
-  </article>
+  <div class="grid md:grid-cols-3 gap-6">
+    <article class="group p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-sky-500/30 hover:bg-slate-900 transition-all duration-300 hover:-translate-y-1">
+      <div class="h-12 w-12 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400 grid place-items-center text-xl mb-5 group-hover:scale-110 transition-transform">
+        <i class="bi bi-graph-up-arrow"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-white mb-3 group-hover:text-sky-400 transition-colors">Data Engineering & Science</h3>
+      <p class="text-slate-400 text-sm leading-relaxed">
+        Turning raw data into value. Designing ETLs, cleaning with Pandas/NumPy, and visualizing business-critical metrics.
+      </p>
+    </article>
 
-  <article class="h-full rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-lg shadow-black/15">
-    <div class="flex items-center justify-center h-12 w-12 rounded-xl bg-emerald-400/10 border border-emerald-400/40 text-emerald-200 text-xl mb-4">
-      <i class="bi bi-hdd-rack"></i>
-    </div>
-    <h3 class="text-xl font-semibold mb-2">DevOps & Cloud</h3>
-    <p class="text-slate-300 leading-relaxed">
-      Del código a producción con Docker Compose, Nginx y Linux. Pipelines CI/CD y monitoreo para mantener uptime.
-    </p>
-  </article>
+    <article class="group p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-indigo-500/30 hover:bg-slate-900 transition-all duration-300 hover:-translate-y-1">
+      <div class="h-12 w-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 grid place-items-center text-xl mb-5 group-hover:scale-110 transition-transform">
+        <i class="bi bi-code-slash"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-white mb-3 group-hover:text-indigo-400 transition-colors">Backend & API Development</h3>
+      <p class="text-slate-400 text-sm leading-relaxed">
+        Building solid business logic with Flask/Django. Secure REST APIs, JWT authentication, and database integrations.
+      </p>
+    </article>
+
+    <article class="group p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-rose-500/30 hover:bg-slate-900 transition-all duration-300 hover:-translate-y-1">
+      <div class="h-12 w-12 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 grid place-items-center text-xl mb-5 group-hover:scale-110 transition-transform">
+        <i class="bi bi-hdd-rack"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-white mb-3 group-hover:text-rose-400 transition-colors">DevOps & Cloud</h3>
+      <p class="text-slate-400 text-sm leading-relaxed">
+        Code matters only if it runs in production. Linux servers, Docker containers, Nginx reverse proxies, and cloud deployments.
+      </p>
+    </article>
+  </div>
 </section>
 
 {% endblock %}

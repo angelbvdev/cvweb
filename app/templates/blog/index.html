@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Blog - Angel Burgos{% endblock %}
+
+{% block content %}
+
+<section class="max-w-5xl mx-auto space-y-10">
+  <header class="space-y-4">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium">
+      <i class="bi bi-journal-text"></i> Blog
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Writing</h1>
+    <p class="text-slate-400 text-lg leading-relaxed max-w-2xl">
+      Short, practical notes on data engineering, backend development, and shipping to production.
+    </p>
+  </header>
+
+  {% if posts and posts|length > 0 %}
+  <div class="grid md:grid-cols-2 gap-6">
+    {% for post in posts %}
+    <article class="card p-6 space-y-3 hover:border-indigo-500/30 transition-colors">
+      {% if post.cover_image_path %}
+      <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="block overflow-hidden rounded-2xl border border-slate-800">
+        <img src="{{ url_for('static', filename='uploads/blog/' ~ post.cover_image_path) }}"
+             alt="{{ post.title }} cover"
+             class="w-full h-48 object-cover hover:scale-[1.01] transition">
+      </a>
+      {% endif %}
+      <h2 class="text-2xl font-bold text-white">
+        <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="hover:underline underline-offset-4">{{ post.title }}</a>
+      </h2>
+      <p class="text-slate-400">{{ post.excerpt }}</p>
+      <div class="pt-2">
+        <a class="btn btn-secondary btn-sm" href="{{ url_for('blog.post_detail', slug=post.slug) }}">
+          Read post <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card p-10 text-center space-y-4">
+    <div class="mx-auto h-14 w-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 grid place-items-center text-indigo-300 text-2xl">
+      <i class="bi bi-hourglass-split"></i>
+    </div>
+    <h2 class="text-2xl font-bold text-white">Coming soon</h2>
+    <p class="text-slate-400 max-w-xl mx-auto">
+      I’m setting up the blog section. In the meantime, feel free to check my projects or reach out.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a class="btn btn-primary" href="{{ url_for('projects.projects_home') }}"><i class="bi bi-folder2-open"></i> Projects</a>
+      <a class="btn btn-secondary" href="{{ url_for('main.contact') }}"><i class="bi bi-envelope"></i> Contact</a>
+    </div>
+  </div>
+  {% endif %}
+</section>
+
+{% endblock %}

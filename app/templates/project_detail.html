@@ -5,8 +5,8 @@
 {% block content %}
 
 <div class="mb-6">
-  <a href="{{ url_for('projects.projects_home') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-400/60 transition">
-    <i class="bi bi-arrow-left"></i> Volver a proyectos
+  <a href="{{ url_for('projects.projects_home') }}" class="btn btn-secondary btn-sm">
+    <i class="bi bi-arrow-left"></i> Back to projects
   </a>
 </div>
 
@@ -21,7 +21,7 @@
     <div class="rounded-3xl overflow-hidden border border-slate-800 shadow-2xl shadow-black/30">
       <button type="button" class="w-full" onclick="openModal('{{ url_for('static', filename='uploads/' ~ proyecto.images[0].image_path) }}', '{{ proyecto.title }}')">
         <img src="{{ url_for('static', filename='uploads/' ~ proyecto.images[0].image_path) }}"
-             alt="{{ proyecto.title }} Portada"
+             alt="{{ proyecto.title }} cover"
              class="w-full h-full object-cover hover:scale-[1.01] transition">
       </button>
     </div>
@@ -29,7 +29,7 @@
 
     {% if proyecto.long_description %}
     <section class="space-y-3">
-      <h3 class="text-xl font-semibold text-white border-b border-slate-800 pb-2">Sobre el proyecto</h3>
+      <h3 class="text-xl font-semibold text-white border-b border-slate-800 pb-2">About the project</h3>
       <p class="text-slate-300 leading-relaxed whitespace-pre-line">{{ proyecto.long_description }}</p>
     </section>
     {% endif %}
@@ -37,20 +37,20 @@
     {% if proyecto.code %}
     <section class="space-y-4">
       <div class="flex items-center gap-2">
-        <span class="h-10 w-10 grid place-items-center rounded-xl bg-cyan-400/10 border border-cyan-400/40 text-cyan-200">
+        <span class="h-10 w-10 grid place-items-center rounded-xl bg-cyan-400/10 border border-cyan-400/40 accent-text">
           <i class="bi bi-code-square"></i>
         </span>
         <h3 class="text-xl font-semibold text-white">Snippets</h3>
       </div>
       <div class="space-y-4">
         {% for snippet in proyecto.code %}
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/70 shadow-lg shadow-black/20 overflow-hidden">
+        <div class="card overflow-hidden">
           <div class="flex items-center justify-between px-4 py-3 border-b border-slate-800 text-sm text-slate-300">
-            <span class="font-mono text-cyan-200 flex items-center gap-2"><i class="bi bi-file-earmark-code"></i> {{ snippet.file_name }}</span>
+            <span class="font-mono accent-text flex items-center gap-2"><i class="bi bi-file-earmark-code"></i> {{ snippet.file_name }}</span>
             <span class="px-3 py-1 rounded-full border border-slate-700 text-slate-100">{{ snippet.language }}</span>
           </div>
           <div class="relative">
-            <button type="button" class="absolute top-3 right-3 px-3 py-1 text-xs rounded-lg border border-slate-700 text-slate-200 bg-slate-900/70" onclick="copySnippet(this.nextElementSibling.innerText)">Copiar</button>
+            <button type="button" class="btn btn-secondary btn-sm absolute top-3 right-3" onclick="copySnippet(this.nextElementSibling.innerText)">Copy</button>
             <pre class="overflow-auto text-sm leading-relaxed p-4 text-slate-100 bg-slate-950/60"><code class="language-{{ snippet.language }}">{{ snippet.code_snippet }}</code></pre>
           </div>
         </div>
@@ -61,15 +61,15 @@
 
     {% if proyecto.images and proyecto.images|length > 1 %}
     <section class="space-y-4">
-      <h3 class="text-xl font-semibold text-white border-b border-slate-800 pb-2">Galería de imágenes</h3>
+      <h3 class="text-xl font-semibold text-white border-b border-slate-800 pb-2">Image gallery</h3>
       <div class="grid md:grid-cols-2 gap-4">
         {% for img in proyecto.images[1:] %}
-        <div class="rounded-2xl border border-slate-800 overflow-hidden bg-slate-900/60 shadow-lg shadow-black/15">
+        <div class="card overflow-hidden">
           <button type="button" class="relative w-full group" onclick="openModal('{{ url_for('static', filename='uploads/' ~ img.image_path) }}', '{{ img.caption or proyecto.title }}')">
             <img src="{{ url_for('static', filename='uploads/' ~ img.image_path) }}"
-                 alt="Galería"
+                 alt="Gallery"
                  class="w-full h-56 object-cover transition duration-300 group-hover:scale-105">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex items-end justify-end p-3 text-lime-200">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex items-end justify-end p-3 accent-on-overlay">
               <i class="bi bi-zoom-in"></i>
             </div>
           </button>
@@ -84,40 +84,40 @@
   </div>
 
   <aside class="space-y-6 lg:sticky lg:top-28 h-fit">
-    <div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-white p-6 shadow-xl shadow-emerald-500/10 space-y-3">
-      <h4 class="text-lg font-semibold">Enlaces del proyecto</h4>
+    <div class="card card-accent p-6 space-y-3">
+      <h4 class="text-lg font-semibold">Project links</h4>
       <div class="space-y-3">
         {% if proyecto.website_url %}
-        <a href="{{ proyecto.website_url }}" target="_blank" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-white text-slate-900 font-semibold shadow-lg">
-          <i class="bi bi-globe"></i> Ver Demo Online
+        <a href="{{ proyecto.website_url }}" target="_blank" class="btn btn-primary w-full">
+          <i class="bi bi-globe"></i> View live demo
         </a>
         {% endif %}
         {% if proyecto.github_url %}
-        <a href="{{ proyecto.github_url }}" target="_blank" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-white/50 text-white hover:border-white transition">
-          <i class="bi bi-github"></i> Ver Repositorio
+        <a href="{{ proyecto.github_url }}" target="_blank" class="btn btn-secondary w-full">
+          <i class="bi bi-github"></i> View repository
         </a>
         {% endif %}
         {% if not proyecto.website_url and not proyecto.github_url %}
-        <p class="text-sm text-emerald-50/80">Este proyecto es privado o se ejecuta en entorno local.</p>
+        <p class="text-sm muted">This project is private or runs in a local environment.</p>
         {% endif %}
       </div>
     </div>
 
-    <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-lg shadow-black/20 space-y-4 text-slate-200">
+    <div class="card p-6 space-y-4 text-slate-200">
       <div class="space-y-2">
-        <p class="text-xs uppercase tracking-wide text-slate-400">Categoría</p>
+        <p class="text-xs uppercase tracking-wide text-slate-400">Category</p>
         <p class="text-lg font-semibold text-white">{{ proyecto.category_slug|replace('-', ' ')|title }}</p>
       </div>
       <div class="space-y-2">
-        <p class="text-xs uppercase tracking-wide text-slate-400">Publicado</p>
+        <p class="text-xs uppercase tracking-wide text-slate-400">Published</p>
         <p class="text-lg font-semibold text-white">{{ proyecto.created_at.strftime('%d %b, %Y') }}</p>
       </div>
       {% if proyecto.technologies %}
       <div class="space-y-2">
-        <p class="text-xs uppercase tracking-wide text-slate-400">Stack Tecnológico</p>
+        <p class="text-xs uppercase tracking-wide text-slate-400">Tech stack</p>
         <div class="flex flex-wrap gap-2">
           {% for tech in proyecto.technologies.split(',') %}
-          <span class="px-3 py-1 rounded-full border border-slate-800 bg-slate-950/70 text-slate-100 text-sm">{{ tech.strip() }}</span>
+          <span class="tag">{{ tech.strip() }}</span>
           {% endfor %}
         </div>
       </div>
@@ -127,10 +127,10 @@
 </div>
 
 <div id="imageModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-40">
-  <div class="relative max-w-5xl w-full">
-    <button type="button" class="absolute -top-10 right-0 text-white text-2xl" onclick="closeModal()">✕</button>
-    <img id="modalImage" src="" alt="Vista previa" class="w-full max-h-[80vh] object-contain rounded-2xl border border-slate-700 shadow-2xl shadow-black/30">
-    <p id="modalCaption" class="text-center text-slate-200 mt-2"></p>
+  <div class="relative max-w-6xl w-full">
+    <button type="button" class="absolute -top-10 right-0 text-on-overlay text-2xl" onclick="closeModal()">✕</button>
+    <img id="modalImage" src="" alt="Preview" class="w-full max-h-[80vh] object-contain rounded-2xl border border-slate-700 shadow-2xl shadow-black/30">
+    <p id="modalCaption" class="text-center muted-on-overlay mt-2"></p>
   </div>
 </div>
 

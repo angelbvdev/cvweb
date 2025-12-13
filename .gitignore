@@ -1,12 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+*.egg-info/
+dist/
+build/
+
+# Envs / secrets
+.env
+.env.*
+!.env.example
+.flaskenv
 venv/
 .venv/
 env/
-.env/
-*.pyc
-.pytest_cache/
-.mypy_cache/
-.coverage
-.vscode/
+
+# Flask / DB
 instance/
 *.db
 *.sqlite
@@ -14,9 +29,20 @@ instance/
 migrations/
 alembic/versions/
 alembic.ini
-.env
-.flaskenv
-*.sublime-workspace
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Uploads
+app/static/uploads/
+
+# Editors / OS
+.vscode/
 .idea/
+*.sublime-workspace
 *.swp
-uploads/
+.DS_Store
