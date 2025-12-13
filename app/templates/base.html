@@ -3,91 +3,146 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
     <title>{% block title %}Bienvenido{% endblock %} - Angel Burgos</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
+
+    <script>
+      (function () {
+        const saved = localStorage.getItem('theme');
+        const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        const theme = saved || (prefersLight ? 'light' : 'dark');
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   </head>
-  <body class="d-flex flex-column min-vh-100">
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-      <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ url_for('main.index') }}">
-            <i class="bi bi-code-slash"></i> Angel Dev
+  <body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <header class="sticky top-0 z-30 backdrop-blur bg-slate-950/80 border-b border-slate-900">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+        <a href="{{ url_for('main.index') }}" class="flex items-center gap-3 group">
+          <span class="grid place-items-center h-12 w-12 rounded-2xl bg-gradient-to-br from-lime-400/20 via-emerald-400/15 to-cyan-400/15 border border-lime-400/30 text-lime-200 text-xl shadow-lg shadow-lime-500/10 group-hover:scale-105 transition-transform">
+            <i class="bi bi-code-slash"></i>
+          </span>
+          <div>
+            <p class="text-sm uppercase tracking-[0.25em] text-slate-400">Angel Burgos</p>
+            <p class="text-lg font-semibold text-slate-50">DevOps · Data Driven</p>
+          </div>
         </a>
-        
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.index') }}">Inicio</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.about') }}">Sobre Mí</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('projects.projects_home') }}">Proyectos</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.contact') }}">Contacto</a>
-            </li>
-            <!--
-            <li class="nav-item">
-              <a class="nav-link" href="#">Blog</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.skills') }}">Mis Habilidades</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Diario de Aprendizaje</a>
-            </li>
-            -->
-            <!--
-            <li class="nav-item ms-lg-2">
-                <a class="btn btn-primary btn-sm mt-1 mt-lg-0" href="#">
-                    <i class="bi bi-download"></i> Descargar CV
-                </a>
-            </li> -->
-          </ul>
+
+        <div class="flex items-center gap-2 md:order-3">
+          <button id="theme-toggle" type="button" class="inline-flex items-center justify-center h-11 w-11 rounded-xl border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition" title="Cambiar tema" aria-label="Cambiar tema">
+            <i id="theme-icon" class="bi bi-sun text-xl text-slate-100"></i>
+          </button>
+          <button id="menu-toggle" type="button" class="md:hidden inline-flex items-center justify-center h-11 w-11 rounded-xl border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition" aria-label="Abrir menú">
+            <i class="bi bi-list text-2xl text-slate-100"></i>
+          </button>
+        </div>
+
+        <nav id="main-nav" class="hidden md:flex items-center gap-2 text-sm font-medium">
+          <a href="{{ url_for('main.index') }}" class="px-4 py-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition">Inicio</a>
+          <a href="{{ url_for('main.about') }}" class="px-4 py-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition">Sobre Mí</a>
+          <a href="{{ url_for('projects.projects_home') }}" class="px-4 py-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition">Proyectos</a>
+          <a href="{{ url_for('main.contact') }}" class="px-4 py-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition">Contacto</a>
+          <a href="{{ url_for('main.skills') }}" class="px-4 py-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition">Skills</a>
+        </nav>
+      </div>
+
+      <div id="mobile-nav" class="md:hidden hidden px-4 pb-4">
+        <div class="flex flex-col gap-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+          <a href="{{ url_for('main.index') }}" class="px-4 py-3 rounded-xl hover:bg-slate-800 transition">Inicio</a>
+          <a href="{{ url_for('main.about') }}" class="px-4 py-3 rounded-xl hover:bg-slate-800 transition">Sobre Mí</a>
+          <a href="{{ url_for('projects.projects_home') }}" class="px-4 py-3 rounded-xl hover:bg-slate-800 transition">Proyectos</a>
+          <a href="{{ url_for('main.contact') }}" class="px-4 py-3 rounded-xl hover:bg-slate-800 transition">Contacto</a>
+          <a href="{{ url_for('main.skills') }}" class="px-4 py-3 rounded-xl hover:bg-slate-800 transition">Skills</a>
         </div>
       </div>
-    </nav>
+    </header>
 
-    <div class="container mt-3">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+    <div class="max-w-5xl w-full mx-auto px-4 sm:px-6 pt-6 space-y-4">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% set styles = {
+              'success': 'border-emerald-700/80 bg-emerald-900/40 text-emerald-50',
+              'warning': 'border-amber-700/80 bg-amber-900/40 text-amber-50',
+              'danger': 'border-rose-700/80 bg-rose-900/40 text-rose-50',
+              'error': 'border-rose-700/80 bg-rose-900/40 text-rose-50',
+              'info': 'border-cyan-700/80 bg-cyan-900/40 text-cyan-50'
+            } %}
+            <div class="flex items-start gap-3 border rounded-2xl px-4 py-3 shadow-lg shadow-black/20 {{ styles.get(category, 'border-slate-800 bg-slate-900/60 text-slate-100') }}">
+              <span class="mt-1 text-xl">
+                {% if category in ['success'] %}✅{% elif category in ['warning'] %}⚠️{% elif category in ['danger', 'error'] %}⛔{% else %}💡{% endif %}
+              </span>
+              <div class="flex-1 leading-relaxed">{{ message }}</div>
+              <button type="button" class="text-slate-300 hover:text-white" onclick="this.parentElement.remove()">✕</button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
     </div>
 
-    <main class="container my-4 flex-grow-1">
+    <main class="flex-1 w-full">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
         {% block content %}{% endblock %}
+      </div>
     </main>
 
-    <footer class="bg-light text-center text-lg-start mt-auto py-3 border-top">
-      <div class="container text-center text-muted">
-        <p class="mb-0">© 2025 Angel Burgos. Construido con Python & Flask.</p>
-        <div class="mt-2">
-            <a href="https://www.linkedin.com/in/angel-aldair-burgos-valenzuela-150889381" class="text-secondary me-3"><i class="bi bi-linkedin"></i></a>
-            <a href="https://github.com/angelbvdev" class="text-secondary me-3"><i class="bi bi-github"></i></a>
-            <a href="{{ url_for('main.contact') }}" class="text-secondary"><i class="bi bi-envelope-fill"></i></a>
+    <footer class="mt-auto border-t border-slate-900 bg-slate-950/90">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-slate-400">
+        <p>© 2025 Angel Burgos · Construido con Python & Flask</p>
+        <div class="flex items-center gap-4 text-lg">
+          <a href="https://www.linkedin.com/in/angel-aldair-burgos-valenzuela-150889381" class="hover:text-white transition"><i class="bi bi-linkedin"></i></a>
+          <a href="https://github.com/angelbvdev" class="hover:text-white transition"><i class="bi bi-github"></i></a>
+          <a href="{{ url_for('main.contact') }}" class="hover:text-white transition"><i class="bi bi-envelope-fill"></i></a>
         </div>
       </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const menuToggle = document.getElementById('menu-toggle');
+      const mobileNav = document.getElementById('mobile-nav');
+      if (menuToggle && mobileNav) {
+        menuToggle.addEventListener('click', () => {
+          mobileNav.classList.toggle('hidden');
+        });
+      }
+    </script>
+
+    <script>
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = document.getElementById('theme-icon');
+
+      function getTheme() {
+        return document.documentElement.dataset.theme || 'dark';
+      }
+
+      function setTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem('theme', theme);
+        syncThemeIcon();
+      }
+
+      function syncThemeIcon() {
+        if (!themeIcon) return;
+        const theme = getTheme();
+        themeIcon.classList.remove('bi-sun', 'bi-moon');
+        if (theme === 'light') {
+          themeIcon.classList.add('bi-moon');
+          themeIcon.title = 'Cambiar a oscuro';
+        } else {
+          themeIcon.classList.add('bi-sun');
+          themeIcon.title = 'Cambiar a claro';
+        }
+      }
+
+      syncThemeIcon();
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          setTheme(getTheme() === 'light' ? 'dark' : 'light');
+        });
+      }
+    </script>
   </body>
 </html>

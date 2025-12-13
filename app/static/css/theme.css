@@ -1,0 +1,37 @@
+:root[data-theme="light"] body {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+:root[data-theme="light"] [class~="bg-slate-950"] { background-color: #ffffff !important; }
+:root[data-theme="light"] [class~="bg-slate-950/60"] { background-color: rgba(255, 255, 255, 0.9) !important; }
+:root[data-theme="light"] [class~="bg-slate-950/70"] { background-color: rgba(255, 255, 255, 0.92) !important; }
+:root[data-theme="light"] [class~="bg-slate-950/80"] { background-color: rgba(255, 255, 255, 0.92) !important; }
+:root[data-theme="light"] [class~="bg-slate-950/90"] { background-color: rgba(255, 255, 255, 0.96) !important; }
+
+:root[data-theme="light"] [class~="bg-slate-900"] { background-color: #f8fafc !important; }
+:root[data-theme="light"] [class~="bg-slate-900/60"] { background-color: rgba(248, 250, 252, 0.92) !important; }
+:root[data-theme="light"] [class~="bg-slate-900/70"] { background-color: rgba(248, 250, 252, 0.94) !important; }
+:root[data-theme="light"] [class~="bg-slate-900/80"] { background-color: rgba(248, 250, 252, 0.96) !important; }
+
+:root[data-theme="light"] [class~="bg-slate-800"] { background-color: #e2e8f0 !important; }
+
+:root[data-theme="light"] [class~="border-slate-900"] { border-color: #e2e8f0 !important; }
+:root[data-theme="light"] [class~="border-slate-800"] { border-color: #e2e8f0 !important; }
+:root[data-theme="light"] [class~="border-slate-700"] { border-color: #cbd5e1 !important; }
+
+:root[data-theme="light"] [class~="text-white"] { color: #0f172a !important; }
+:root[data-theme="light"] [class~="text-slate-50"] { color: #0f172a !important; }
+:root[data-theme="light"] [class~="text-slate-100"] { color: #0f172a !important; }
+:root[data-theme="light"] [class~="text-slate-200"] { color: #1e293b !important; }
+:root[data-theme="light"] [class~="text-slate-300"] { color: #334155 !important; }
+:root[data-theme="light"] [class~="text-slate-400"] { color: #475569 !important; }
+:root[data-theme="light"] [class~="text-slate-500"] { color: #64748b !important; }
+
+:root[data-theme="light"] [class~="hover:bg-slate-900"]:hover { background-color: #f1f5f9 !important; }
+:root[data-theme="light"] [class~="hover:bg-slate-800"]:hover { background-color: #e2e8f0 !important; }
+:root[data-theme="light"] [class~="hover:bg-slate-900/60"]:hover { background-color: #f1f5f9 !important; }
+
+:root[data-theme="light"] [class~="divide-slate-800"] > :not(:last-child) {
+  border-color: #e2e8f0 !important;
+}

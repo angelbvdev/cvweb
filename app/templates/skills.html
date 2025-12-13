@@ -3,55 +3,46 @@
 {% block title %}Habilidades{% endblock %}
 
 {% block content %}
-<div class="row mb-5 text-center">
-    <div class="col-lg-8 mx-auto">
-        <h1 class="display-4 fw-bold">Mis Habilidades</h1>
-        <p class="lead text-muted">Un resumen de mi stack tecnológico y herramientas que uso día a día.</p>
+<section class="text-center space-y-3 mb-10">
+  <p class="text-sm uppercase tracking-[0.35em] text-slate-500">Stack</p>
+  <h1 class="text-4xl font-bold text-white">Mis Habilidades</h1>
+  <p class="text-slate-300 text-lg">Resumen de las tecnologías y herramientas que uso día a día.</p>
+</section>
+
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {% for category, items in skills.items() %}
+  <article class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-lg shadow-black/15">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="h-10 w-10 grid place-items-center rounded-xl bg-lime-400/10 border border-lime-400/40 text-lime-200">
+        {% if category == 'Lenguajes' %}<i class="bi bi-code-square"></i>
+        {% elif category == 'Data Science & AI' %}<i class="bi bi-graph-up-arrow"></i>
+        {% else %}<i class="bi bi-tools"></i>{% endif %}
+      </span>
+      <h3 class="text-lg font-semibold text-white">{{ category }}</h3>
     </div>
+
+    <div class="space-y-4">
+      {% for skill in items %}
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-sm text-slate-300">
+          <span>{{ skill.name }}</span>
+          <span>{{ skill.level }}%</span>
+        </div>
+        <div class="h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-lime-400 to-emerald-400" style="width: {{ skill.level }}%"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </article>
+  {% endfor %}
 </div>
 
-<div class="row g-4">
-    {% for category, items in skills.items() %}
-    <div class="col-md-6 col-lg-4">
-        <div class="card h-100 shadow-sm border-0">
-            <div class="card-header bg-white border-0 pt-4 pb-0">
-                <h3 class="h5 fw-bold text-primary mb-0">
-                    {% if category == 'Lenguajes' %}<i class="bi bi-code-square me-2"></i>
-                    {% elif category == 'Data Science & AI' %}<i class="bi bi-graph-up-arrow me-2"></i>
-                    {% else %}<i class="bi bi-tools me-2"></i>{% endif %}
-                    {{ category }}
-                </h3>
-            </div>
-            <div class="card-body">
-                {% for skill in items %}
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-medium">{{ skill.name }}</span>
-                        <small class="text-muted">{{ skill.level }}%</small>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-primary" role="progressbar" 
-                             style="width: {{ skill.level }}%" 
-                             aria-valuenow="{{ skill.level }}" aria-valuemin="0" aria-valuemax="100">
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-<div class="row mt-5">
-    <div class="col-12">
-        <div class="card bg-light border-0 p-4">
-            <div class="d-flex flex-wrap justify-content-center gap-3">
-                <span class="badge bg-dark p-3 rounded-pill">Español (Nativo)</span>
-                <span class="badge bg-success p-3 rounded-pill">Inglés (Intermedio - B1/B2)</span>
-                <span class="badge bg-danger p-3 rounded-pill">Japonés (Aprendiendo - JLPT N5)</span>
-            </div>
-        </div>
-    </div>
+<div class="mt-10 rounded-2xl border border-slate-800 bg-slate-900/70 p-6">
+  <div class="flex flex-wrap justify-center gap-3 text-sm font-semibold">
+    <span class="px-4 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-700">Español (Nativo)</span>
+    <span class="px-4 py-2 rounded-full bg-emerald-500/15 text-emerald-100 border border-emerald-500/40">Inglés (Intermedio - B1/B2)</span>
+    <span class="px-4 py-2 rounded-full bg-rose-500/10 text-rose-100 border border-rose-500/40">Japonés (Aprendiendo - JLPT N5)</span>
+  </div>
 </div>
 {% endblock %}

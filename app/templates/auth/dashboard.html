@@ -3,329 +3,327 @@
 {% block title %}Panel de Control{% endblock %}
 
 {% block content %}
-<div class="row g-0">
-    
-    <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="min-height: 90vh; border-right: 1px solid #dee2e6;">
-        <div class="position-sticky pt-4 px-3">
-            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-3 text-muted text-uppercase small fw-bold">
-                <span>Administración</span>
-            </h6>
-            <ul class="nav flex-column mb-4">
-                <li class="nav-item">
-                    <a class="nav-link active fw-bold text-primary bg-primary bg-opacity-10 rounded mb-2" href="#">
-                        <i class="bi bi-layers-fill me-2"></i> Proyectos
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-secondary mb-2" href="#">
-                        <i class="bi bi-mortarboard-fill me-2"></i> Habilidades
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-secondary mb-2" href="#">
-                        <i class="bi bi-file-text-fill me-2"></i> Blog
-                    </a>
-                </li>
-            </ul>
+<div class="grid lg:grid-cols-[260px,1fr] gap-6">
+  <aside class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 h-fit shadow-lg shadow-black/20">
+    <div class="space-y-2 mb-6">
+      <p class="text-xs uppercase tracking-[0.25em] text-slate-500">Administración</p>
+      <p class="text-lg font-semibold text-white">Dashboard</p>
+    </div>
+    <nav class="space-y-2">
+      <a class="flex items-center gap-3 px-3 py-2 rounded-xl bg-lime-500/15 border border-lime-400/40 text-lime-100 font-semibold" href="#">
+        <i class="bi bi-layers-fill"></i> Proyectos
+      </a>
+      <span class="flex items-center gap-3 px-3 py-2 rounded-xl border border-slate-800 text-slate-500">
+        <i class="bi bi-mortarboard-fill"></i> Habilidades
+      </span>
+      <span class="flex items-center gap-3 px-3 py-2 rounded-xl border border-slate-800 text-slate-500">
+        <i class="bi bi-file-text-fill"></i> Blog
+      </span>
+    </nav>
 
-            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-3 text-muted text-uppercase small fw-bold">
-                <span>Cuenta</span>
-            </h6>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">
-                        <i class="bi bi-box-arrow-left me-2"></i> Cerrar Sesión
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <div class="mt-6 border-t border-slate-800 pt-4">
+      <a class="flex items-center gap-3 px-3 py-2 rounded-xl border border-rose-500/40 text-rose-100 hover:bg-rose-500/10 transition" href="{{ url_for('auth.logout') }}">
+        <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+      </a>
+    </div>
+  </aside>
+
+  <section class="space-y-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Proyectos</h1>
+        <p class="text-slate-400">Gestiona tu portafolio desde aquí.</p>
+      </div>
+      <div class="flex gap-2">
+        <a href="{{ url_for('main.index') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-400/60 transition">
+          <i class="bi bi-eye"></i> Ver sitio público
+        </a>
+        <button type="button" onclick="togglePanel('newProjectPanel', true)" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold shadow-lg shadow-lime-500/20">
+          <i class="bi bi-plus-lg"></i> Nuevo proyecto
+        </button>
+      </div>
     </div>
 
-    <div class="col-md-9 ms-sm-auto col-lg-10 px-md-5 py-4">
-        
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
-            <div>
-                <h1 class="h2 fw-bold">Proyectos</h1>
-                <p class="text-muted">Gestiona tu portafolio desde aquí.</p>
-            </div>
-            <div class="btn-toolbar mb-2 mb-md-0 gap-2">
-                <a href="{{ url_for('main.index') }}" target="_blank" class="btn btn-sm btn-outline-secondary d-flex align-items-center">
-                    <i class="bi bi-eye me-2"></i> Ver Sitio Público
-                </a>
-                <button type="button" class="btn btn-sm btn-primary d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#newProjectModal">
-                    <i class="bi bi-plus-lg me-2"></i> Nuevo Proyecto
-                </button>
-            </div>
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg shadow-black/20 flex items-center justify-between">
+        <div>
+          <p class="text-xs uppercase tracking-wide text-slate-400">Total publicados</p>
+          <p class="text-3xl font-bold text-white">{{ projects|length }}</p>
         </div>
-
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm border-start border-4 border-primary">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-                                <small class="text-muted fw-bold text-uppercase">Total Publicados</small>
-                                <h3 class="mb-0 fw-bold">{{ projects|length }}</h3>
-                            </div>
-                            <div class="text-primary opacity-50">
-                                <i class="bi bi-folder-check fs-1"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card shadow-sm border-0 rounded-3">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light border-bottom">
-                            <tr>
-                                <th class="ps-4 py-3 text-uppercase small fw-bold text-muted">Título / Slug</th>
-                                <th class="py-3 text-uppercase small fw-bold text-muted">Categoría</th>
-                                <th class="py-3 text-uppercase small fw-bold text-muted">Links</th>
-                                <th class="py-3 text-uppercase small fw-bold text-muted">Fecha</th>
-                                <th class="text-end pe-4 py-3 text-uppercase small fw-bold text-muted">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for project in projects %}
-                            <tr>
-                                <td class="ps-4">
-                                    <div class="fw-bold text-dark">{{ project.title }}</div>
-                                    <div class="small text-muted font-monospace">{{ project.slug }}</div>
-                                    {% if project.images %}
-                                    <span class="badge bg-light text-secondary border mt-1"><i class="bi bi-images me-1"></i> {{ project.images|length }} fotos</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if 'data' in project.category_slug %}
-                                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 rounded-pill">Data Science</span>
-                                    {% elif 'web' in project.category_slug %}
-                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill">Web Dev</span>
-                                    {% else %}
-                                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill">{{ project.category_slug }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if project.github_url %}
-                                        <a href="{{ project.github_url }}" target="_blank" class="text-muted me-2" title="GitHub"><i class="bi bi-github"></i></a>
-                                    {% endif %}
-                                    {% if project.website_url %}
-                                        <a href="{{ project.website_url }}" target="_blank" class="text-muted" title="Demo"><i class="bi bi-globe"></i></a>
-                                    {% endif %}
-                                </td>
-                                <td class="small text-muted">
-                                    {{ project.created_at.strftime('%d %b, %Y') }}
-                                </td>
-                                <td class="text-end pe-4">
-                                    <div class="btn-group">
-                                        <button type="button" 
-                                                class="btn btn-sm btn-outline-secondary border-0" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#editProjectModal"
-                                                data-id="{{ project.id }}"
-                                                data-title="{{ project.title }}"
-                                                data-slug="{{ project.slug }}"
-                                                data-category="{{ project.category_slug }}"
-                                                data-tech="{{ project.technologies }}"
-                                                data-desc="{{ project.description }}"
-                                                data-long="{{ project.long_description or '' }}"
-                                                data-github="{{ project.github_url or '' }}"
-                                                data-web="{{ project.website_url or '' }}"
-                                                title="Editar">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        
-                                        <form action="{{ url_for('auth.delete_project', id=project.id) }}" method="POST" class="d-inline" onsubmit="return confirm('⚠ ¿Estás seguro de eliminar el proyecto: {{ project.title }}?\n\nEsta acción no se puede deshacer.');">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Eliminar">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="5" class="text-center py-5">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="Empty" style="width: 80px; opacity: 0.5;" class="mb-3">
-                                    <p class="text-muted fw-medium">No has subido ningún proyecto aún.</p>
-                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#newProjectModal">
-                                        Crear el primero
-                                    </button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <i class="bi bi-folder-check text-3xl text-lime-200"></i>
+      </div>
     </div>
+
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/70 shadow-xl shadow-black/25 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-900 border-b border-slate-800 text-slate-400 uppercase tracking-wide">
+            <tr>
+              <th class="text-left px-5 py-3">Título / Slug</th>
+              <th class="text-left px-5 py-3">Categoría</th>
+              <th class="text-left px-5 py-3">Links</th>
+              <th class="text-left px-5 py-3">Fecha</th>
+              <th class="text-right px-5 py-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-100">
+            {% for project in projects %}
+            <tr class="hover:bg-slate-900/60">
+              <td class="px-5 py-3">
+                <div class="font-semibold">{{ project.title }}</div>
+                <div class="text-xs text-slate-400 font-mono">{{ project.slug }}</div>
+                {% if project.images %}
+                <span class="inline-flex items-center gap-1 mt-1 text-xs px-2 py-1 rounded-full border border-slate-800 text-slate-300">
+                  <i class="bi bi-images"></i> {{ project.images|length }} fotos
+                </span>
+                {% endif %}
+              </td>
+              <td class="px-5 py-3">
+                {% if 'data' in project.category_slug %}
+                  <span class="px-3 py-1 rounded-full text-xs border border-cyan-400/40 bg-cyan-400/10 text-cyan-100">Data Science</span>
+                {% elif 'web' in project.category_slug %}
+                  <span class="px-3 py-1 rounded-full text-xs border border-lime-400/40 bg-lime-400/10 text-lime-100">Web Dev</span>
+                {% else %}
+                  <span class="px-3 py-1 rounded-full text-xs border border-slate-700 text-slate-200">{{ project.category_slug }}</span>
+                {% endif %}
+              </td>
+              <td class="px-5 py-3 space-x-2 text-lg text-slate-300">
+                {% if project.github_url %}
+                  <a href="{{ project.github_url }}" target="_blank" class="hover:text-white"><i class="bi bi-github"></i></a>
+                {% endif %}
+                {% if project.website_url %}
+                  <a href="{{ project.website_url }}" target="_blank" class="hover:text-white"><i class="bi bi-globe"></i></a>
+                {% endif %}
+              </td>
+              <td class="px-5 py-3 text-slate-300">
+                {{ project.created_at.strftime('%d %b, %Y') }}
+              </td>
+              <td class="px-5 py-3 text-right">
+                <div class="inline-flex gap-2">
+                  <button type="button"
+                          class="px-3 py-2 rounded-xl border border-slate-700 text-slate-100 hover:border-lime-400/50"
+                          data-id="{{ project.id }}"
+                          data-title="{{ project.title }}"
+                          data-slug="{{ project.slug }}"
+                          data-category="{{ project.category_slug }}"
+                          data-tech="{{ project.technologies }}"
+                          data-desc="{{ project.description }}"
+                          data-long="{{ project.long_description or '' }}"
+                          data-github="{{ project.github_url or '' }}"
+                          data-web="{{ project.website_url or '' }}"
+                          onclick="openEditFromButton(this)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <form action="{{ url_for('auth.delete_project', id=project.id) }}" method="POST" onsubmit="return confirm('¿Eliminar {{ project.title }}? Esta acción es irreversible.');">
+                    <button type="submit" class="px-3 py-2 rounded-xl border border-rose-500/60 text-rose-100 hover:bg-rose-500/10">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="5" class="px-5 py-10 text-center text-slate-400">
+                No has subido ningún proyecto aún.
+                <button class="ml-2 text-lime-200 underline" onclick="togglePanel('newProjectPanel', true)">Crear el primero</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 </div>
 
-<div class="modal fade" id="newProjectModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Nuevo Proyecto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="{{ url_for('auth.create_project') }}" method="POST" enctype="multipart/form-data">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Título</label>
-                            <input type="text" name="title" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Slug (URL)</label>
-                            <input type="text" name="slug" class="form-control" placeholder="mi-proyecto-increible" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Categoría</label>
-                            <select name="category" class="form-select">
-                                <option value="web-dev">Desarrollo Web</option>
-                                <option value="data-science">Data Science</option>
-                                <option value="data-engineer">Data Engineer</option>
-                                <option value="other">Otro</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Stack Tecnológico</label>
-                            <input type="text" name="technologies" class="form-control" placeholder="Ej: Python, SQL, Azure">
-                        </div>
-                        
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Imágenes del Proyecto</label>
-                            <input type="file" name="images" class="form-control" multiple accept="image/*">
-                            <div class="form-text">Selecciona una o varias imágenes (JPG, PNG).</div>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Descripción Corta</label>
-                            <input type="text" name="description" class="form-control" required>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Contenido Detallado</label>
-                            <textarea name="long_description" class="form-control" rows="5" placeholder="Soporta texto simple por ahora..."></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">GitHub URL</label>
-                            <input type="url" name="github_url" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Demo URL</label>
-                            <input type="url" name="website_url" class="form-control">
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0 px-0 pb-0 mt-3">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Proyecto</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+<!-- Panel nuevo proyecto -->
+<div id="newProjectPanel" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-40">
+  <div class="max-w-4xl w-full rounded-3xl border border-slate-800 bg-slate-950/90 shadow-2xl shadow-black/40 overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 text-white">
+      <h3 class="text-xl font-semibold">Nuevo Proyecto</h3>
+      <button type="button" class="text-2xl" onclick="togglePanel('newProjectPanel', false)">✕</button>
     </div>
+    <div class="p-6">
+      <form action="{{ url_for('auth.create_project') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Título</span>
+            <input type="text" name="title" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Slug (URL)</span>
+            <input type="text" name="slug" placeholder="mi-proyecto-increible" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Categoría</span>
+            <select name="category" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
+              <option value="web-dev">Desarrollo Web</option>
+              <option value="data-science">Data Science</option>
+              <option value="data-engineer">Data Engineer</option>
+              <option value="other">Otro</option>
+            </select>
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Stack Tecnológico</span>
+            <input type="text" name="technologies" placeholder="Ej: Python, SQL, Azure" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
+          </label>
+        </div>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Imágenes del Proyecto</span>
+          <input type="file" name="images" multiple accept="image/*" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100">
+          <span class="text-xs text-slate-400">Selecciona una o varias imágenes (JPG, PNG).</span>
+        </label>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Descripción Corta</span>
+          <input type="text" name="description" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
+        </label>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Contenido Detallado</span>
+          <textarea name="long_description" rows="5" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" placeholder="Soporta texto simple por ahora..."></textarea>
+        </label>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>GitHub URL</span>
+            <input type="url" name="github_url" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Demo URL</span>
+            <input type="url" name="website_url" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
+          </label>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-200" onclick="togglePanel('newProjectPanel', false)">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold shadow-lg shadow-lime-500/20">Guardar Proyecto</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
-<div class="modal fade" id="editProjectModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title fw-bold">Editar Proyecto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editProjectForm" method="POST" enctype="multipart/form-data">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Título</label>
-                            <input type="text" name="title" id="edit-title" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Slug (URL)</label>
-                            <input type="text" name="slug" id="edit-slug" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Categoría</label>
-                            <select name="category" id="edit-category" class="form-select">
-                                <option value="web-dev">Desarrollo Web</option>
-                                <option value="data-science">Data Science</option>
-                                <option value="data-engineer">Data Engineer</option>
-                                <option value="other">Otro</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Stack Tecnológico</label>
-                            <input type="text" name="technologies" id="edit-tech" class="form-control">
-                        </div>
-                        
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Agregar más imágenes</label>
-                            <input type="file" name="images" class="form-control" multiple accept="image/*">
-                            <div class="form-text text-muted">Las imágenes actuales se mantendrán. Las que subas aquí se añadirán.</div>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Descripción Corta</label>
-                            <input type="text" name="description" id="edit-desc" class="form-control" required>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Contenido Detallado</label>
-                            <textarea name="long_description" id="edit-long" class="form-control" rows="5"></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">GitHub URL</label>
-                            <input type="url" name="github_url" id="edit-github" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Demo URL</label>
-                            <input type="url" name="website_url" id="edit-web" class="form-control">
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0 px-0 pb-0 mt-3">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+<!-- Panel editar proyecto -->
+<div id="editProjectPanel" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-40">
+  <div class="max-w-4xl w-full rounded-3xl border border-slate-800 bg-slate-950/90 shadow-2xl shadow-black/40 overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 text-white">
+      <h3 class="text-xl font-semibold">Editar Proyecto</h3>
+      <button type="button" class="text-2xl" onclick="togglePanel('editProjectPanel', false)">✕</button>
     </div>
+    <div class="p-6">
+      <form id="editProjectForm" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Título</span>
+            <input type="text" name="title" id="edit-title" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Slug (URL)</span>
+            <input type="text" name="slug" id="edit-slug" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Categoría</span>
+            <select name="category" id="edit-category" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
+              <option value="web-dev">Desarrollo Web</option>
+              <option value="data-science">Data Science</option>
+              <option value="data-engineer">Data Engineer</option>
+              <option value="other">Otro</option>
+            </select>
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Stack Tecnológico</span>
+            <input type="text" name="technologies" id="edit-tech" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
+          </label>
+        </div>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Agregar más imágenes</span>
+          <input type="file" name="images" multiple accept="image/*" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100">
+          <span class="text-xs text-slate-400">Las imágenes actuales se mantendrán. Las que subas aquí se añadirán.</span>
+        </label>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Descripción Corta</span>
+          <input type="text" name="description" id="edit-desc" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60" required>
+        </label>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Contenido Detallado</span>
+          <textarea name="long_description" id="edit-long" rows="5" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60"></textarea>
+        </label>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>GitHub URL</span>
+            <input type="url" name="github_url" id="edit-github" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Demo URL</span>
+            <input type="url" name="website_url" id="edit-web" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100 focus:outline-none focus:border-lime-400/60">
+          </label>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-200" onclick="togglePanel('editProjectPanel', false)">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold shadow-lg shadow-lime-500/20">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <script>
-    var editModal = document.getElementById('editProjectModal')
-    editModal.addEventListener('show.bs.modal', function (event) {
-        // Botón que activó el modal
-        var button = event.relatedTarget
-        
-        // Extraer info de los atributos data-*
-        var id = button.getAttribute('data-id')
-        var title = button.getAttribute('data-title')
-        var slug = button.getAttribute('data-slug')
-        var category = button.getAttribute('data-category')
-        var tech = button.getAttribute('data-tech')
-        var desc = button.getAttribute('data-desc')
-        var long = button.getAttribute('data-long')
-        var github = button.getAttribute('data-github')
-        var web = button.getAttribute('data-web')
+  function togglePanel(id, show) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (show) {
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+    } else {
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+    }
+  }
 
-        // Actualizar la acción del formulario
-        var form = document.getElementById('editProjectForm')
-        form.action = "{{ url_for('auth.edit_project', id=0) }}".replace('0', id)
+  function openEdit(id, title, slug, category, tech, desc, longDesc, github, web) {
+    const form = document.getElementById('editProjectForm');
+    form.action = "{{ url_for('auth.edit_project', id=0) }}".replace('0', id);
+    document.getElementById('edit-title').value = title;
+    document.getElementById('edit-slug').value = slug;
+    document.getElementById('edit-category').value = category;
+    document.getElementById('edit-tech').value = tech;
+    document.getElementById('edit-desc').value = desc;
+    document.getElementById('edit-long').value = longDesc || '';
+    document.getElementById('edit-github').value = github || '';
+    document.getElementById('edit-web').value = web || '';
+    togglePanel('editProjectPanel', true);
+  }
 
-        // Rellenar los inputs
-        document.getElementById('edit-title').value = title
-        document.getElementById('edit-slug').value = slug
-        document.getElementById('edit-category').value = category
-        document.getElementById('edit-tech').value = tech
-        document.getElementById('edit-desc').value = desc
-        document.getElementById('edit-long').value = long
-        document.getElementById('edit-github').value = github
-        document.getElementById('edit-web').value = web
-    })
+  function openEditFromButton(button) {
+    openEdit(
+      button.dataset.id,
+      button.dataset.title || '',
+      button.dataset.slug || '',
+      button.dataset.category || '',
+      button.dataset.tech || '',
+      button.dataset.desc || '',
+      button.dataset.long || '',
+      button.dataset.github || '',
+      button.dataset.web || ''
+    );
+  }
+
+  ['newProjectPanel', 'editProjectPanel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', (e) => {
+        if (e.target === el) togglePanel(id, false);
+      });
+    }
+  });
 </script>
 
 {% endblock %}

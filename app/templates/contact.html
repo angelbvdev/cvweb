@@ -3,91 +3,87 @@
 {% block title %}Contacto{% endblock %}
 
 {% block content %}
-<div class="row mb-5">
-    <div class="col-lg-8 mx-auto text-center">
-        <h1 class="display-4 fw-bold">Contáctame</h1>
-        <p class="lead text-muted">¿Tienes una oportunidad laboral para mi o proyecto en mente? ¡Hablemos!</p>
-    </div>
-</div>
+<section class="text-center space-y-3 mb-10">
+  <p class="text-sm uppercase tracking-[0.35em] text-slate-500">Contacto</p>
+  <h1 class="text-4xl font-bold text-white">¿Colaboremos?</h1>
+  <p class="text-slate-300 text-lg">Oportunidades laborales, proyectos o ideas: responde rápido.</p>
+</section>
 
-<div class="row g-5">
-    <div class="col-lg-7">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h3 class="card-title h4 mb-4">Envíame un mensaje</h3>
-                
-                <form action="" method="POST">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="name" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Tu nombre" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="tucorreo@ejemplo.com" required>
-                        </div>
-                        <div class="col-12">
-                            <label for="subject" class="form-label">Asunto</label>
-                            <input type="text" class="form-control" id="subject" name="subject" placeholder="¿Sobre qué quieres hablar?" required>
-                        </div>
-                        <div class="col-12">
-                            <label for="message" class="form-label">Mensaje</label>
-                            <textarea class="form-control" id="message" name="message" rows="5" placeholder="Cuéntame más..." required></textarea>
-                        </div>
-                        <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-primary px-4 py-2">
-                                <i class="bi bi-send-fill me-2"></i> Enviar Mensaje
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+<div class="grid lg:grid-cols-5 gap-8">
+  <div class="lg:col-span-3">
+    <div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 shadow-xl shadow-black/20">
+      <h3 class="text-2xl font-semibold text-white mb-6">Envíame un mensaje</h3>
+      <form action="" method="POST" class="space-y-4">
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Nombre</span>
+            <input type="text" id="name" name="name" placeholder="Tu nombre" required
+                   class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-slate-100 focus:outline-none focus:border-lime-400/60 focus:ring-2 focus:ring-lime-400/30">
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Email</span>
+            <input type="email" id="email" name="email" placeholder="tucorreo@ejemplo.com" required
+                   class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-slate-100 focus:outline-none focus:border-lime-400/60 focus:ring-2 focus:ring-lime-400/30">
+          </label>
         </div>
+        <label class="space-y-2 text-sm text-slate-200">
+          <span>Asunto</span>
+          <input type="text" id="subject" name="subject" placeholder="¿Sobre qué quieres hablar?" required
+                 class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-slate-100 focus:outline-none focus:border-lime-400/60 focus:ring-2 focus:ring-lime-400/30">
+        </label>
+        <label class="space-y-2 text-sm text-slate-200">
+          <span>Mensaje</span>
+          <textarea id="message" name="message" rows="5" placeholder="Cuéntame más..." required
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-slate-100 focus:outline-none focus:border-lime-400/60 focus:ring-2 focus:ring-lime-400/30"></textarea>
+        </label>
+        <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold shadow-lg shadow-lime-500/25">
+          <i class="bi bi-send-fill"></i> Enviar mensaje
+        </button>
+      </form>
     </div>
+  </div>
 
-    <div class="col-lg-5">
-        <div class="card bg-dark text-white border-0 shadow-sm h-100">
-            <div class="card-body p-4 d-flex flex-column justify-content-center">
-                <h3 class="card-title h4 mb-4">Información de Contacto</h3>
-                <p class="card-text text-white-50 mb-4">
-                    Actualmente estoy disponible para trabajar en nuevos proyectos y oportunidades laborales.
-                </p>
+  <div class="lg:col-span-2">
+    <div class="rounded-3xl border border-emerald-500/30 bg-emerald-500/5 p-8 text-white shadow-xl shadow-emerald-500/10 h-full">
+      <h3 class="text-2xl font-semibold mb-3">Información de contacto</h3>
+      <p class="text-slate-200/80 mb-6">Disponible para proyectos y oportunidades laborales.</p>
 
-                <div class="d-flex align-items-center mb-4">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                        <i class="bi bi-geo-alt-fill fs-5"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Ubicación</h6>
-                        <small class="text-white-50">Guasave, Sinaloa, México</small>
-                    </div>
-                </div>
-
-                <div class="d-flex align-items-center mb-4">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                        <i class="bi bi-envelope-fill fs-5"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Email</h6>
-                        <small class="text-white-50">angelbv.dev@gmail.como</small> </div>
-                </div>
-
-                <hr class="border-secondary my-4">
-
-                <h5 class="h6 mb-3">Sígueme en redes</h5>
-                <div class="d-flex gap-3">
-                    <a href="https://www.linkedin.com/in/angel-aldair-burgos-valenzuela-150889381" class="btn btn-outline-light btn-sm rounded-circle" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                        <i class="bi bi-linkedin"></i>
-                    </a>
-                    <a href="https://github.com/angelbvdev" class="btn btn-outline-light btn-sm rounded-circle" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                        <i class="bi bi-github"></i>
-                    </a>
-                    <a href="https://x.com/AngelbvDev" class="btn btn-outline-light btn-sm rounded-circle" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                        <i class="bi bi-twitter"></i>
-                    </a>
-                </div>
-            </div>
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          <span class="h-12 w-12 grid place-items-center rounded-2xl bg-slate-900/70 border border-slate-800 text-lime-200 text-xl">
+            <i class="bi bi-geo-alt-fill"></i>
+          </span>
+          <div>
+            <p class="font-semibold">Ubicación</p>
+            <p class="text-slate-300 text-sm">Guasave, Sinaloa, México</p>
+          </div>
         </div>
+        <div class="flex items-center gap-3">
+          <span class="h-12 w-12 grid place-items-center rounded-2xl bg-slate-900/70 border border-slate-800 text-lime-200 text-xl">
+            <i class="bi bi-envelope-fill"></i>
+          </span>
+          <div>
+            <p class="font-semibold">Email</p>
+            <p class="text-slate-300 text-sm">angelbv.dev@gmail.com</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <h4 class="text-sm uppercase tracking-wide text-slate-300 mb-3">Sígueme</h4>
+        <div class="flex gap-3">
+          <a href="https://www.linkedin.com/in/angel-aldair-burgos-valenzuela-150889381" class="h-10 w-10 grid place-items-center rounded-xl border border-slate-700 bg-slate-900/70 text-slate-100 hover:border-lime-400/50 transition">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a href="https://github.com/angelbvdev" class="h-10 w-10 grid place-items-center rounded-xl border border-slate-700 bg-slate-900/70 text-slate-100 hover:border-lime-400/50 transition">
+            <i class="bi bi-github"></i>
+          </a>
+          <a href="https://x.com/AngelbvDev" class="h-10 w-10 grid place-items-center rounded-xl border border-slate-700 bg-slate-900/70 text-slate-100 hover:border-lime-400/50 transition">
+            <i class="bi bi-twitter"></i>
+          </a>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

@@ -4,226 +4,157 @@
 
 {% block content %}
 
-<!-- Estilos específicos para esta página -->
-<style>
-    .cursor-zoom {
-        cursor: zoom-in;
-        transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-    .cursor-zoom:hover {
-        transform: scale(1.02);
-        opacity: 0.9;
-    }
-    .sticky-sidebar {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 100px; /* Espacio desde arriba al hacer scroll */
-        z-index: 10;
-    }
-    /* Ajuste para que el modal use casi toda la pantalla */
-    .modal-fullscreen-custom {
-        max-width: 90vw;
-    }
-    .modal-body img {
-        max-height: 85vh;
-        object-fit: contain;
-        width: 100%;
-    }
-</style>
+<div class="mb-6">
+  <a href="{{ url_for('projects.projects_home') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-400/60 transition">
+    <i class="bi bi-arrow-left"></i> Volver a proyectos
+  </a>
+</div>
 
-<div class="container py-5">
+<div class="grid lg:grid-cols-3 gap-8">
+  <div class="lg:col-span-2 space-y-8">
+    <header class="space-y-3">
+      <h1 class="text-4xl font-bold text-white">{{ proyecto.title }}</h1>
+      <p class="text-lg text-slate-300">{{ proyecto.description }}</p>
+    </header>
 
-    <!-- Navegación -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <a href="{{ url_for('projects.projects_home') }}" class="btn btn-outline-secondary rounded-pill px-3 btn-sm">
-            <i class="bi bi-arrow-left me-2"></i> Volver a Proyectos
+    {% if proyecto.images and proyecto.images|length > 0 %}
+    <div class="rounded-3xl overflow-hidden border border-slate-800 shadow-2xl shadow-black/30">
+      <button type="button" class="w-full" onclick="openModal('{{ url_for('static', filename='uploads/' ~ proyecto.images[0].image_path) }}', '{{ proyecto.title }}')">
+        <img src="{{ url_for('static', filename='uploads/' ~ proyecto.images[0].image_path) }}"
+             alt="{{ proyecto.title }} Portada"
+             class="w-full h-full object-cover hover:scale-[1.01] transition">
+      </button>
+    </div>
+    {% endif %}
+
+    {% if proyecto.long_description %}
+    <section class="space-y-3">
+      <h3 class="text-xl font-semibold text-white border-b border-slate-800 pb-2">Sobre el proyecto</h3>
+      <p class="text-slate-300 leading-relaxed whitespace-pre-line">{{ proyecto.long_description }}</p>
+    </section>
+    {% endif %}
+
+    {% if proyecto.code %}
+    <section class="space-y-4">
+      <div class="flex items-center gap-2">
+        <span class="h-10 w-10 grid place-items-center rounded-xl bg-cyan-400/10 border border-cyan-400/40 text-cyan-200">
+          <i class="bi bi-code-square"></i>
+        </span>
+        <h3 class="text-xl font-semibold text-white">Snippets</h3>
+      </div>
+      <div class="space-y-4">
+        {% for snippet in proyecto.code %}
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/70 shadow-lg shadow-black/20 overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-slate-800 text-sm text-slate-300">
+            <span class="font-mono text-cyan-200 flex items-center gap-2"><i class="bi bi-file-earmark-code"></i> {{ snippet.file_name }}</span>
+            <span class="px-3 py-1 rounded-full border border-slate-700 text-slate-100">{{ snippet.language }}</span>
+          </div>
+          <div class="relative">
+            <button type="button" class="absolute top-3 right-3 px-3 py-1 text-xs rounded-lg border border-slate-700 text-slate-200 bg-slate-900/70" onclick="copySnippet(this.nextElementSibling.innerText)">Copiar</button>
+            <pre class="overflow-auto text-sm leading-relaxed p-4 text-slate-100 bg-slate-950/60"><code class="language-{{ snippet.language }}">{{ snippet.code_snippet }}</code></pre>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {% if proyecto.images and proyecto.images|length > 1 %}
+    <section class="space-y-4">
+      <h3 class="text-xl font-semibold text-white border-b border-slate-800 pb-2">Galería de imágenes</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        {% for img in proyecto.images[1:] %}
+        <div class="rounded-2xl border border-slate-800 overflow-hidden bg-slate-900/60 shadow-lg shadow-black/15">
+          <button type="button" class="relative w-full group" onclick="openModal('{{ url_for('static', filename='uploads/' ~ img.image_path) }}', '{{ img.caption or proyecto.title }}')">
+            <img src="{{ url_for('static', filename='uploads/' ~ img.image_path) }}"
+                 alt="Galería"
+                 class="w-full h-56 object-cover transition duration-300 group-hover:scale-105">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex items-end justify-end p-3 text-lime-200">
+              <i class="bi bi-zoom-in"></i>
+            </div>
+          </button>
+          {% if img.caption %}
+          <div class="px-4 py-3 text-sm text-slate-300">{{ img.caption }}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+  </div>
+
+  <aside class="space-y-6 lg:sticky lg:top-28 h-fit">
+    <div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-white p-6 shadow-xl shadow-emerald-500/10 space-y-3">
+      <h4 class="text-lg font-semibold">Enlaces del proyecto</h4>
+      <div class="space-y-3">
+        {% if proyecto.website_url %}
+        <a href="{{ proyecto.website_url }}" target="_blank" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-white text-slate-900 font-semibold shadow-lg">
+          <i class="bi bi-globe"></i> Ver Demo Online
         </a>
-    </nav>
-
-    <div class="row g-5">
-        
-        <!-- === COLUMNA PRINCIPAL (Contenido) === -->
-        <div class="col-lg-8">
-            
-            <!-- Encabezado -->
-            <div class="mb-4">
-                <h1 class="display-4 fw-bold mb-3">{{ proyecto.title }}</h1>
-                <p class="lead text-dark">{{ proyecto.description }}</p>
-            </div>
-
-            <!-- Imagen Principal (La primera de la lista, si existe) -->
-            {% if proyecto.images and proyecto.images|length > 0 %}
-            <div class="mb-5 shadow rounded overflow-hidden">
-                <img src="{{ url_for('static', filename='uploads/' ~ proyecto.images[0].image_path) }}" 
-                     class="img-fluid w-100 cursor-zoom" 
-                     alt="{{ proyecto.title }} Portada"
-                     onclick="openModal(this.src, '{{ proyecto.title }}')">
-            </div>
-            {% endif %}
-
-            <!-- Descripción Larga -->
-            {% if proyecto.long_description %}
-            <div class="mb-5">
-                <h3 class="h4 fw-bold mb-3 border-bottom pb-2">Sobre el Proyecto</h3>
-                <div class="text-muted fs-5 lh-lg" style="white-space: pre-wrap;">
-                    {{ proyecto.long_description }}
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- Bloques de Código -->
-            {% if proyecto.code %}
-            <div class="mb-5">
-                <h3 class="h4 fw-bold mb-3 border-bottom pb-2">
-                    <i class="bi bi-code-square me-2 text-primary"></i>Snippets
-                </h3>
-                
-                {% for snippet in proyecto.code %}
-                <div class="card shadow-sm border-0 bg-dark text-light mb-4 overflow-hidden">
-                    <div class="card-header bg-secondary bg-opacity-25 border-bottom border-secondary d-flex justify-content-between align-items-center">
-                        <span class="font-monospace text-info small">
-                            <i class="bi bi-file-earmark-code me-1"></i> {{ snippet.file_name }}
-                        </span>
-                        <span class="badge bg-light text-dark">{{ snippet.language }}</span>
-                    </div>
-                    <div class="card-body p-0 position-relative">
-                        <!-- Botón copiar (visual) -->
-                        <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2 border-0 opacity-50" title="Copiar">
-                            <i class="bi bi-clipboard"></i>
-                        </button>
-                        <pre class="m-0 p-3" style="max-height: 400px;"><code class="language-{{ snippet.language }}">{{ snippet.code_snippet }}</code></pre>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            <!-- Galería Restante (Grid) -->
-            {% if proyecto.images and proyecto.images|length > 1 %}
-            <div class="mb-5">
-                <h3 class="h4 fw-bold mb-3 border-bottom pb-2">Galería de Imágenes</h3>
-                <div class="row row-cols-1 row-cols-md-2 g-3">
-                    <!-- Iteramos saltando la primera imagen porque ya la pusimos de portada -->
-                    {% for img in proyecto.images[1:] %}
-                    <div class="col">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="overflow-hidden rounded position-relative group-hover">
-                                <img src="{{ url_for('static', filename='uploads/' ~ img.image_path) }}" 
-                                     class="card-img-top cursor-zoom" 
-                                     alt="Galería"
-                                     style="height: 250px; object-fit: cover;"
-                                     onclick="openModal(this.src, '{{ img.caption or proyecto.title }}')">
-                                
-                                <!-- Icono de lupa superpuesto -->
-                                <div class="position-absolute bottom-0 end-0 m-2 badge bg-dark bg-opacity-75">
-                                    <i class="bi bi-zoom-in"></i>
-                                </div>
-                            </div>
-                            {% if img.caption %}
-                            <div class="card-footer bg-white border-0 py-2">
-                                <small class="text-muted fst-italic">{{ img.caption }}</small>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-
-        </div>
-
-        <!-- === COLUMNA LATERAL (Sidebar Sticky) === -->
-        <div class="col-lg-4">
-            <div class="sticky-sidebar">
-                
-                <!-- Tarjeta de Acciones -->
-                <div class="card shadow-lg border-0 mb-4 bg-primary text-white">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-4">Enlaces del Proyecto</h5>
-                        <div class="d-grid gap-3">
-                            {% if proyecto.website_url %}
-                            <a href="{{ proyecto.website_url }}" target="_blank" class="btn btn-light fw-bold text-primary shadow-sm">
-                               <i class="bi bi-globe me-2"></i> Ver Demo Online
-                            </a>
-                            {% endif %}
-                            
-                            {% if proyecto.github_url %}
-                            <a href="{{ proyecto.github_url }}" target="_blank" class="btn btn-outline-light fw-bold">
-                               <i class="bi bi-github me-2"></i> Ver Repositorio
-                            </a>
-                            {% endif %}
-
-                            {% if not proyecto.website_url and not proyecto.github_url %}
-                            <div class="alert alert-primary border-white bg-transparent text-white mb-0 small">
-                                <i class="bi bi-info-circle me-1"></i> Este proyecto es privado o local.
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tarjeta de Detalles -->
-                <div class="card shadow-sm border-0 bg-light">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3 text-secondary h6 text-uppercase">Información</h5>
-                        
-                        <ul class="list-unstyled mb-4">
-                            <li class="mb-2 d-flex justify-content-between">
-                                <span class="text-muted">Categoría:</span>
-                                <span class="fw-bold text-dark">{{ proyecto.category_slug|replace('-', ' ')|title }}</span>
-                            </li>
-                            <li class="mb-2 d-flex justify-content-between">
-                                <span class="text-muted">Publicado:</span>
-                                <span class="fw-bold text-dark">{{ proyecto.created_at.strftime('%d %b, %Y') }}</span>
-                            </li>
-                        </ul>
-
-                        {% if proyecto.technologies %}
-                        <h5 class="fw-bold mb-3 text-secondary h6 text-uppercase">Stack Tecnológico</h5>
-                        <div class="d-flex flex-wrap gap-2">
-                            {% for tech in proyecto.technologies.split(',') %}
-                                <span class="badge bg-white text-dark border shadow-sm py-2 px-3 fw-normal">
-                                    {{ tech.strip() }}
-                                </span>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
+        {% endif %}
+        {% if proyecto.github_url %}
+        <a href="{{ proyecto.github_url }}" target="_blank" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-white/50 text-white hover:border-white transition">
+          <i class="bi bi-github"></i> Ver Repositorio
+        </a>
+        {% endif %}
+        {% if not proyecto.website_url and not proyecto.github_url %}
+        <p class="text-sm text-emerald-50/80">Este proyecto es privado o se ejecuta en entorno local.</p>
+        {% endif %}
+      </div>
     </div>
+
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-lg shadow-black/20 space-y-4 text-slate-200">
+      <div class="space-y-2">
+        <p class="text-xs uppercase tracking-wide text-slate-400">Categoría</p>
+        <p class="text-lg font-semibold text-white">{{ proyecto.category_slug|replace('-', ' ')|title }}</p>
+      </div>
+      <div class="space-y-2">
+        <p class="text-xs uppercase tracking-wide text-slate-400">Publicado</p>
+        <p class="text-lg font-semibold text-white">{{ proyecto.created_at.strftime('%d %b, %Y') }}</p>
+      </div>
+      {% if proyecto.technologies %}
+      <div class="space-y-2">
+        <p class="text-xs uppercase tracking-wide text-slate-400">Stack Tecnológico</p>
+        <div class="flex flex-wrap gap-2">
+          {% for tech in proyecto.technologies.split(',') %}
+          <span class="px-3 py-1 rounded-full border border-slate-800 bg-slate-950/70 text-slate-100 text-sm">{{ tech.strip() }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </aside>
 </div>
 
-<!-- === MODAL PARA VER FOTOS (LIGHTBOX) === -->
-<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen-custom mx-auto">
-        <div class="modal-content bg-transparent border-0 shadow-none">
-            <div class="modal-header border-0 p-0 mb-2">
-                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-0 text-center">
-                <img id="modalImage" src="" alt="Vista Previa" class="rounded shadow-lg">
-                <p id="modalCaption" class="text-white mt-2 fw-bold text-shadow"></p>
-            </div>
-        </div>
-    </div>
+<div id="imageModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-40">
+  <div class="relative max-w-5xl w-full">
+    <button type="button" class="absolute -top-10 right-0 text-white text-2xl" onclick="closeModal()">✕</button>
+    <img id="modalImage" src="" alt="Vista previa" class="w-full max-h-[80vh] object-contain rounded-2xl border border-slate-700 shadow-2xl shadow-black/30">
+    <p id="modalCaption" class="text-center text-slate-200 mt-2"></p>
+  </div>
 </div>
 
-<!-- Script simple para manejar el modal -->
 <script>
-    function openModal(imageSrc, caption) {
-        // 1. Poner la imagen en el modal
-        document.getElementById('modalImage').src = imageSrc;
-        // 2. Poner el texto (si hay)
-        document.getElementById('modalCaption').innerText = caption || '';
-        // 3. Abrir el modal usando Bootstrap
-        var myModal = new bootstrap.Modal(document.getElementById('imageModal'));
-        myModal.show();
-    }
+  function openModal(imageSrc, caption) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('modalCaption').innerText = caption || '';
+    document.getElementById('imageModal').classList.remove('hidden');
+    document.getElementById('imageModal').classList.add('flex');
+  }
+  function closeModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+  function copySnippet(text) {
+    navigator.clipboard.writeText(text.trim());
+  }
+  const modalEl = document.getElementById('imageModal');
+  if (modalEl) {
+    modalEl.addEventListener('click', (event) => {
+      if (event.target === modalEl) closeModal();
+    });
+  }
 </script>
 
 {% endblock %}

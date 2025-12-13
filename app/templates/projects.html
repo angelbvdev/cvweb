@@ -4,170 +4,120 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="text-center space-y-3 mb-10">
+  <p class="text-sm uppercase tracking-[0.35em] text-slate-500">Portafolio</p>
+  <h1 class="text-4xl font-bold text-white">Mis Proyectos</h1>
+  <p class="text-slate-300 max-w-2xl mx-auto">Filtra por categoría, stack o busca directamente lo que necesitas.</p>
+</section>
 
-    <h1 class="fw-bold text-center mb-4">Mis Proyectos</h1>
-    <p class="text-center text-muted mb-5">
-        Explora mis proyectos filtrando por categoría, tecnologías o usando la barra de búsqueda.
-    </p>
-
-    <!-- === BUSCADOR === -->
-    <div class="input-group mb-4 shadow-sm">
-        <span class="input-group-text bg-primary text-white">
-            <i class="bi bi-search"></i>
-        </span>
-        <input id="searchInput" type="text" class="form-control"
-               placeholder="Buscar por nombre, descripción o tecnología...">
-    </div>
-
-    <!-- === FILTROS (Manuales para coincidir con tu Dashboard) === -->
-    <div class="d-flex flex-wrap gap-2 mb-5 justify-content-center">
-        <button class="btn btn-outline-primary filter-btn active" data-category="all">Todos</button>
-        <button class="btn btn-outline-primary filter-btn" data-category="web-dev">Desarrollo Web</button>
-        <button class="btn btn-outline-primary filter-btn" data-category="data-science">Data Science</button>
-        <button class="btn btn-outline-primary filter-btn" data-category="data-engineer">Data Engineer</button>
-        <button class="btn btn-outline-primary filter-btn" data-category="other">Otros</button>
-    </div>
-
-    <!-- === GRID DE PROYECTOS === -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="projectGrid">
-
-        {% for p in proyectos %}
-        <!-- Ajustamos los data-attributes para que usen los campos correctos de tu BD -->
-        <div class="col project-item"
-             data-category="{{ p.category_slug }}"
-             data-tags="{{ p.technologies }}"
-             data-title="{{ p.title | lower }}"
-             data-description="{{ p.description | lower }}">
-
-            <div class="card h-100 shadow-sm border-0 hover-effect">
-
-                <!-- LÓGICA DE IMAGEN DE PORTADA -->
-                <div style="height: 200px; overflow: hidden; background-color: #f8f9fa;">
-                    {% if p.images|length > 0 %}
-                        <!-- Toma la primera imagen de la lista [0] -->
-                        <img src="{{ url_for('static', filename='uploads/' ~ p.images[0].image_path) }}"
-                             class="card-img-top h-100 w-100" 
-                             style="object-fit: cover;"
-                             alt="{{ p.title }}">
-                    {% else %}
-                        <!-- Placeholder si no hay imágenes -->
-                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
-                            <div class="text-center">
-                                <i class="bi bi-image fs-1"></i>
-                                <p class="small m-0">Sin imagen</p>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">{{ p.title }}</h5>
-                    <!-- Usamos p.description (no short_description) -->
-                    <p class="card-text text-muted small">{{ p.description }}</p>
-                </div>
-
-                <div class="card-footer bg-white border-0 pt-0">
-                    <!-- Parseamos el string de tecnologías separadas por coma -->
-                    {% if p.technologies %}
-                        {% for tech in p.technologies.split(',') %}
-                            <span class="badge rounded-pill bg-light text-dark border me-1 mb-1">
-                                {{ tech.strip() }}
-                            </span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
-                <div class="card-footer bg-white border-0 text-end pb-3">
-                    <!-- Corregido el nombre del parámetro (project_id a p.id) -->
-                    <a href="{{ url_for('projects.project_detail', project_id=p.id) }}"
-                        class="btn btn-primary w-100 rounded-pill">
-                        Ver Proyecto <i class="bi bi-arrow-right-short"></i>
-                    </a>
-                </div>
-
-            </div>
-        </div>
-        {% endfor %}
-
-    </div>
-
+<div class="max-w-3xl mx-auto mb-6 relative">
+  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
+    <i class="bi bi-search"></i>
+  </span>
+  <input id="searchInput" type="text" placeholder="Buscar por nombre, descripción o tecnología..."
+         class="w-full rounded-2xl border border-slate-800 bg-slate-900/70 text-slate-100 pl-11 pr-4 py-3 shadow-inner shadow-black/20 focus:outline-none focus:border-lime-400/60 focus:ring-2 focus:ring-lime-400/30">
 </div>
 
-<!-- === SCRIPT DE FILTRO + BUSCADOR === -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+<div class="flex flex-wrap justify-center gap-3 mb-10" id="filters">
+  <button class="filter-btn px-4 py-2 rounded-xl border border-lime-300/50 bg-lime-400/20 text-lime-100" data-category="all">Todos</button>
+  <button class="filter-btn px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-300/40" data-category="web-dev">Desarrollo Web</button>
+  <button class="filter-btn px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-300/40" data-category="data-science">Data Science</button>
+  <button class="filter-btn px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-300/40" data-category="data-engineer">Data Engineer</button>
+  <button class="filter-btn px-4 py-2 rounded-xl border border-slate-800 text-slate-200 hover:border-lime-300/40" data-category="other">Otros</button>
+</div>
 
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projectGrid">
+  {% for p in proyectos %}
+  <article class="project-item group rounded-2xl border border-slate-800 bg-slate-900/70 shadow-lg shadow-black/15 overflow-hidden transition" 
+           data-category="{{ p.category_slug }}"
+           data-tags="{{ p.technologies }}"
+           data-title="{{ p.title | lower }}"
+           data-description="{{ p.description | lower }}">
+    <div class="h-52 bg-slate-900 overflow-hidden">
+      {% if p.images|length > 0 %}
+        <img src="{{ url_for('static', filename='uploads/' ~ p.images[0].image_path) }}"
+             alt="{{ p.title }}"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+      {% else %}
+        <div class="h-full w-full grid place-items-center text-slate-500">
+          <div class="text-center">
+            <i class="bi bi-image text-3xl"></i>
+            <p class="text-sm mt-1">Sin imagen</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="p-5 space-y-3">
+      <div class="flex items-start justify-between gap-2">
+        <h3 class="text-xl font-semibold text-white">{{ p.title }}</h3>
+        <span class="text-xs uppercase tracking-wide text-slate-400">{{ p.category_slug }}</span>
+      </div>
+      <p class="text-sm text-slate-300 leading-relaxed">{{ p.description }}</p>
+
+      {% if p.technologies %}
+      <div class="flex flex-wrap gap-2">
+        {% for tech in p.technologies.split(',') %}
+          <span class="px-3 py-1 rounded-full text-xs border border-slate-800 bg-slate-950/60 text-slate-200">{{ tech.strip() }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="px-5 pb-5">
+      <a href="{{ url_for('projects.project_detail', project_id=p.id) }}"
+         class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-lime-400 to-emerald-400 text-slate-950 font-semibold py-3 shadow-lg shadow-lime-500/20 transition hover:-translate-y-[1px]">
+        Ver Proyecto <i class="bi bi-arrow-right-short text-lg"></i>
+      </a>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
     const filterButtons = document.querySelectorAll(".filter-btn");
     const projectItems = document.querySelectorAll(".project-item");
-
+    const activeClasses = ["border-lime-300/50","bg-lime-400/20","text-lime-100"];
+    const baseClasses = ["border-slate-800","text-slate-200","bg-transparent"];
     let currentCategory = "all";
 
-    // 1. FILTRO POR CATEGORÍA
     filterButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            // Quitar clase active de todos
-            filterButtons.forEach(b => b.classList.remove("active"));
-            // Poner al actual
-            btn.classList.add("active");
-
-            currentCategory = btn.dataset.category;
-            filtrar();
+      btn.addEventListener("click", () => {
+        filterButtons.forEach(b => {
+          b.classList.remove(...activeClasses);
+          if (!b.classList.contains("border-slate-800")) b.classList.add("border-slate-800");
+          if (!b.classList.contains("text-slate-200")) b.classList.add("text-slate-200");
+          b.classList.remove("bg-lime-400/20");
         });
+        btn.classList.remove(...baseClasses);
+        btn.classList.add(...activeClasses);
+        currentCategory = btn.dataset.category;
+        filtrar();
+      });
     });
 
-    // 2. BUSQUEDA EN TIEMPO REAL
     searchInput.addEventListener("input", () => filtrar());
 
     function filtrar() {
-        const q = searchInput.value.toLowerCase();
-
-        projectItems.forEach(item => {
-            // Obtenemos los datos del DOM (manejando nulos por seguridad)
-            const title = (item.dataset.title || "").toLowerCase();
-            const description = (item.dataset.description || "").toLowerCase();
-            const tags = (item.dataset.tags || "").toLowerCase();
-            const category = item.dataset.category;
-
-            // Lógica de coincidencia de texto
-            const matchText =
-                title.includes(q) ||
-                description.includes(q) ||
-                tags.includes(q);
-
-            // Lógica de coincidencia de categoría
-            const matchCategory =
-                currentCategory === "all" ||
-                category === currentCategory;
-
-            // Mostrar u Ocultar
-            if (matchText && matchCategory) {
-                item.style.display = "block"; // O "flex" si usas d-flex
-                // Animación simple de entrada
-                item.style.opacity = "0";
-                setTimeout(() => item.style.opacity = "1", 50);
-            } else {
-                item.style.display = "none";
-            }
-        });
+      const q = searchInput.value.toLowerCase();
+      projectItems.forEach(item => {
+        const title = (item.dataset.title || "").toLowerCase();
+        const description = (item.dataset.description || "").toLowerCase();
+        const tags = (item.dataset.tags || "").toLowerCase();
+        const category = item.dataset.category;
+        const matchText = title.includes(q) || description.includes(q) || tags.includes(q);
+        const matchCategory = currentCategory === "all" || category === currentCategory;
+        if (matchText && matchCategory) {
+          item.classList.remove("hidden");
+          item.style.opacity = "1";
+        } else {
+          item.classList.add("hidden");
+        }
+      });
     }
-
-});
+  });
 </script>
-
-<style>
-    /* Efecto hover opcional para las tarjetas */
-    .hover-effect {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .hover-effect:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-    }
-    .project-item {
-        transition: opacity 0.3s ease;
-    }
-</style>
 
 {% endblock %}
