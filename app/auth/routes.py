@@ -21,6 +21,29 @@ def _blog_upload_dir() -> str:
     base = current_app.config['UPLOAD_FOLDER']
     return os.path.join(base, 'blog')
 
+
+def _documents_dir() -> str:
+    return current_app.config.get('DOCUMENTS_FOLDER') or os.path.join(current_app.root_path, 'static', 'documents')
+
+
+def _cv_path() -> str:
+    filename = current_app.config.get('CV_FILENAME') or 'cv_angel.pdf'
+    return os.path.join(_documents_dir(), filename)
+
+
+def _looks_like_pdf(file_storage) -> bool:
+    try:
+        head = file_storage.stream.read(1024) or b""
+        file_storage.stream.seek(0)
+        head = head.lstrip()
+        return head.startswith(b"%PDF-")
+    except Exception:
+        try:
+            file_storage.stream.seek(0)
+        except Exception:
+            pass
+        return False
+
 def _blog_posts_has_meta_columns() -> bool:
     try:
         cols = {c["name"] for c in inspect(db.engine).get_columns("blog_posts")}
@@ -154,12 +177,34 @@ def dashboard():
         key = p.category_slug or 'uncategorized'
         category_counts[key] = category_counts.get(key, 0) + 1
 
+    cv_filename = current_app.config.get('CV_FILENAME') or 'cv_angel.pdf'
+    cv_path = _cv_path()
+    cv_exists = os.path.exists(cv_path)
+    cv_size = None
+    cv_size_display = None
+    if cv_exists:
+        try:
+            cv_size = os.path.getsize(cv_path)
+            if cv_size < 1024:
+                cv_size_display = f"{cv_size} B"
+            elif cv_size < 1024 * 1024:
+                cv_size_display = f"{round(cv_size / 1024)} KB"
+            else:
+                cv_size_display = f"{cv_size / (1024 * 1024):.1f} MB"
+        except Exception:
+            cv_size = None
+            cv_size_display = None
+
     return render_template(
         'auth/dashboard.html',
         title='Dashboard',
         projects=projects,
         stats=stats,
-        category_counts=category_counts
+        category_counts=category_counts,
+        cv_filename=cv_filename,
+        cv_exists=cv_exists,
+        cv_size=cv_size,
+        cv_size_display=cv_size_display,
     )
 
 
@@ -215,6 +260,7 @@ def create_blog_post():
     )
     post.tags = _upsert_tags(tags_string)
 
+    saved_cover_path = None
     cover = request.files.get('cover_image')
     if cover and cover.filename:
         if not _is_allowed_image(cover.filename):
@@ -223,7 +269,8 @@ def create_blog_post():
         os.makedirs(_blog_upload_dir(), exist_ok=True)
         safe_name = secure_filename(cover.filename)
         unique_name = f"{uuid4().hex}_{safe_name}"
-        cover.save(os.path.join(_blog_upload_dir(), unique_name))
+        saved_cover_path = os.path.join(_blog_upload_dir(), unique_name)
+        cover.save(saved_cover_path)
         post.cover_image_path = unique_name
 
     try:
@@ -235,6 +282,11 @@ def create_blog_post():
             flash('Post created as a draft. Publish it to show on the public blog.', 'info')
     except Exception as e:
         db.session.rollback()
+        if saved_cover_path and os.path.exists(saved_cover_path):
+            try:
+                os.remove(saved_cover_path)
+            except Exception:
+                pass
         flash(f'Error creating post: {str(e)}', 'danger')
 
     return redirect(url_for('auth.blog'))
@@ -258,6 +310,7 @@ def edit_blog_post(id):
     meta_description = (request.form.get('meta_description') or '').strip() or None
     is_published = request.form.get('is_published') == 'on'
     published_at_input = (request.form.get('published_at') or '').strip()
+    remove_cover_image = request.form.get('remove_cover_image') == 'on'
 
     if not title or not slug or not content:
         flash('Title, slug, and content are required.', 'danger')
@@ -285,6 +338,8 @@ def edit_blog_post(id):
     if not is_published:
         post.published_at = None
 
+    old_cover_path_to_delete = None
+    new_cover_path_saved = None
     cover = request.files.get('cover_image')
     if cover and cover.filename:
         if not _is_allowed_image(cover.filename):
@@ -293,20 +348,30 @@ def edit_blog_post(id):
         os.makedirs(_blog_upload_dir(), exist_ok=True)
         safe_name = secure_filename(cover.filename)
         unique_name = f"{uuid4().hex}_{safe_name}"
-        cover.save(os.path.join(_blog_upload_dir(), unique_name))
-
+        new_cover_path_saved = os.path.join(_blog_upload_dir(), unique_name)
+        cover.save(new_cover_path_saved)
         if post.cover_image_path:
-            old_path = os.path.join(_blog_upload_dir(), post.cover_image_path)
-            if os.path.exists(old_path):
-                os.remove(old_path)
-
+            old_cover_path_to_delete = os.path.join(_blog_upload_dir(), post.cover_image_path)
         post.cover_image_path = unique_name
+    elif remove_cover_image and post.cover_image_path:
+        old_cover_path_to_delete = os.path.join(_blog_upload_dir(), post.cover_image_path)
+        post.cover_image_path = None
 
     try:
         db.session.commit()
+        if old_cover_path_to_delete and os.path.exists(old_cover_path_to_delete):
+            try:
+                os.remove(old_cover_path_to_delete)
+            except Exception:
+                pass
         flash('Post updated.', 'success')
     except Exception as e:
         db.session.rollback()
+        if new_cover_path_saved and os.path.exists(new_cover_path_saved):
+            try:
+                os.remove(new_cover_path_saved)
+            except Exception:
+                pass
         flash(f'Error updating post: {str(e)}', 'danger')
 
     return redirect(url_for('auth.blog'))
@@ -317,17 +382,69 @@ def edit_blog_post(id):
 def delete_blog_post(id):
     post = _blog_post_query_safe().filter(BlogPost.id == id).first_or_404()
     try:
-        if post.cover_image_path:
-            path = os.path.join(_blog_upload_dir(), post.cover_image_path)
-            if os.path.exists(path):
-                os.remove(path)
+        cover_path = os.path.join(_blog_upload_dir(), post.cover_image_path) if post.cover_image_path else None
         db.session.delete(post)
         db.session.commit()
+        if cover_path and os.path.exists(cover_path):
+            try:
+                os.remove(cover_path)
+            except Exception:
+                pass
         flash('Post deleted.', 'success')
     except Exception as e:
         db.session.rollback()
         flash(f'Error deleting post: {str(e)}', 'danger')
     return redirect(url_for('auth.blog'))
+
+
+@bp.route('/cv/upload', methods=['POST'])
+@login_required
+def upload_cv():
+    cv_file = request.files.get('cv_file')
+    if not cv_file or not cv_file.filename:
+        flash('Choose a PDF file to upload.', 'danger')
+        return redirect(url_for('auth.dashboard'))
+
+    filename = (cv_file.filename or '').lower()
+    if not filename.endswith('.pdf'):
+        flash('CV must be a PDF file.', 'danger')
+        return redirect(url_for('auth.dashboard'))
+    if not _looks_like_pdf(cv_file):
+        flash('That file does not look like a valid PDF.', 'danger')
+        return redirect(url_for('auth.dashboard'))
+
+    os.makedirs(_documents_dir(), exist_ok=True)
+    target = _cv_path()
+    tmp_name = f"{uuid4().hex}_{secure_filename(cv_file.filename)}"
+    tmp_path = os.path.join(_documents_dir(), tmp_name)
+    try:
+        cv_file.save(tmp_path)
+        os.replace(tmp_path, target)
+        flash('CV uploaded successfully.', 'success')
+    except Exception as e:
+        try:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+        except Exception:
+            pass
+        flash(f'Error uploading CV: {str(e)}', 'danger')
+
+    return redirect(url_for('auth.dashboard'))
+
+
+@bp.route('/cv/delete', methods=['POST'])
+@login_required
+def delete_cv():
+    path = _cv_path()
+    try:
+        if os.path.exists(path):
+            os.remove(path)
+            flash('CV deleted.', 'success')
+        else:
+            flash('No CV found to delete.', 'warning')
+    except Exception as e:
+        flash(f'Error deleting CV: {str(e)}', 'danger')
+    return redirect(url_for('auth.dashboard'))
 
 @bp.route('/create_project', methods=['POST'])
 @login_required
@@ -355,6 +472,7 @@ def create_project():
         website_url=website_url
     )
 
+    saved_files = []
     try:
         custom_published_at = _parse_optional_publish_datetime(published_at_input)
         if published_at_input and not custom_published_at:
@@ -363,22 +481,35 @@ def create_project():
         if custom_published_at:
             new_project.created_at = custom_published_at
 
-        # 3. Guardamos el proyecto PRIMERO para generar el ID
+        # 3. Guardamos el proyecto para generar el ID (sin commit aún)
         db.session.add(new_project)
-        db.session.commit() 
+        db.session.flush()
 
         # 4. Procesar las Imágenes
         # 'images' debe coincidir con el name="images" del input HTML
         files = request.files.getlist('images') 
-        
+        os.makedirs(current_app.config['UPLOAD_FOLDER'], exist_ok=True)
+
         for file in files:
             if file and file.filename != '':
+                if not _is_allowed_image(file.filename):
+                    try:
+                        for path in saved_files:
+                            if os.path.exists(path):
+                                os.remove(path)
+                    except Exception:
+                        pass
+                    db.session.rollback()
+                    flash('Project images must be PNG/JPG/JPEG/WEBP/GIF.', 'danger')
+                    return redirect(url_for('auth.dashboard'))
                 # Limpiamos el nombre del archivo (seguridad)
-                filename = secure_filename(file.filename)
+                safe_name = secure_filename(file.filename)
+                filename = f"{uuid4().hex}_{safe_name}"
                 
                 # Guardamos el archivo físico en la carpeta static/uploads
                 file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
+                saved_files.append(file_path)
                 
                 # Guardamos la referencia en la Base de Datos
                 # Aquí usamos new_project.id que acabamos de crear
@@ -389,13 +520,18 @@ def create_project():
                 )
                 db.session.add(new_image)
         
-        # Hacemos commit de las imágenes
         db.session.commit()
         
         flash('Project and images created successfully!', 'success')
 
     except Exception as e:
         db.session.rollback()
+        try:
+            for path in saved_files:
+                if os.path.exists(path):
+                    os.remove(path)
+        except Exception:
+            pass
         flash(f'Error creating project: {str(e)}', 'danger')
         print(e) # Para ver el error en consola si pasa algo
 
@@ -408,22 +544,24 @@ def delete_project(id):
     project = Project.query.get_or_404(id)
     
     try:
-        # === PASO 1: Borrar los archivos físicos (Imágenes) ===
-        # Iteramos sobre las imágenes asociadas al proyecto
-        for img in project.images:
-            # Construimos la ruta completa del archivo
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], img.image_path)
-            
-            # Verificamos si el archivo existe para evitar errores
-            if os.path.exists(file_path):
-                os.remove(file_path) # <--- Aquí se borra la foto del disco
-                print(f"Imagen eliminada: {file_path}")
+        image_paths = [
+            os.path.join(current_app.config['UPLOAD_FOLDER'], img.image_path)
+            for img in (project.images or [])
+            if img.image_path
+        ]
 
-        # === PASO 2: Borrar de la Base de Datos ===
+        # === Borrar de la Base de Datos ===
         # Gracias al cascade="all, delete" en tu modelo, esto borrará 
         # también las filas en la tabla ProjectImage automáticamente.
         db.session.delete(project)
         db.session.commit()
+
+        for file_path in image_paths:
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except Exception:
+                    pass
         
         flash(f'The project "{project.title}" and its images have been deleted.', 'success')
 
@@ -440,12 +578,39 @@ def delete_project(id):
 def edit_project(id):
     project = Project.query.get_or_404(id)
     
+    saved_files = []
     try:
         published_at_input = (request.form.get('published_at') or '').strip()
         custom_published_at = _parse_optional_publish_datetime(published_at_input)
         if published_at_input and not custom_published_at:
             flash('Published date must be in YYYY-MM-DD format.', 'danger')
             return redirect(url_for('auth.dashboard'))
+
+        files = request.files.getlist('images')
+        for file in files:
+            if file and file.filename != '' and not _is_allowed_image(file.filename):
+                flash('Project images must be PNG/JPG/JPEG/WEBP/GIF.', 'danger')
+                return redirect(url_for('auth.dashboard'))
+
+        delete_image_ids = request.form.getlist('delete_image_ids')
+        delete_ids = set()
+        for raw_id in delete_image_ids:
+            try:
+                delete_ids.add(int(raw_id))
+            except (TypeError, ValueError):
+                continue
+        if delete_ids:
+            images_to_delete = ProjectImage.query.filter(
+                ProjectImage.project_id == project.id,
+                ProjectImage.id.in_(delete_ids),
+            ).all()
+            delete_paths = []
+            for img in images_to_delete:
+                if img.image_path:
+                    delete_paths.append(os.path.join(current_app.config['UPLOAD_FOLDER'], img.image_path))
+                db.session.delete(img)
+        else:
+            delete_paths = []
 
         # 1. Actualizar datos de texto
         project.title = request.form.get('title')
@@ -460,12 +625,14 @@ def edit_project(id):
             project.created_at = _preserve_time_if_date_only(published_at_input, custom_published_at, project.created_at)
 
         # 2. Procesar NUEVAS imágenes (si las hay)
-        files = request.files.getlist('images') 
+        os.makedirs(current_app.config['UPLOAD_FOLDER'], exist_ok=True)
         for file in files:
             if file and file.filename != '':
-                filename = secure_filename(file.filename)
+                safe_name = secure_filename(file.filename)
+                filename = f"{uuid4().hex}_{safe_name}"
                 file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
+                saved_files.append(file_path)
                 
                 new_image = ProjectImage(
                     project_id=project.id, 
@@ -475,10 +642,22 @@ def edit_project(id):
                 db.session.add(new_image)
         
         db.session.commit()
+        for file_path in delete_paths:
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except Exception:
+                    pass
         flash(f'The project "{project.title}" has been updated.', 'success')
 
     except Exception as e:
         db.session.rollback()
+        try:
+            for path in saved_files:
+                if os.path.exists(path):
+                    os.remove(path)
+        except Exception:
+            pass
         flash(f'Error editing: {str(e)}', 'danger')
         print(e)
 

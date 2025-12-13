@@ -129,6 +129,7 @@
                         data-meta-description="{{ (post.meta_description or '') if blog_meta_ready else '' }}"
                         data-published="{{ '1' if post.is_published else '0' }}"
                         data-published-at="{{ post.published_at.strftime('%Y-%m-%d') if post.published_at else '' }}"
+                        data-cover-url="{{ url_for('static', filename='uploads/blog/' ~ post.cover_image_path) if post.cover_image_path else '' }}"
                         {% if blog_meta_ready %}onclick="openEditPostFromButton(this)"{% else %}disabled{% endif %}>
                   <i class="bi bi-pencil"></i>
                 </button>
@@ -159,8 +160,8 @@
   </div>
 </section>
 
-<div id="newPostPanel" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-  <div class="panel max-w-4xl w-full overflow-hidden">
+<div id="newPostPanel" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-2 sm:p-4 z-50">
+  <div class="panel max-w-6xl w-full overflow-hidden">
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 text-white">
       <div>
         <h3 class="text-xl font-semibold">New post</h3>
@@ -202,10 +203,24 @@
           </label>
         </div>
 
-        <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Cover image</span>
-          <input type="file" name="cover_image" accept="image/*" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100">
-        </label>
+        <div class="space-y-2">
+          <p class="text-sm text-slate-200">Cover image</p>
+          <input id="new-post-cover-image" type="file" name="cover_image" accept="image/*" class="hidden">
+          <button id="new-post-cover-pick" type="button" class="w-full rounded-xl border-2 border-dashed border-slate-800 bg-slate-900/40 px-6 py-8 text-center transition-all hover:bg-slate-900/60 hover:border-indigo-500/30">
+            <i class="bi bi-image text-3xl text-slate-500 mb-2"></i>
+            <p class="text-slate-200 font-medium">Click to upload a cover image</p>
+            <p class="text-xs text-slate-500 mt-1">PNG, JPG, WEBP, GIF</p>
+          </button>
+          <div id="new-post-cover-preview" class="hidden rounded-xl border border-slate-800 bg-slate-900/40 p-3">
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <span id="new-post-cover-name" class="text-sm text-slate-200 truncate"></span>
+              <button id="new-post-cover-clear" type="button" class="icon-btn icon-btn-sm" title="Remove selected cover">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <img id="new-post-cover-img" src="" alt="Cover preview" class="w-full max-h-56 object-cover rounded-lg border border-slate-800">
+          </div>
+        </div>
 
         <label class="space-y-2 text-sm text-slate-200 block">
           <span>Content</span>
@@ -231,26 +246,38 @@
   </div>
 </div>
 
-<div id="editPostPanel" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-  <div class="panel max-w-4xl w-full overflow-hidden">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 text-white">
+<div id="editPostPanel" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-2 sm:p-4 z-50">
+  <div class="panel max-w-6xl w-full overflow-hidden flex flex-col max-h-[85vh]">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 text-white flex-shrink-0">
       <div>
         <h3 class="text-xl font-semibold">Edit post</h3>
-        <p class="text-sm text-slate-400">Uploading a new cover image will replace the old one.</p>
+        <p class="text-sm text-slate-400">Drafts are visible to you only. Use preview to sanity check.</p>
       </div>
-      <button type="button" class="text-2xl" onclick="togglePanel('editPostPanel', false)">✕</button>
+      <div class="flex items-center gap-2">
+        <a id="edit-post-preview-link" class="btn btn-secondary btn-sm" href="#" target="_blank">
+          <i class="bi bi-eye"></i> Preview
+        </a>
+        <button type="button" class="text-2xl" onclick="togglePanel('editPostPanel', false)">✕</button>
+      </div>
     </div>
-    <div class="p-6">
-      <form id="editPostForm" method="POST" enctype="multipart/form-data" class="space-y-4">
+    <div class="p-6 overflow-y-auto flex-1" style="overflow-x: hidden;">
+      <form id="editPostForm" method="POST" enctype="multipart/form-data" class="space-y-5">
         <div class="grid md:grid-cols-2 gap-4">
           <label class="space-y-2 text-sm text-slate-200">
             <span>Title</span>
             <input type="text" name="title" id="edit-post-title" class="input" required>
           </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Slug (URL)</span>
-            <input type="text" name="slug" id="edit-post-slug" class="input" required>
-          </label>
+          <div class="space-y-2 text-sm text-slate-200">
+            <div class="flex items-center justify-between gap-3">
+              <span>Slug (URL)</span>
+              <button id="edit-post-slug-generate" type="button" class="tag" title="Generate from title">Generate</button>
+            </div>
+            <div class="input-group">
+              <i class="bi bi-link-45deg text-slate-400"></i>
+              <input type="text" name="slug" id="edit-post-slug"
+                     class="bg-transparent flex-1 outline-none text-slate-100 font-mono text-sm" style="min-width: 0;" required>
+            </div>
+          </div>
         </div>
 
         <label class="space-y-2 text-sm text-slate-200 block">
@@ -263,25 +290,69 @@
           <input type="text" name="excerpt" id="edit-post-excerpt" class="input" placeholder="1–2 lines summary (optional)">
         </label>
 
+        <details class="rounded-xl border border-slate-800 bg-slate-900/30 p-4">
+          <summary class="cursor-pointer select-none text-sm text-slate-200 font-medium flex items-center justify-between">
+            <span class="inline-flex items-center gap-2"><i class="bi bi-search"></i> SEO (optional)</span>
+            <span class="text-xs text-slate-500">Meta title & description</span>
+          </summary>
+          <div class="grid md:grid-cols-2 gap-4 mt-4">
+            <label class="space-y-2 text-sm text-slate-200">
+              <span>Meta title</span>
+              <input type="text" name="meta_title" id="edit-post-meta-title" class="input" placeholder="Optional SEO title">
+            </label>
+            <label class="space-y-2 text-sm text-slate-200">
+              <span>Meta description</span>
+              <input type="text" name="meta_description" id="edit-post-meta-description" class="input" placeholder="Optional SEO description">
+            </label>
+          </div>
+        </details>
+
         <div class="grid md:grid-cols-2 gap-4">
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Meta title</span>
-            <input type="text" name="meta_title" id="edit-post-meta-title" class="input" placeholder="Optional SEO title">
-          </label>
-          <label class="space-y-2 text-sm text-slate-200">
-            <span>Meta description</span>
-            <input type="text" name="meta_description" id="edit-post-meta-description" class="input" placeholder="Optional SEO description">
-          </label>
+          <div class="space-y-2">
+            <p class="text-sm text-slate-200">Replace cover (optional)</p>
+            <input id="edit-post-cover-image" type="file" name="cover_image" accept="image/*" class="hidden">
+            <button id="edit-post-cover-pick" type="button" class="w-full rounded-xl border-2 border-dashed border-slate-800 bg-slate-900/40 px-6 py-6 text-center transition-all hover:bg-slate-900/60 hover:border-indigo-500/30">
+              <i class="bi bi-image text-3xl text-slate-500 mb-2"></i>
+              <p class="text-slate-200 font-medium">Click to select a new cover</p>
+              <p class="text-xs text-slate-500 mt-1">PNG, JPG, WEBP, GIF</p>
+            </button>
+
+            <div id="edit-post-new-cover-preview" class="hidden rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-3">
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <span id="edit-post-new-cover-name" class="text-sm text-slate-200 truncate">New cover selected</span>
+                <button id="edit-post-new-cover-clear" type="button" class="icon-btn icon-btn-sm" title="Remove selected cover">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+              <img id="edit-post-new-cover-img" src="" alt="New cover preview" class="w-full max-h-56 object-cover rounded-lg border border-slate-800">
+            </div>
+          </div>
+
+          <div id="edit-post-current-cover" class="hidden rounded-xl border border-slate-800 bg-slate-900/40 p-3">
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <span class="text-sm text-slate-200">Current cover</span>
+              <a id="edit-post-cover-link" class="tag" href="#" target="_blank">Open</a>
+            </div>
+            <div class="flex items-start gap-3">
+              <img id="edit-post-cover-img" src="" alt="Cover thumbnail" class="h-24 w-36 object-cover rounded-lg border border-slate-800">
+              <div class="flex-1">
+                <label class="inline-flex items-center gap-2 text-sm text-slate-200">
+                  <input type="checkbox" name="remove_cover_image" id="edit-post-remove-cover" class="accent-text">
+                  Remove on save
+                </label>
+                <p id="edit-post-remove-cover-hint" class="hidden text-xs text-rose-200/80 mt-2">Cover will be removed when you save.</p>
+                <p class="text-xs text-slate-500 mt-2">Tip: selecting a new cover keeps the old one until you save.</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Cover image</span>
-          <input type="file" name="cover_image" accept="image/*" class="w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100">
-        </label>
-
-        <label class="space-y-2 text-sm text-slate-200 block">
-          <span>Content</span>
-          <textarea name="content" id="edit-post-content" rows="10" class="input" required></textarea>
+          <span class="flex items-center justify-between gap-3">
+            <span>Content</span>
+            <span id="edit-post-content-stats" class="text-xs text-slate-500"></span>
+          </span>
+          <textarea name="content" id="edit-post-content" rows="14" class="input font-mono text-sm" style="min-height: 320px" required></textarea>
         </label>
 
         <label class="space-y-2 text-sm text-slate-200 block">
@@ -294,11 +365,11 @@
           Published
         </label>
 
-        <div class="flex justify-end gap-2 pt-2">
-          <button type="button" class="btn btn-secondary btn-sm" onclick="togglePanel('editPostPanel', false)">Cancel</button>
-          <button type="submit" class="btn btn-primary btn-sm">Save</button>
-        </div>
       </form>
+    </div>
+    <div class="flex items-center justify-end gap-2 px-6 py-4 border-t border-slate-800 bg-slate-900/80 backdrop-blur flex-shrink-0">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="togglePanel('editPostPanel', false)">Cancel</button>
+      <button type="submit" form="editPostForm" class="btn btn-primary btn-sm">Save</button>
     </div>
   </div>
 </div>
@@ -313,6 +384,8 @@
     } else {
       el.classList.add('hidden');
       el.classList.remove('flex');
+      if (id === 'newPostPanel') window.cvwebBlogUpload?.clearNewCover?.();
+      if (id === 'editPostPanel') window.cvwebBlogUpload?.clearEditNewCover?.();
     }
   }
 
@@ -327,6 +400,13 @@
       .slice(0, 120);
   }
 
+  const _postPreviewBase = "{{ url_for('blog.post_detail', slug='__slug__') }}";
+  function _postUrlFromSlug(slug) {
+    const safe = (slug || '').trim();
+    if (!safe) return '#';
+    return _postPreviewBase.replace('__slug__', encodeURIComponent(safe));
+  }
+
   function openEditPostFromButton(button) {
     const form = document.getElementById('editPostForm');
     form.action = "{{ url_for('auth.edit_blog_post', id=0) }}".replace('0', button.dataset.id);
@@ -339,6 +419,39 @@
     document.getElementById('edit-post-meta-description').value = button.dataset.metaDescription || '';
     document.getElementById('edit-post-published').checked = button.dataset.published === '1';
     document.getElementById('edit-post-published-at').value = button.dataset.publishedAt || '';
+
+    const previewLink = document.getElementById('edit-post-preview-link');
+    if (previewLink) previewLink.href = _postUrlFromSlug(button.dataset.slug || '');
+    window.cvwebBlogUpload?.syncEdit?.();
+
+    const coverUrl = button.dataset.coverUrl || '';
+    const coverPreview = document.getElementById('edit-post-current-cover');
+    const coverImg = document.getElementById('edit-post-cover-img');
+    const coverLink = document.getElementById('edit-post-cover-link');
+    const removeCover = document.getElementById('edit-post-remove-cover');
+    const removeCoverHint = document.getElementById('edit-post-remove-cover-hint');
+    const editCoverInput = document.getElementById('edit-post-cover-image');
+    const newCoverPreview = document.getElementById('edit-post-new-cover-preview');
+    const newCoverImg = document.getElementById('edit-post-new-cover-img');
+    const newCoverName = document.getElementById('edit-post-new-cover-name');
+    if (removeCover) removeCover.checked = false;
+    if (removeCoverHint) removeCoverHint.classList.add('hidden');
+    if (editCoverInput) editCoverInput.value = '';
+    if (newCoverPreview) newCoverPreview.classList.add('hidden');
+    if (newCoverImg) newCoverImg.src = '';
+    if (newCoverName) newCoverName.textContent = 'New cover selected';
+    if (coverUrl && coverPreview && coverImg && coverLink) {
+      coverPreview.dataset.coverUrl = coverUrl;
+      coverImg.src = coverUrl;
+      coverLink.href = coverUrl;
+      coverPreview.classList.remove('hidden');
+    } else if (coverPreview) {
+      coverPreview.dataset.coverUrl = '';
+      coverPreview.classList.add('hidden');
+      if (coverImg) coverImg.src = '';
+      if (coverLink) coverLink.href = '#';
+    }
+
     togglePanel('editPostPanel', true);
   }
 
@@ -362,6 +475,140 @@
         newSlug.value = slugify(newTitle.value);
       });
     }
+
+    const newCoverInput = document.getElementById('new-post-cover-image');
+    const newCoverPick = document.getElementById('new-post-cover-pick');
+    const newCoverPreview = document.getElementById('new-post-cover-preview');
+    const newCoverImg = document.getElementById('new-post-cover-img');
+    const newCoverName = document.getElementById('new-post-cover-name');
+    const newCoverClear = document.getElementById('new-post-cover-clear');
+    let newCoverUrl = '';
+
+    function clearNewCover() {
+      if (newCoverUrl) URL.revokeObjectURL(newCoverUrl);
+      newCoverUrl = '';
+      if (newCoverInput) newCoverInput.value = '';
+      if (newCoverImg) newCoverImg.src = '';
+      if (newCoverName) newCoverName.textContent = '';
+      if (newCoverPreview) newCoverPreview.classList.add('hidden');
+    }
+
+    newCoverInput?.addEventListener('change', () => {
+      const file = newCoverInput.files && newCoverInput.files[0];
+      if (!file) return clearNewCover();
+      if (newCoverUrl) URL.revokeObjectURL(newCoverUrl);
+      newCoverUrl = URL.createObjectURL(file);
+      if (newCoverImg) newCoverImg.src = newCoverUrl;
+      if (newCoverName) newCoverName.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+      if (newCoverPreview) newCoverPreview.classList.remove('hidden');
+    });
+    newCoverPick?.addEventListener('click', () => newCoverInput?.click());
+    newCoverClear?.addEventListener('click', clearNewCover);
+
+    const editCoverInput = document.getElementById('edit-post-cover-image');
+    const editCoverPick = document.getElementById('edit-post-cover-pick');
+    const editCurrentCoverPreview = document.getElementById('edit-post-current-cover');
+    const editRemoveCover = document.getElementById('edit-post-remove-cover');
+    const editRemoveHint = document.getElementById('edit-post-remove-cover-hint');
+    const editNewCoverPreview = document.getElementById('edit-post-new-cover-preview');
+    const editNewCoverImg = document.getElementById('edit-post-new-cover-img');
+    const editNewCoverName = document.getElementById('edit-post-new-cover-name');
+    const editNewCoverClear = document.getElementById('edit-post-new-cover-clear');
+    let editNewCoverUrl = '';
+
+    function clearEditNewCover() {
+      if (editNewCoverUrl) URL.revokeObjectURL(editNewCoverUrl);
+      editNewCoverUrl = '';
+      if (editCoverInput) editCoverInput.value = '';
+      if (editNewCoverImg) editNewCoverImg.src = '';
+      if (editNewCoverName) editNewCoverName.textContent = 'New cover selected';
+      if (editNewCoverPreview) editNewCoverPreview.classList.add('hidden');
+      const currentUrl = editCurrentCoverPreview?.dataset?.coverUrl || '';
+      if (editCurrentCoverPreview) editCurrentCoverPreview.classList.toggle('hidden', !currentUrl);
+    }
+
+    editCoverInput?.addEventListener('change', () => {
+      const file = editCoverInput.files && editCoverInput.files[0];
+      if (!file) return clearEditNewCover();
+      if (editNewCoverUrl) URL.revokeObjectURL(editNewCoverUrl);
+      editNewCoverUrl = URL.createObjectURL(file);
+      if (editNewCoverImg) editNewCoverImg.src = editNewCoverUrl;
+      if (editNewCoverName) editNewCoverName.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+      if (editNewCoverPreview) editNewCoverPreview.classList.remove('hidden');
+      if (editRemoveCover) editRemoveCover.checked = false;
+      if (editRemoveHint) editRemoveHint.classList.add('hidden');
+      if (editCurrentCoverPreview) editCurrentCoverPreview.classList.add('hidden');
+    });
+    editCoverPick?.addEventListener('click', () => editCoverInput?.click());
+    editNewCoverClear?.addEventListener('click', clearEditNewCover);
+
+    editRemoveCover?.addEventListener('change', () => {
+      const checked = editRemoveCover.checked;
+      if (checked) {
+        clearEditNewCover();
+        if (editRemoveHint) editRemoveHint.classList.remove('hidden');
+      } else {
+        if (editRemoveHint) editRemoveHint.classList.add('hidden');
+      }
+    });
+
+    window.cvwebBlogUpload = {
+      clearNewCover,
+      clearEditNewCover,
+      syncEdit: () => {},
+    };
+
+    const editTitle = document.getElementById('edit-post-title');
+    const editSlug = document.getElementById('edit-post-slug');
+    const editSlugGenerate = document.getElementById('edit-post-slug-generate');
+    const editPreviewLink = document.getElementById('edit-post-preview-link');
+    const editContent = document.getElementById('edit-post-content');
+    const editContentStats = document.getElementById('edit-post-content-stats');
+
+    function updateEditPreview() {
+      if (!editPreviewLink || !editSlug) return;
+      editPreviewLink.href = _postUrlFromSlug(editSlug.value);
+    }
+
+    function updateEditContentStats() {
+      if (!editContent || !editContentStats) return;
+      const raw = (editContent.value || '');
+      const text = raw.trim();
+      const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+      const minutes = words ? Math.max(1, Math.ceil(words / 220)) : 0;
+      const chars = raw.length;
+      editContentStats.textContent = `${words} words · ${minutes} min read · ${chars} chars`;
+    }
+
+    editSlug?.addEventListener('input', () => {
+      updateEditPreview();
+    });
+    editTitle?.addEventListener('input', () => {
+      updateEditContentStats();
+    });
+    editContent?.addEventListener('input', updateEditContentStats);
+
+    editSlugGenerate?.addEventListener('click', () => {
+      if (!editTitle || !editSlug) return;
+      editSlug.value = slugify(editTitle.value);
+      updateEditPreview();
+    });
+
+    window.cvwebBlogUpload.syncEdit = () => {
+      updateEditPreview();
+      updateEditContentStats();
+    };
+
+    updateEditPreview();
+    updateEditContentStats();
+
+    ['newPostPanel', 'editPostPanel'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('click', (event) => {
+        if (event.target === el) togglePanel(id, false);
+      });
+    });
 
     function matches(row) {
       const q = (searchInput?.value || '').toLowerCase().trim();

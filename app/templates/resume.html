@@ -4,53 +4,310 @@
 
 {% block content %}
 
-<section class="max-w-4xl mx-auto space-y-8">
-  <header class="space-y-3">
-    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium">
-      <i class="bi bi-file-earmark-text"></i> Resume
+<section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-indigo-500/10 blur-[100px] -z-10 rounded-full opacity-50 pointer-events-none"></div>
+
+  <header class="mb-12 space-y-8">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+      <div class="space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-medium uppercase tracking-wider">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+          </span>
+          Live Resume
+        </div>
+        <h1 class="text-5xl md:text-7xl font-black text-white tracking-tight">
+          Angel <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Burgos</span>
+        </h1>
+        <p class="text-slate-400 text-xl max-w-2xl font-light">
+          Computer Systems Engineer specializing in <span class="text-slate-200 font-medium">Data Engineering</span>, <span class="text-slate-200 font-medium">Backend Systems</span>, and <span class="text-slate-200 font-medium">Automation</span>.
+        </p>
+      </div>
+
+      <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:flex-wrap">
+        <a class="group relative inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-all shadow-lg shadow-indigo-500/20 {{ '' if cv_exists else 'opacity-50 pointer-events-none' }}" href="{{ url_for('main.download_cv') }}">
+          <i class="bi bi-file-earmark-pdf text-lg"></i> 
+          <span>Download PDF</span>
+        </a>
+        <a class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/50 text-slate-300 hover:text-white transition-all backdrop-blur-sm" href="{{ url_for('main.contact') }}">
+          <i class="bi bi-envelope"></i> Contact
+        </a>
+        <button type="button" class="inline-flex items-center justify-center h-[50px] w-[50px] rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/50 text-slate-300 hover:text-white transition-all" onclick="window.print()" title="Print View">
+          <i class="bi bi-printer"></i>
+        </button>
+
+        <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400 sm:ml-2">
+          {% if cv_exists %}
+            <span class="px-2 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-200 inline-flex items-center gap-1.5">
+              <i class="bi bi-check2-circle"></i> PDF ready
+            </span>
+            <span class="font-mono text-slate-300">{{ cv_filename }}</span>
+            {% if cv_size_display %}<span class="text-slate-500">({{ cv_size_display }})</span>{% endif %}
+          {% else %}
+            <span class="px-2 py-1 rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-200 inline-flex items-center gap-1.5">
+              <i class="bi bi-exclamation-triangle"></i> PDF not uploaded
+            </span>
+            <a class="underline underline-offset-4 hover:text-slate-200" href="{{ url_for('auth.login', next=url_for('auth.dashboard')) }}">Upload in dashboard</a>
+          {% endif %}
+        </div>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Resume</h1>
-    <p class="text-slate-400 text-lg leading-relaxed">
-      Download the PDF resume or contact me directly. If the file isn’t available yet, this page stays as the fallback.
-    </p>
   </header>
 
-  <div class="card p-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-    <div class="space-y-1">
-      <p class="text-white font-semibold">Prefer a PDF?</p>
-      <p class="text-slate-400 text-sm">Download the latest version of my resume.</p>
-    </div>
-    <div class="flex gap-2">
-      <a class="btn btn-primary" href="{{ url_for('main.download_cv') }}">
-        <i class="bi bi-download"></i> Download PDF
-      </a>
-      <a class="btn btn-secondary" href="{{ url_for('main.contact') }}">
-        <i class="bi bi-envelope"></i> Contact
-      </a>
-    </div>
-  </div>
+	  <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+    
+	    <aside class="space-y-6 lg:sticky lg:top-28 lg:col-span-4">
+      
+      <div class="rounded-2xl border border-slate-800 bg-slate-950/60 backdrop-blur-xl p-6 shadow-2xl overflow-hidden relative group">
+        <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        
+        <div class="relative z-10 space-y-6">
+          <div class="flex items-center gap-4">
+            <div class="h-14 w-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
+              <span class="font-bold text-xl">AB</span>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-1">Status</p>
+              <div class="flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
+                <span class="text-slate-200 font-medium">Open to Work</span>
+              </div>
+            </div>
+          </div>
 
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="card p-6 space-y-2">
-      <p class="text-xs uppercase tracking-widest text-slate-500 font-semibold">Target Roles</p>
-      <p class="text-slate-200">Data Engineer</p>
-      <p class="text-slate-200">DevOps Engineer</p>
-      <p class="text-slate-200">Backend Engineer (Flask)</p>
-    </div>
-    <div class="card p-6 space-y-2">
-      <p class="text-xs uppercase tracking-widest text-slate-500 font-semibold">Core Skills</p>
-      <p class="text-slate-200">ETL & pipelines</p>
-      <p class="text-slate-200">Docker & Linux</p>
-      <p class="text-slate-200">CI/CD & deployment</p>
-    </div>
-    <div class="card p-6 space-y-2">
-      <p class="text-xs uppercase tracking-widest text-slate-500 font-semibold">Availability</p>
-      <p class="text-slate-200">Open to full-time</p>
-      <p class="text-slate-200">Open to contract</p>
-      <p class="text-slate-200">Remote / On-site</p>
-    </div>
+          <hr class="border-slate-800">
+
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 text-slate-300">
+              <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center border border-slate-800 text-indigo-400"><i class="bi bi-geo-alt"></i></div>
+              <span class="text-sm">Remote / Mexico</span>
+            </div>
+            <div class="flex items-center gap-3 text-slate-300">
+              <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center border border-slate-800 text-indigo-400"><i class="bi bi-translate"></i></div>
+              <span class="text-sm">English (B2) / Spanish (Native)</span>
+            </div>
+            <div class="flex items-center gap-3 text-slate-300">
+              <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center border border-slate-800 text-indigo-400"><i class="bi bi-code-slash"></i></div>
+              <span class="text-sm">Full Stack / Data</span>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 pt-2">
+             <a href="{{ url_for('projects.projects_home') }}" class="flex items-center justify-center gap-2 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white hover:border-indigo-500/50 transition-colors">
+               <i class="bi bi-folder2-open"></i> Portfolio
+             </a>
+	             <a href="https://github.com/angelbvdev" target="_blank" class="flex items-center justify-center gap-2 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white hover:border-indigo-500/50 transition-colors">
+	               <i class="bi bi-github"></i> GitHub
+	             </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-800 bg-slate-950/60 backdrop-blur-xl p-6 shadow-xl">
+        <h3 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+          <i class="bi bi-cpu text-indigo-400"></i> Technical Arsenal
+        </h3>
+        
+        <div class="space-y-5">
+          <div>
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Core Stack</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1.5 rounded-md text-sm font-medium bg-slate-900 text-slate-300 border border-slate-800 hover:border-indigo-500/50 hover:text-indigo-300 transition-colors cursor-default">Python</span>
+              <span class="px-3 py-1.5 rounded-md text-sm font-medium bg-slate-900 text-slate-300 border border-slate-800 hover:border-indigo-500/50 hover:text-indigo-300 transition-colors cursor-default">SQL</span>
+              <span class="px-3 py-1.5 rounded-md text-sm font-medium bg-slate-900 text-slate-300 border border-slate-800 hover:border-indigo-500/50 hover:text-indigo-300 transition-colors cursor-default">Docker</span>
+              <span class="px-3 py-1.5 rounded-md text-sm font-medium bg-slate-900 text-slate-300 border border-slate-800 hover:border-indigo-500/50 hover:text-indigo-300 transition-colors cursor-default">Linux</span>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Data Engineering</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded text-xs font-medium bg-slate-900/50 text-slate-400 border border-slate-800/50">ETL Pipelines</span>
+              <span class="px-2.5 py-1 rounded text-xs font-medium bg-slate-900/50 text-slate-400 border border-slate-800/50">Pandas/NumPy</span>
+              <span class="px-2.5 py-1 rounded text-xs font-medium bg-slate-900/50 text-slate-400 border border-slate-800/50">Data Cleaning</span>
+              <span class="px-2.5 py-1 rounded text-xs font-medium bg-slate-900/50 text-slate-400 border border-slate-800/50">Scraping</span>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Web & DevOps</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded text-xs font-medium bg-slate-900/50 text-slate-400 border border-slate-800/50">Flask</span>
+              <span class="px-2.5 py-1 rounded text-xs font-medium bg-slate-900/50 text-slate-400 border border-slate-800/50">Tailwind CSS</span>
+              <span class="px-2.5 py-1 rounded text-xs font-medium bg-slate-900/50 text-slate-400 border border-slate-800/50">CI/CD</span>
+              <span class="px-2.5 py-1 rounded text-xs font-medium bg-slate-900/50 text-slate-400 border border-slate-800/50">Git</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+	    <main class="space-y-10 lg:col-span-8">
+      
+      <section id="overview" class="rounded-3xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 p-8 shadow-xl">
+        <h2 class="text-2xl font-bold text-white mb-4">Professional Overview</h2>
+        <div class="prose prose-invert prose-lg max-w-none text-slate-300 leading-relaxed">
+          <p>
+            I am a results-oriented Computer Systems Engineer focused on building robust data infrastructure and scalable backend systems. My passion lies in transforming raw data into actionable insights through efficient ETL pipelines and automated workflows.
+          </p>
+          <div class="grid md:grid-cols-2 gap-4 mt-6 not-prose">
+            <div class="p-4 rounded-xl bg-slate-950/50 border border-slate-800/50">
+              <div class="flex items-center gap-3 mb-2">
+                <i class="bi bi-database-fill-gear text-indigo-400 text-xl"></i>
+                <h4 class="font-semibold text-white">Data Engineering</h4>
+              </div>
+              <p class="text-sm text-slate-400">Designing and maintaining data architectures, ensuring data quality, and optimizing query performance.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/50 border border-slate-800/50">
+              <div class="flex items-center gap-3 mb-2">
+                <i class="bi bi-server text-cyan-400 text-xl"></i>
+                <h4 class="font-semibold text-white">Backend Development</h4>
+              </div>
+              <p class="text-sm text-slate-400">Building RESTful APIs using Flask/Python, managing server configurations, and containerization.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="projects">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-white">Featured Projects</h2>
+          <a class="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1" href="{{ url_for('projects.projects_home') }}">
+            View Full Portfolio <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+
+        {% if recent_projects and recent_projects|length > 0 %}
+        <div class="space-y-4">
+          {% for p in recent_projects %}
+          <article class="group relative rounded-2xl border border-slate-800 bg-slate-950 hover:bg-slate-900 transition-all p-6 md:p-8 hover:border-indigo-500/30">
+            <div class="flex flex-col md:flex-row gap-6 md:items-start">
+              
+              <div class="hidden md:flex h-16 w-16 shrink-0 rounded-xl bg-slate-900 border border-slate-800 items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform duration-300">
+                <i class="bi bi-terminal-fill text-2xl"></i>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-4">
+                  <h3 class="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors truncate">
+                    <a href="{{ url_for('projects.project_detail', project_id=p.id) }}" class="focus:outline-none">
+                      <span class="absolute inset-0" aria-hidden="true"></span>
+                      {{ p.title }}
+                    </a>
+                  </h3>
+                  <div class="relative z-10 flex gap-2">
+                    {% if p.github_url %}
+                    <a href="{{ p.github_url }}" target="_blank" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors" title="View Code">
+                      <i class="bi bi-github"></i>
+                    </a>
+                    {% endif %}
+                    {% if p.website_url %}
+                    <a href="{{ p.website_url }}" target="_blank" class="p-2 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 hover:text-indigo-300 transition-colors" title="Live Demo">
+                      <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <p class="mt-2 text-slate-400 line-clamp-2 leading-relaxed">{{ p.description }}</p>
+
+                {% if p.technologies %}
+                <div class="mt-4 flex flex-wrap gap-2">
+                  {% for tech in p.technologies.split(',')[:5] %}
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                    {{ tech.strip() }}
+                  </span>
+                  {% endfor %}
+                  {% if p.technologies.split(',')|length > 5 %}
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium text-slate-500">
+                    +{{ p.technologies.split(',')|length - 5 }}
+                  </span>
+                  {% endif %}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="rounded-2xl border border-dashed border-slate-800 p-10 text-center">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-slate-500 mb-4">
+            <i class="bi bi-folder"></i>
+          </div>
+          <p class="text-slate-400">No projects added yet.</p>
+        </div>
+        {% endif %}
+      </section>
+
+      <section class="rounded-3xl border border-slate-800 bg-slate-950/30 p-8">
+        <h2 class="text-xl font-bold text-white mb-6">Education & Certifications</h2>
+        <div class="relative pl-6 border-l border-slate-800 space-y-8">
+          
+          <div class="relative">
+            <span class="absolute -left-[31px] top-1 h-4 w-4 rounded-full border-2 border-indigo-500 bg-slate-950"></span>
+            <h3 class="text-lg font-semibold text-white">Computer Systems Engineering</h3>
+            <p class="text-indigo-400 text-sm mb-1">Instituto Tecnológico Superior de Guasave</p>
+            <p class="text-slate-500 text-sm">Focus on Software Development and Network Infrastructure.</p>
+          </div>
+
+          <div class="relative">
+            <span class="absolute -left-[31px] top-1 h-4 w-4 rounded-full border-2 border-slate-700 bg-slate-950"></span>
+            <h3 class="text-lg font-semibold text-white">JLPT N2 Preparation</h3>
+            <p class="text-indigo-400 text-sm mb-1">Japanese Language Proficiency</p>
+            <p class="text-slate-500 text-sm">Advanced study of Japanese language and culture.</p>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
   </div>
 </section>
 
-{% endblock %}
+<style>
+  @media print {
+    @page { margin: 1cm; size: auto; }
+    body { background: white !important; color: black !important; -webkit-print-color-adjust: exact; }
+    
+    /* Hide non-print elements */
+    header div.flex-wrap, /* Hides buttons */
+    nav, 
+    .app-header, 
+    .app-footer,
+    .bi-github, .bi-box-arrow-up-right, /* Hide icon links */
+    .absolute { display: none !important; }
 
+    /* Layout Reset for Print */
+    section.max-w-7xl { max-width: 100% !important; padding: 0 !important; }
+    .grid { display: block !important; }
+    aside { position: static !important; width: 100% !important; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+    
+    /* Typography Overrides */
+    h1 { color: black !important; font-size: 24pt !important; margin-bottom: 5px !important; }
+    h1 span { color: black !important; -webkit-text-fill-color: black !important; }
+    p { color: #333 !important; }
+    h2 { color: #000 !important; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 20px; }
+    
+    /* Card Resets */
+    .card, .rounded-2xl, .rounded-3xl, article { 
+      border: none !important; 
+      background: none !important; 
+      box-shadow: none !important; 
+      padding: 0 !important; 
+      margin-bottom: 15px !important; 
+    }
+    
+    /* Skills as a list */
+    .flex-wrap { gap: 5px !important; }
+    .bg-slate-900, .bg-slate-950, .bg-indigo-500\/10 { background: white !important; border: 1px solid #ddd !important; color: #000 !important; padding: 2px 8px !important; }
+    
+    /* Links */
+    a { text-decoration: none !important; color: black !important; pointer-events: none; }
+    a[href]:after { content: none !important; } 
+  }
+</style>
+
+{% endblock %}

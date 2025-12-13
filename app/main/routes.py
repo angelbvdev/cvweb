@@ -66,8 +66,8 @@ def contact_legacy():
 
 @bp.route('/download-cv')
 def download_cv():
-    path = os.path.join(current_app.root_path, 'static', 'documents')
-    filename = 'cv_angel.pdf'
+    path = current_app.config.get('DOCUMENTS_FOLDER') or os.path.join(current_app.root_path, 'static', 'documents')
+    filename = current_app.config.get('CV_FILENAME') or 'cv_angel.pdf'
     full_path = os.path.join(path, filename)
     if not os.path.exists(full_path):
         flash('Resume file is not available yet. You can still reach out via the contact form.', 'info')
@@ -80,4 +80,40 @@ def download_cv_legacy():
 
 @bp.route('/resume')
 def resume():
-    return render_template('resume.html', title='Resume')
+    recent_projects = []
+    try:
+        from app.models import Project
+
+        recent_projects = (
+            Project.query.order_by(Project.created_at.desc())
+            .limit(3)
+            .all()
+        )
+    except Exception:
+        recent_projects = []
+
+    documents_dir = current_app.config.get('DOCUMENTS_FOLDER') or os.path.join(current_app.root_path, 'static', 'documents')
+    cv_filename = current_app.config.get('CV_FILENAME') or 'cv_angel.pdf'
+    cv_path = os.path.join(documents_dir, cv_filename)
+    cv_exists = os.path.exists(cv_path)
+    cv_size_display = None
+    if cv_exists:
+        try:
+            size = os.path.getsize(cv_path)
+            if size < 1024:
+                cv_size_display = f"{size} B"
+            elif size < 1024 * 1024:
+                cv_size_display = f"{round(size / 1024)} KB"
+            else:
+                cv_size_display = f"{size / (1024 * 1024):.1f} MB"
+        except Exception:
+            cv_size_display = None
+
+    return render_template(
+        'resume.html',
+        title='Resume',
+        recent_projects=recent_projects,
+        cv_exists=cv_exists,
+        cv_filename=cv_filename,
+        cv_size_display=cv_size_display,
+    )

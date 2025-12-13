@@ -60,8 +60,8 @@
       </div>
     </div>
 
-    {# --- Stats Cards --- #}
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
+	    {# --- Stats Cards --- #}
+	    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
       <div class="card p-5 flex items-center justify-between relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         <div class="relative z-10">
@@ -105,10 +105,49 @@
           <i class="bi bi-images text-2xl"></i>
         </div>
       </div>
-    </div>
+	    </div>
 
-    {# --- Data Table Section --- #}
-    <div class="card overflow-hidden border border-slate-800/60 shadow-xl shadow-black/20">
+	    <div class="card p-6 border border-slate-800/60 bg-slate-900/40">
+	      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+	        <div class="space-y-1">
+	          <div class="flex items-center gap-2 text-white font-semibold">
+	            <i class="bi bi-file-earmark-pdf"></i>
+	            <span>Resume (PDF)</span>
+	          </div>
+	          {% if cv_exists %}
+	            <p class="text-sm text-slate-300">
+	              Current: <span class="font-mono text-slate-100">{{ cv_filename }}</span>
+	              {% if cv_size_display %}<span class="text-slate-500">({{ cv_size_display }})</span>{% endif %}
+	            </p>
+	          {% else %}
+	            <p class="text-sm text-slate-400">No CV uploaded yet. Upload a PDF to enable the download button on the resume page.</p>
+	          {% endif %}
+	          <p class="text-xs text-slate-500">Stored in the static documents folder.</p>
+	        </div>
+
+	        <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+	          <form action="{{ url_for('auth.upload_cv') }}" method="POST" enctype="multipart/form-data" class="flex flex-col sm:flex-row gap-2 sm:items-center">
+	            <input type="file" name="cv_file" accept="application/pdf" class="w-full sm:w-auto rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-100">
+	            <button type="submit" class="btn btn-primary btn-sm whitespace-nowrap">
+	              <i class="bi bi-upload"></i> Upload CV
+	            </button>
+	          </form>
+		          <div class="flex gap-2">
+		            <a class="btn btn-secondary btn-sm whitespace-nowrap {{ '' if cv_exists else 'opacity-50 pointer-events-none' }}" href="{{ url_for('main.download_cv') }}" target="_blank">
+		              <i class="bi bi-download"></i> Download
+		            </a>
+		            <form action="{{ url_for('auth.delete_cv') }}" method="POST" onsubmit="return confirm('Delete the current CV PDF?');">
+		              <button type="submit" class="btn btn-secondary btn-sm whitespace-nowrap {{ '' if cv_exists else 'opacity-50 cursor-not-allowed' }}" {% if not cv_exists %}disabled{% endif %}>
+		                <i class="bi bi-trash"></i> Delete
+		              </button>
+		            </form>
+		          </div>
+	        </div>
+	      </div>
+	    </div>
+
+	    {# --- Data Table Section --- #}
+	    <div class="card overflow-hidden border border-slate-800/60 shadow-xl shadow-black/20">
       <div class="p-5 border-b border-slate-800/60 bg-slate-900/50">
         <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div class="flex flex-col md:flex-row gap-3 md:items-center flex-1">
@@ -260,6 +299,8 @@
                           data-github="{{ project.github_url or '' }}"
                           data-web="{{ project.website_url or '' }}"
                           data-published-at="{{ project.created_at.strftime('%Y-%m-%d') }}"
+                          data-image-ids='{{ project.images|map(attribute="id")|list|tojson }}'
+                          data-image-paths='{{ project.images|map(attribute="image_path")|list|tojson }}'
                           onclick="openEditFromButton(this)">
                     <i class="bi bi-pencil-fill text-xs"></i>
                   </button>
@@ -336,15 +377,34 @@
   <label class="space-y-2 text-sm font-medium text-slate-300 block">
     <span>{{ 'Add more images' if is_edit else 'Project images' }}</span>
     <div class="relative">
-      <input type="file" name="images" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+      <input id="{{ 'edit' if is_edit else 'new' }}-images" type="file" name="images" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
       <div class="w-full rounded-xl border-2 border-dashed border-slate-700/50 bg-slate-800/30 px-6 py-8 text-center transition-all hover:bg-slate-800/50 hover:border-indigo-500/30">
         <i class="bi bi-cloud-arrow-up text-3xl text-slate-500 mb-2"></i>
         <p class="text-slate-300 font-medium">Click to upload or drag and drop</p>
-        <p class="text-xs text-slate-500 mt-1">PNG, JPG (Max 2MB per file)</p>
+        <p class="text-xs text-slate-500 mt-1">PNG, JPG, WEBP, GIF (Max 16MB total)</p>
         {% if is_edit %}<p class="text-xs text-indigo-300 mt-3 font-medium">Existing images will remain.</p>{% endif %}
       </div>
     </div>
   </label>
+
+  <div id="{{ 'edit' if is_edit else 'new' }}-uploads-preview" class="hidden rounded-xl border border-slate-800 bg-slate-950/20 p-4">
+    <div class="flex items-center justify-between gap-3 mb-3">
+      <p class="text-sm font-medium text-slate-200">New uploads <span id="{{ 'edit' if is_edit else 'new' }}-uploads-count" class="text-slate-500 font-normal"></span></p>
+      <button id="{{ 'edit' if is_edit else 'new' }}-uploads-clear" type="button" class="btn btn-secondary btn-sm">Clear</button>
+    </div>
+    <div id="{{ 'edit' if is_edit else 'new' }}-uploads-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+  </div>
+
+  {% if is_edit %}
+  <div class="space-y-3">
+    <div class="flex items-center justify-between gap-3">
+      <p class="text-sm font-medium text-slate-300">Existing images</p>
+      <p class="text-xs text-slate-500">Select images to delete, then save.</p>
+    </div>
+    <div id="edit-existing-images" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+    <p id="edit-no-images" class="hidden text-sm text-slate-500 italic">No images uploaded yet.</p>
+  </div>
+  {% endif %}
 
   <label class="space-y-2 text-sm font-medium text-slate-300 block">
     <span>Short description <span class="text-rose-400">*</span></span>
@@ -438,13 +498,167 @@
     if (show) {
       el.classList.remove('hidden');
       el.classList.add('flex');
+      if (id === 'newProjectPanel') resetUploads('new');
+      if (id === 'editProjectPanel') resetUploads('edit');
     } else {
       el.classList.add('hidden');
       el.classList.remove('flex');
     }
   }
 
-  function openEdit(id, title, slug, category, tech, desc, longDesc, github, web, publishedAt) {
+  const uploadsBase = "{{ url_for('static', filename='uploads/') }}";
+  const uploadsState = {};
+
+  function formatBytes(bytes) {
+    const n = Number(bytes || 0);
+    if (!Number.isFinite(n) || n <= 0) return '0 KB';
+    if (n < 1024) return `${n} B`;
+    const kb = n / 1024;
+    if (kb < 1024) return `${Math.round(kb)} KB`;
+    return `${(kb / 1024).toFixed(1)} MB`;
+  }
+
+  function initUploads(prefix) {
+    const input = document.getElementById(`${prefix}-images`);
+    const preview = document.getElementById(`${prefix}-uploads-preview`);
+    const grid = document.getElementById(`${prefix}-uploads-grid`);
+    const count = document.getElementById(`${prefix}-uploads-count`);
+    const clear = document.getElementById(`${prefix}-uploads-clear`);
+    if (!input || !preview || !grid || !count || !clear) return;
+
+    let objectUrls = [];
+
+    function revokeAll() {
+      for (const url of objectUrls) URL.revokeObjectURL(url);
+      objectUrls = [];
+    }
+
+    function setFiles(files) {
+      const dt = new DataTransfer();
+      for (const f of files) dt.items.add(f);
+      input.files = dt.files;
+    }
+
+    function render(files) {
+      revokeAll();
+      grid.innerHTML = '';
+
+      if (!files || files.length === 0) {
+        preview.classList.add('hidden');
+        count.textContent = '';
+        return;
+      }
+
+      const totalBytes = files.reduce((sum, f) => sum + (f?.size || 0), 0);
+      count.textContent = `(${files.length}, ${formatBytes(totalBytes)})`;
+      preview.classList.remove('hidden');
+
+      files.forEach((file, idx) => {
+        const url = URL.createObjectURL(file);
+        objectUrls.push(url);
+
+        const card = document.createElement('div');
+        card.className = 'relative overflow-hidden rounded-xl border border-slate-800 bg-slate-950/30';
+
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = file.name || 'Upload preview';
+        img.className = 'h-28 w-full object-cover';
+
+        const meta = document.createElement('div');
+        meta.className = 'px-3 py-2 text-xs text-slate-300 flex items-center justify-between gap-2';
+
+        const name = document.createElement('span');
+        name.className = 'truncate';
+        name.textContent = file.name || 'image';
+
+        const size = document.createElement('span');
+        size.className = 'text-slate-500';
+        size.textContent = formatBytes(file.size);
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'icon-btn icon-btn-sm absolute top-2 right-2';
+        remove.title = 'Remove from upload';
+        remove.innerHTML = '<i class="bi bi-x-lg"></i>';
+        remove.addEventListener('click', () => {
+          const current = Array.from(input.files || []);
+          current.splice(idx, 1);
+          setFiles(current);
+          render(current);
+        });
+
+        meta.appendChild(name);
+        meta.appendChild(size);
+        card.appendChild(remove);
+        card.appendChild(img);
+        card.appendChild(meta);
+        grid.appendChild(card);
+      });
+    }
+
+    function reset() {
+      revokeAll();
+      input.value = '';
+      render([]);
+    }
+
+    input.addEventListener('change', () => render(Array.from(input.files || [])));
+    clear.addEventListener('click', reset);
+
+    uploadsState[prefix] = { reset };
+  }
+
+  function resetUploads(prefix) {
+    uploadsState[prefix]?.reset?.();
+  }
+
+  function renderExistingImages(imageIds, imagePaths) {
+    const grid = document.getElementById('edit-existing-images');
+    const empty = document.getElementById('edit-no-images');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    const pairs = [];
+    const ids = Array.isArray(imageIds) ? imageIds : [];
+    const paths = Array.isArray(imagePaths) ? imagePaths : [];
+    for (let i = 0; i < Math.min(ids.length, paths.length); i++) {
+      const id = Number(ids[i]);
+      const path = String(paths[i] || '');
+      if (!Number.isFinite(id) || !path) continue;
+      pairs.push({ id, path });
+    }
+
+    if (empty) empty.classList.toggle('hidden', pairs.length !== 0);
+    if (pairs.length === 0) return;
+
+    const base = uploadsBase.endsWith('/') ? uploadsBase : `${uploadsBase}/`;
+    for (const img of pairs) {
+      const url = `${base}${img.path}`;
+      const wrapper = document.createElement('label');
+      wrapper.className = 'group relative overflow-hidden rounded-xl border border-slate-800 bg-slate-950/30 cursor-pointer hover:border-rose-500/40 transition';
+      wrapper.innerHTML = `
+        <input type="checkbox" name="delete_image_ids" value="${img.id}" class="absolute top-3 left-3 h-4 w-4 accent-rose-500 z-10">
+        <a href="${url}" target="_blank" class="absolute top-2 right-2 z-10 tag opacity-90 hover:opacity-100">Open</a>
+        <img src="${url}" alt="Project image" class="h-28 w-full object-cover">
+        <div class="px-3 py-2 text-xs text-slate-300 flex items-center justify-between">
+          <span class="truncate">#${img.id}</span>
+          <span class="tag border-rose-500/30 bg-rose-500/10 text-rose-200 hidden" data-delete-badge>Delete</span>
+        </div>
+      `;
+      const checkbox = wrapper.querySelector('input[type="checkbox"]');
+      const badge = wrapper.querySelector('[data-delete-badge]');
+      checkbox?.addEventListener('change', () => {
+        const marked = checkbox.checked;
+        wrapper.classList.toggle('opacity-60', marked);
+        wrapper.classList.toggle('border-rose-500/50', marked);
+        badge?.classList.toggle('hidden', !marked);
+      });
+      grid.appendChild(wrapper);
+    }
+  }
+
+  function openEdit(id, title, slug, category, tech, desc, longDesc, github, web, publishedAt, imageIds, imagePaths) {
     const form = document.getElementById('editProjectForm');
     form.action = "{{ url_for('auth.edit_project', id=0) }}".replace('0', id);
     document.getElementById('edit-title').value = title;
@@ -456,10 +670,21 @@
     document.getElementById('edit-long').value = longDesc || '';
     document.getElementById('edit-github').value = github || '';
     document.getElementById('edit-web').value = web || '';
+    renderExistingImages(imageIds, imagePaths);
+    resetUploads('edit');
     togglePanel('editProjectPanel', true);
   }
 
   function openEditFromButton(button) {
+    let imageIds = [];
+    let imagePaths = [];
+    try {
+      imageIds = JSON.parse(button.dataset.imageIds || '[]');
+    } catch {}
+    try {
+      imagePaths = JSON.parse(button.dataset.imagePaths || '[]');
+    } catch {}
+
     openEdit(
       button.dataset.id,
       button.dataset.title || '',
@@ -470,7 +695,9 @@
       button.dataset.long || '',
       button.dataset.github || '',
       button.dataset.web || '',
-      button.dataset.publishedAt || ''
+      button.dataset.publishedAt || '',
+      imageIds,
+      imagePaths
     );
   }
 
@@ -558,6 +785,9 @@
   function initDashboardEnhancements() {
     const tbody = document.getElementById('projectsTbody');
     if (!tbody) return;
+
+    initUploads('new');
+    initUploads('edit');
 
     const newTitle = document.getElementById('new-title');
     const newSlug = document.getElementById('new-slug');

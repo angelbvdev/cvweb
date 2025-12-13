@@ -39,3 +39,7 @@ class Config:
     # 5. Configuración de Subidas de Archivos
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(os.path.abspath(os.path.dirname(__file__)), 'app/static/uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024 # 16 MB límite de subida
+
+    # 6. Documentos (CV)
+    DOCUMENTS_FOLDER = os.environ.get('DOCUMENTS_FOLDER') or os.path.join(os.path.abspath(os.path.dirname(__file__)), 'app/static/documents')
+    CV_FILENAME = os.environ.get('CV_FILENAME') or 'cv_angel.pdf'
