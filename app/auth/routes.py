@@ -4,8 +4,10 @@ from uuid import uuid4
 
 from flask import render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy import inspect
+from sqlalchemy.orm import load_only
 from app.extensions import db
-from app.models import User, Project, ProjectImage, BlogPost
+from app.models import User, Project, ProjectImage, BlogPost, BlogTag
 from . import bp
 from werkzeug.utils import secure_filename
 
@@ -18,6 +20,64 @@ def _is_allowed_image(filename: str) -> bool:
 def _blog_upload_dir() -> str:
     base = current_app.config['UPLOAD_FOLDER']
     return os.path.join(base, 'blog')
+
+def _blog_posts_has_meta_columns() -> bool:
+    try:
+        cols = {c["name"] for c in inspect(db.engine).get_columns("blog_posts")}
+        return "meta_description" in cols and "meta_title" in cols
+    except Exception:
+        return False
+
+
+def _blog_post_query_safe():
+    return BlogPost.query.options(
+        load_only(
+            BlogPost.id,
+            BlogPost.slug,
+            BlogPost.title,
+            BlogPost.excerpt,
+            BlogPost.content,
+            BlogPost.cover_image_path,
+            BlogPost.is_published,
+            BlogPost.published_at,
+            BlogPost.created_at,
+            BlogPost.updated_at,
+        )
+    )
+
+
+def _slugify_text(value: str, max_len: int = 120) -> str:
+    value = (value or "").strip().lower()
+    out = []
+    prev_dash = False
+    for ch in value:
+        if ("a" <= ch <= "z") or ("0" <= ch <= "9"):
+            out.append(ch)
+            prev_dash = False
+            continue
+        if ch in {" ", "-", "_", ".", "/"}:
+            if not prev_dash and out:
+                out.append("-")
+                prev_dash = True
+    slug = "".join(out).strip("-")[:max_len]
+    return slug or "tag"
+
+
+def _parse_tags(tag_string: str):
+    raw = [t.strip() for t in (tag_string or "").split(",")]
+    return [t for t in raw if t]
+
+
+def _upsert_tags(tag_string: str):
+    tags = []
+    for name in _parse_tags(tag_string):
+        slug = _slugify_text(name, max_len=80)
+        tag = BlogTag.query.filter_by(slug=slug).first()
+        if not tag:
+            tag = BlogTag(name=name, slug=slug)
+            db.session.add(tag)
+        tags.append(tag)
+    return tags
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -76,20 +136,30 @@ def dashboard():
 @login_required
 def blog():
     try:
-        posts = BlogPost.query.order_by(BlogPost.created_at.desc()).all()
+        posts = _blog_post_query_safe().order_by(BlogPost.created_at.desc()).all()
     except Exception as e:
         posts = []
         flash(f'Blog tables not ready yet ({e}). Run migrations to enable blog admin.', 'warning')
-    return render_template('auth/blog.html', title='Blog', posts=posts)
+    meta_ready = _blog_posts_has_meta_columns()
+    if not meta_ready:
+        flash('Blog admin needs a migration update. Run `flask db upgrade` to enable creating/editing posts.', 'warning')
+    return render_template('auth/blog.html', title='Blog', posts=posts, blog_meta_ready=meta_ready)
 
 
 @bp.route('/blog/create', methods=['POST'])
 @login_required
 def create_blog_post():
+    if not _blog_posts_has_meta_columns():
+        flash('Run `flask db upgrade` before creating posts (blog schema update pending).', 'danger')
+        return redirect(url_for('auth.blog'))
+
     title = (request.form.get('title') or '').strip()
     slug = (request.form.get('slug') or '').strip()
     excerpt = (request.form.get('excerpt') or '').strip() or None
     content = (request.form.get('content') or '').strip()
+    tags_string = (request.form.get('tags') or '').strip()
+    meta_title = (request.form.get('meta_title') or '').strip() or None
+    meta_description = (request.form.get('meta_description') or '').strip() or None
     is_published = request.form.get('is_published') == 'on'
 
     if not title or not slug or not content:
@@ -101,9 +171,12 @@ def create_blog_post():
         slug=slug,
         excerpt=excerpt,
         content=content,
+        meta_title=meta_title,
+        meta_description=meta_description,
         is_published=is_published,
         published_at=datetime.utcnow() if is_published else None,
     )
+    post.tags = _upsert_tags(tags_string)
 
     cover = request.files.get('cover_image')
     if cover and cover.filename:
@@ -119,7 +192,10 @@ def create_blog_post():
     try:
         db.session.add(post)
         db.session.commit()
-        flash('Post created.', 'success')
+        if is_published:
+            flash('Post created and published.', 'success')
+        else:
+            flash('Post created as a draft. Publish it to show on the public blog.', 'info')
     except Exception as e:
         db.session.rollback()
         flash(f'Error creating post: {str(e)}', 'danger')
@@ -130,12 +206,19 @@ def create_blog_post():
 @bp.route('/blog/edit/<int:id>', methods=['POST'])
 @login_required
 def edit_blog_post(id):
-    post = BlogPost.query.get_or_404(id)
+    if not _blog_posts_has_meta_columns():
+        flash('Run `flask db upgrade` before editing posts (blog schema update pending).', 'danger')
+        return redirect(url_for('auth.blog'))
+
+    post = _blog_post_query_safe().filter(BlogPost.id == id).first_or_404()
 
     title = (request.form.get('title') or '').strip()
     slug = (request.form.get('slug') or '').strip()
     excerpt = (request.form.get('excerpt') or '').strip() or None
     content = (request.form.get('content') or '').strip()
+    tags_string = (request.form.get('tags') or '').strip()
+    meta_title = (request.form.get('meta_title') or '').strip() or None
+    meta_description = (request.form.get('meta_description') or '').strip() or None
     is_published = request.form.get('is_published') == 'on'
 
     if not title or not slug or not content:
@@ -146,6 +229,9 @@ def edit_blog_post(id):
     post.slug = slug
     post.excerpt = excerpt
     post.content = content
+    post.meta_title = meta_title
+    post.meta_description = meta_description
+    post.tags = _upsert_tags(tags_string)
     post.is_published = is_published
     if is_published and not post.published_at:
         post.published_at = datetime.utcnow()
@@ -182,7 +268,7 @@ def edit_blog_post(id):
 @bp.route('/blog/delete/<int:id>', methods=['POST'])
 @login_required
 def delete_blog_post(id):
-    post = BlogPost.query.get_or_404(id)
+    post = _blog_post_query_safe().filter(BlogPost.id == id).first_or_404()
     try:
         if post.cover_image_path:
             path = os.path.join(_blog_upload_dir(), post.cover_image_path)

@@ -216,6 +216,11 @@ body {
 :root[data-theme="light"] .chip[data-active="true"] {
   color: #0f172a;
 }
+.chip-active {
+  background-color: rgba(var(--primary-rgb), 0.15) !important;
+  color: rgb(var(--primary-400)) !important;
+  border-color: rgba(var(--primary-rgb), 0.3) !important;
+}
 
 .tag {
   display: inline-flex;

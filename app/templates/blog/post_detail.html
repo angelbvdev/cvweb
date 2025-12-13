@@ -1,34 +1,133 @@
 {% extends "base.html" %}
 
-{% block title %}{{ post.title }} - Blog{% endblock %}
+{% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
 
-<section class="max-w-3xl mx-auto space-y-6">
-  <div>
-    <a href="{{ url_for('blog.index') }}" class="btn btn-secondary btn-sm">
-      <i class="bi bi-arrow-left"></i> Back to blog
+{# --- Progress Indicator (Optional visual flair) --- #}
+<div class="fixed top-0 left-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 z-50 w-full opacity-0" id="scrollProgress"></div>
+
+<article class="max-w-4xl mx-auto pb-20 relative">
+  
+  {# --- Navigation --- #}
+  <div class="mb-8">
+    <a href="{{ url_for('blog.index') }}" class="group inline-flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-indigo-400 transition-colors">
+      <i class="bi bi-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+      Back to writing
     </a>
   </div>
 
-  <header class="space-y-3">
-    <h1 class="text-4xl font-bold text-white tracking-tight">{{ post.title }}</h1>
+  {# --- Article Header --- #}
+  <header class="space-y-6 text-center mb-10">
+    <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-slate-500 font-mono">
+      {% if post.display_date %}
+      <time datetime="{{ post.display_date }}">{{ post.display_date.strftime('%B %d, %Y') }}</time>
+      {% else %}
+      <time datetime="{{ post.created_at }}">{{ post.created_at.strftime('%B %d, %Y') }}</time>
+      {% endif %}
+      <span class="text-slate-700">/</span>
+      <span>{{ post.reading_minutes or 5 }} min read</span>
+      {% if post.is_published is defined and not post.is_published %}
+        <span class="text-slate-700">/</span>
+        <span class="text-amber-300">Draft</span>
+      {% endif %}
+    </div>
+
+    <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
+      {{ post.title }}
+    </h1>
+
     {% if post.excerpt %}
-    <p class="text-slate-400 text-lg">{{ post.excerpt }}</p>
+    <p class="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+      {{ post.excerpt }}
+    </p>
+    {% endif %}
+
+    {% if post.tags is defined and post.tags %}
+    <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+      {% for t in post.tags %}
+        <a class="tag hover:opacity-90" href="{{ url_for('blog.index', tag=t.slug) }}">{{ t.name }}</a>
+      {% endfor %}
+    </div>
     {% endif %}
   </header>
 
-  {% if post.cover_image_path %}
-  <div class="card overflow-hidden border border-slate-800">
-    <img src="{{ url_for('static', filename='uploads/blog/' ~ post.cover_image_path) }}"
-         alt="{{ post.title }} cover"
-         class="w-full max-h-[420px] object-cover">
+  {# --- Draft Alert --- #}
+  {% if post.is_published is defined and not post.is_published %}
+  <div class="mb-10 mx-auto max-w-2xl rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 flex items-start gap-4 shadow-[0_0_20px_rgba(245,158,11,0.1)]">
+    <i class="bi bi-exclamation-triangle-fill text-amber-500 mt-0.5"></i>
+    <div class="space-y-1">
+      <p class="text-sm font-bold text-amber-200 uppercase tracking-wide">Preview Mode</p>
+      <p class="text-sm text-amber-200/70">This post is currently a draft. Only you can see this page.</p>
+    </div>
   </div>
   {% endif %}
 
-  <article class="card p-7 space-y-4 leading-relaxed text-slate-200 whitespace-pre-line">
+  {# --- Cover Image --- #}
+  {% if post.cover_image_path %}
+  <figure class="mb-12 relative group rounded-2xl overflow-hidden shadow-2xl shadow-black/50 border border-slate-800">
+    <img src="{{ url_for('static', filename='uploads/blog/' ~ post.cover_image_path) }}"
+         alt="{{ post.title }} cover"
+         class="w-full h-auto object-cover max-h-[500px] transform transition-transform duration-700 group-hover:scale-[1.02]">
+  </figure>
+  {% endif %}
+
+  {# --- Main Content --- #}
+  {# 
+     NOTE: 'prose-invert' creates dark mode typography. 
+     'prose-lg' makes the text slightly larger for easier reading.
+     We use 'whitespace-pre-wrap' to respect your newlines if you are writing plain text.
+     If you switch to Markdown later, remove 'whitespace-pre-wrap' and add the '| safe' filter.
+  #}
+  <div class="max-w-none mx-auto whitespace-pre-wrap break-words leading-relaxed text-slate-200 text-lg">
     {{ post.content }}
-  </article>
-</section>
+  </div>
+
+  {# --- Footer / Share --- #}
+  <hr class="my-12 border-slate-800/60" />
+
+  <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="text-slate-400 text-sm">Thanks for reading.</div>
+    <div class="flex items-center gap-2">
+      <p id="copyStatus" class="hidden text-sm text-emerald-300 border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 rounded-lg"></p>
+      <button id="copyLink" class="icon-btn" title="Copy link" type="button">
+        <i class="bi bi-link-45deg"></i>
+      </button>
+      <a href="https://twitter.com/intent/tweet?text={{ post.title|urlencode }}&url={{ request.url|urlencode }}"
+         target="_blank" class="icon-btn" title="Share on X" rel="noreferrer">
+        <i class="bi bi-twitter-x"></i>
+      </a>
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url|urlencode }}"
+         target="_blank" class="icon-btn" title="Share on LinkedIn" rel="noreferrer">
+        <i class="bi bi-linkedin"></i>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const btn = document.getElementById('copyLink');
+      const status = document.getElementById('copyStatus');
+      if (!btn || !status) return;
+
+      function show(msg) {
+        status.textContent = msg;
+        status.classList.remove('hidden');
+        window.clearTimeout(show._t);
+        show._t = window.setTimeout(() => status.classList.add('hidden'), 1600);
+      }
+
+      btn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          show('Link copied');
+        } catch {
+          window.prompt('Copy this link:', window.location.href);
+        }
+      });
+    })();
+  </script>
+
+</article>
 
 {% endblock %}

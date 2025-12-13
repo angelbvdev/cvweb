@@ -84,6 +84,8 @@ class BlogPost(db.Model):
     excerpt = db.Column(db.String(300))
     content = db.Column(db.Text, nullable=False)
     cover_image_path = db.Column(db.String(255))
+    meta_title = db.Column(db.String(200))
+    meta_description = db.Column(db.String(300))
 
     is_published = db.Column(db.Boolean, default=False, nullable=False, index=True)
     published_at = db.Column(db.DateTime)

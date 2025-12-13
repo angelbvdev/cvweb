@@ -17,11 +17,17 @@
       <a class="btn btn-secondary" href="{{ url_for('blog.index') }}" target="_blank">
         <i class="bi bi-box-arrow-up-right"></i> Open blog
       </a>
-      <button class="btn btn-primary" type="button" onclick="togglePanel('newPostPanel', true)">
+      <button class="btn btn-primary {{ '' if blog_meta_ready else 'opacity-50 cursor-not-allowed' }}" type="button" {% if blog_meta_ready %}onclick="togglePanel('newPostPanel', true)"{% else %}disabled{% endif %}>
         <i class="bi bi-plus-lg"></i> New post
       </button>
     </div>
   </header>
+
+  {% if blog_meta_ready is defined and not blog_meta_ready %}
+  <div class="card p-5 border border-amber-500/20 bg-amber-500/5 text-amber-200">
+    Blog schema update required. Run `flask db upgrade` to enable creating/editing posts.
+  </div>
+  {% endif %}
 
   <div class="card overflow-hidden">
     <div class="px-5 py-4 border-b border-slate-800">
@@ -52,6 +58,7 @@
             <th class="text-left px-5 py-3">Title / Slug</th>
             <th class="text-left px-5 py-3">Status</th>
             <th class="text-left px-5 py-3">Cover</th>
+            <th class="text-left px-5 py-3">Tags</th>
             <th class="text-left px-5 py-3">Created</th>
             <th class="text-right px-5 py-3">Actions</th>
           </tr>
@@ -75,7 +82,21 @@
             </td>
             <td class="px-5 py-3">
               {% if post.cover_image_path %}
-                <span class="tag">Yes</span>
+                <a class="tag" href="{{ url_for('static', filename='uploads/blog/' ~ post.cover_image_path) }}" target="_blank">View</a>
+              {% else %}
+                <span class="text-slate-400">—</span>
+              {% endif %}
+            </td>
+            <td class="px-5 py-3">
+              {% if post.tags %}
+                <div class="flex flex-wrap gap-2">
+                  {% for t in post.tags[:2] %}
+                    <span class="tag">{{ t.name }}</span>
+                  {% endfor %}
+                  {% if post.tags|length > 2 %}
+                    <span class="tag">+{{ post.tags|length - 2 }}</span>
+                  {% endif %}
+                </div>
               {% else %}
                 <span class="text-slate-400">—</span>
               {% endif %}
@@ -96,15 +117,18 @@
                 {% endif %}
 
                 <button type="button"
-                        class="icon-btn icon-btn-sm"
+                        class="icon-btn icon-btn-sm {{ '' if blog_meta_ready else 'opacity-50 cursor-not-allowed' }}"
                         title="Edit"
                         data-id="{{ post.id }}"
                         data-title="{{ post.title }}"
                         data-slug="{{ post.slug }}"
                         data-excerpt="{{ post.excerpt or '' }}"
                         data-content="{{ post.content }}"
+                        data-tags="{{ post.tags|map(attribute='name')|join(', ') if post.tags else '' }}"
+                        data-meta-title="{{ (post.meta_title or '') if blog_meta_ready else '' }}"
+                        data-meta-description="{{ (post.meta_description or '') if blog_meta_ready else '' }}"
                         data-published="{{ '1' if post.is_published else '0' }}"
-                        onclick="openEditPostFromButton(this)">
+                        {% if blog_meta_ready %}onclick="openEditPostFromButton(this)"{% else %}disabled{% endif %}>
                   <i class="bi bi-pencil"></i>
                 </button>
 
@@ -118,13 +142,13 @@
           </tr>
           {% else %}
           <tr id="emptyPostsRow">
-            <td colspan="5" class="px-5 py-10 text-center text-slate-400">
+            <td colspan="6" class="px-5 py-10 text-center text-slate-400">
               No posts yet. Create your first one.
             </td>
           </tr>
           {% endfor %}
           <tr id="noPostMatchesRow" class="hidden">
-            <td colspan="5" class="px-5 py-10 text-center text-slate-400">
+            <td colspan="6" class="px-5 py-10 text-center text-slate-400">
               No matching posts. Try clearing filters or search.
             </td>
           </tr>
@@ -157,9 +181,25 @@
         </div>
 
         <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Tags</span>
+          <input type="text" name="tags" class="input" placeholder="e.g., data-engineering, flask, docker">
+        </label>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
           <span>Excerpt</span>
           <input type="text" name="excerpt" class="input" placeholder="1–2 lines summary (optional)">
         </label>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Meta title</span>
+            <input type="text" name="meta_title" class="input" placeholder="Optional SEO title">
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Meta description</span>
+            <input type="text" name="meta_description" class="input" placeholder="Optional SEO description">
+          </label>
+        </div>
 
         <label class="space-y-2 text-sm text-slate-200 block">
           <span>Cover image</span>
@@ -208,9 +248,25 @@
         </div>
 
         <label class="space-y-2 text-sm text-slate-200 block">
+          <span>Tags</span>
+          <input type="text" name="tags" id="edit-post-tags" class="input" placeholder="comma-separated tags">
+        </label>
+
+        <label class="space-y-2 text-sm text-slate-200 block">
           <span>Excerpt</span>
           <input type="text" name="excerpt" id="edit-post-excerpt" class="input" placeholder="1–2 lines summary (optional)">
         </label>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Meta title</span>
+            <input type="text" name="meta_title" id="edit-post-meta-title" class="input" placeholder="Optional SEO title">
+          </label>
+          <label class="space-y-2 text-sm text-slate-200">
+            <span>Meta description</span>
+            <input type="text" name="meta_description" id="edit-post-meta-description" class="input" placeholder="Optional SEO description">
+          </label>
+        </div>
 
         <label class="space-y-2 text-sm text-slate-200 block">
           <span>Cover image</span>
@@ -267,6 +323,9 @@
     document.getElementById('edit-post-slug').value = button.dataset.slug || '';
     document.getElementById('edit-post-excerpt').value = button.dataset.excerpt || '';
     document.getElementById('edit-post-content').value = button.dataset.content || '';
+    document.getElementById('edit-post-tags').value = button.dataset.tags || '';
+    document.getElementById('edit-post-meta-title').value = button.dataset.metaTitle || '';
+    document.getElementById('edit-post-meta-description').value = button.dataset.metaDescription || '';
     document.getElementById('edit-post-published').checked = button.dataset.published === '1';
     togglePanel('editPostPanel', true);
   }
