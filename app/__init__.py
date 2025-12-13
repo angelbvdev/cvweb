@@ -1,7 +1,7 @@
 # app/__init__.py
 from flask import Flask
 from config import Config
-from .extensions import db, mail, login # <--- 1. Importamos desde extensions
+from .extensions import db, mail, login, migrate # <--- 1. Importamos desde extensions
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -11,6 +11,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     mail.init_app(app)
     login.init_app(app)
+    migrate.init_app(app, db)
 
     # Configuración de Login
     login.login_view = 'auth.login'

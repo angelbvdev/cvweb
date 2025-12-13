@@ -14,7 +14,16 @@ Volúmenes usados:
 - `cvweb_data`: guarda la base de datos SQLite en `/data/cvweb.db`
 - `cvweb_uploads`: guarda las subidas en `app/static/uploads`
 
-Para inicializar la base de datos dentro del contenedor:
-```
-docker compose exec cvweb python -c "from app import create_app; from app.extensions import db; app = create_app(); with app.app_context(): db.create_all()"
-```
+## Comandos de utilidad
+- Crear tablas de la base de datos (usa la `DATABASE_URL` configurada):
+  - Local: `python manage.py create_db`
+  - Docker: `docker compose exec cvweb python manage.py create_db`
+- Crear o actualizar usuario admin:
+  - Local: `python manage.py create_admin --username admin` (pedirá la contraseña)
+  - Docker: `docker compose exec cvweb python manage.py create_admin --username admin`
+- Migraciones (Flask-Migrate):
+  - Inicializar entorno de migraciones: `python manage.py db_init`
+  - Generar migración: `python manage.py db_migrate -m "mensaje"`
+  - Aplicar migraciones: `python manage.py db_upgrade`
+  - Revertir última migración: `python manage.py db_downgrade --step -1`
+  - En Docker, anteponer `docker compose exec cvweb` a cualquiera de los comandos anteriores.
