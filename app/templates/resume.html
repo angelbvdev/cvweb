@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<section class="resume-page relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
   
   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-indigo-500/10 blur-[100px] -z-10 rounded-full opacity-50 pointer-events-none"></div>
 
@@ -18,23 +18,23 @@
           </span>
           Live Resume
         </div>
-        <h1 class="text-5xl md:text-7xl font-black text-white tracking-tight">
+        <h1 class="text-4xl sm:text-5xl md:text-7xl font-black text-white tracking-tight">
           Angel <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Burgos</span>
         </h1>
-        <p class="text-slate-400 text-xl max-w-2xl font-light">
+        <p class="text-slate-400 text-lg sm:text-xl max-w-2xl font-light">
           Computer Systems Engineer specializing in <span class="text-slate-200 font-medium">Data Engineering</span>, <span class="text-slate-200 font-medium">Backend Systems</span>, and <span class="text-slate-200 font-medium">Automation</span>.
         </p>
       </div>
 
       <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:flex-wrap">
-        <a class="group relative inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-all shadow-lg shadow-indigo-500/20 {{ '' if cv_exists else 'opacity-50 pointer-events-none' }}" href="{{ url_for('main.download_cv') }}">
+        <a class="group relative inline-flex w-full sm:w-auto justify-center items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-all shadow-lg shadow-indigo-500/20 {{ '' if cv_exists else 'opacity-50 pointer-events-none' }}" href="{{ url_for('main.download_cv') }}">
           <i class="bi bi-file-earmark-pdf text-lg"></i> 
           <span>Download PDF</span>
         </a>
-        <a class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/50 text-slate-300 hover:text-white transition-all backdrop-blur-sm" href="{{ url_for('main.contact') }}">
+        <a class="inline-flex w-full sm:w-auto justify-center items-center gap-2 px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/50 text-slate-300 hover:text-white transition-all backdrop-blur-sm" href="{{ url_for('main.contact') }}">
           <i class="bi bi-envelope"></i> Contact
         </a>
-        <button type="button" class="inline-flex items-center justify-center h-[50px] w-[50px] rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/50 text-slate-300 hover:text-white transition-all" onclick="window.print()" title="Print View">
+        <button type="button" class="inline-flex items-center justify-center h-[50px] w-full sm:w-[50px] rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/50 text-slate-300 hover:text-white transition-all" onclick="window.print()" title="Print View">
           <i class="bi bi-printer"></i>
         </button>
 
@@ -43,7 +43,7 @@
             <span class="px-2 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-200 inline-flex items-center gap-1.5">
               <i class="bi bi-check2-circle"></i> PDF ready
             </span>
-            <span class="font-mono text-slate-300">{{ cv_filename }}</span>
+            <span class="font-mono text-slate-300 break-all">{{ cv_filename }}</span>
             {% if cv_size_display %}<span class="text-slate-500">({{ cv_size_display }})</span>{% endif %}
           {% else %}
             <span class="px-2 py-1 rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-200 inline-flex items-center gap-1.5">
@@ -146,9 +146,9 @@
 
 	    <main class="space-y-10 lg:col-span-8">
       
-      <section id="overview" class="rounded-3xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 p-8 shadow-xl">
+      <section id="overview" class="rounded-3xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 p-5 sm:p-8 shadow-xl">
         <h2 class="text-2xl font-bold text-white mb-4">Professional Overview</h2>
-        <div class="prose prose-invert prose-lg max-w-none text-slate-300 leading-relaxed">
+        <div class="prose prose-invert max-w-none text-slate-300 leading-relaxed text-base sm:text-lg">
           <p>
             I am a results-oriented Computer Systems Engineer focused on building robust data infrastructure and scalable backend systems. My passion lies in transforming raw data into actionable insights through efficient ETL pipelines and automated workflows.
           </p>
@@ -182,7 +182,7 @@
         {% if recent_projects and recent_projects|length > 0 %}
         <div class="space-y-4">
           {% for p in recent_projects %}
-          <article class="group relative rounded-2xl border border-slate-800 bg-slate-950 hover:bg-slate-900 transition-all p-6 md:p-8 hover:border-indigo-500/30">
+          <article class="group relative rounded-2xl border border-slate-800 bg-slate-950 hover:bg-slate-900 transition-all p-5 sm:p-6 md:p-8 hover:border-indigo-500/30">
             <div class="flex flex-col md:flex-row gap-6 md:items-start">
               
               <div class="hidden md:flex h-16 w-16 shrink-0 rounded-xl bg-slate-900 border border-slate-800 items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform duration-300">
@@ -242,7 +242,7 @@
         {% endif %}
       </section>
 
-      <section class="rounded-3xl border border-slate-800 bg-slate-950/30 p-8">
+      <section class="rounded-3xl border border-slate-800 bg-slate-950/30 p-5 sm:p-8">
         <h2 class="text-xl font-bold text-white mb-6">Education & Certifications</h2>
         <div class="relative pl-6 border-l border-slate-800 space-y-8">
           
@@ -253,12 +253,6 @@
             <p class="text-slate-500 text-sm">Focus on Software Development and Network Infrastructure.</p>
           </div>
 
-          <div class="relative">
-            <span class="absolute -left-[31px] top-1 h-4 w-4 rounded-full border-2 border-slate-700 bg-slate-950"></span>
-            <h3 class="text-lg font-semibold text-white">JLPT N2 Preparation</h3>
-            <p class="text-indigo-400 text-sm mb-1">Japanese Language Proficiency</p>
-            <p class="text-slate-500 text-sm">Advanced study of Japanese language and culture.</p>
-          </div>
 
         </div>
       </section>

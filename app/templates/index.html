@@ -7,41 +7,51 @@
 <section class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-10 lg:py-16">
   
   <div class="space-y-8 animate-fade-in-up">
+    <!-- Availability badge -->
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium">
       <span class="relative flex h-2 w-2">
         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
         <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
       </span>
-      Open to work · Data Engineering · DevOps
+      Available for hire · Data Engineer · Backend & DevOps
     </div>
 
+    <!-- Hero headline -->
     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white tracking-tight">
-      Build reliable data pipelines <br class="hidden lg:block"/>
-      <span class="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">and production systems</span>
+      Hire a data engineer who builds <br class="hidden lg:block"/>
+      <span class="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">
+        systems that survive production
+      </span>
     </h1>
 
+    <!-- Description -->
     <p class="text-lg text-slate-400 leading-relaxed max-w-xl">
-      I help teams ship faster and run safer: clean ETLs, measurable data flows, containerized deployments, and
-      <strong class="text-slate-200">Python</strong> backends that are ready for production.
+      I’m a data engineer focused on building reliable, production-ready systems.
+      From clean ETLs and measurable data flows to containerized deployments and
+      <strong class="text-slate-200">Python</strong> backends — I build things that teams can trust.
     </p>
 
+    <!-- CTAs -->
     <div class="flex flex-col sm:flex-row gap-4">
       <a href="{{ url_for('main.contact') }}" 
          class="btn btn-secondary px-6 py-3 rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
-        <i class="bi bi-chat-text mr-2"></i> Contact
+        <i class="bi bi-chat-text mr-2"></i> Let’s talk
       </a>
+
       <a href="{{ url_for('main.resume') }}"
          class="btn btn-primary group relative overflow-hidden px-6 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/25">
         <span class="relative z-10 flex items-center gap-2">
           Download resume <i class="bi bi-download"></i>
         </span>
       </a>
+
       <a href="{{ url_for('projects.projects_home') }}"
          class="btn btn-secondary px-6 py-3 rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
         <i class="bi bi-folder2-open mr-2"></i> View projects
       </a>
     </div>
 
+    <!-- Core stack -->
     <div class="pt-6 border-t border-slate-800/60">
       <p class="text-xs uppercase tracking-widest text-slate-500 mb-4 font-semibold">Core Stack</p>
       <div class="flex flex-wrap gap-3">
@@ -52,42 +62,46 @@
           <i class="bi bi-box-seam"></i> Docker
         </span>
         <span class="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 text-sm flex items-center gap-2 hover:border-indigo-500/50 hover:text-indigo-300 transition-colors cursor-default">
-          <i class="bi bi-database-fill"></i> SQL/NoSQL
+          <i class="bi bi-database-fill"></i> SQL / NoSQL
         </span>
         <span class="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 text-sm flex items-center gap-2 hover:border-rose-500/50 hover:text-rose-300 transition-colors cursor-default">
-          <i class="bi bi-server"></i> Nginx/Linux
+          <i class="bi bi-server"></i> Linux / Nginx
         </span>
       </div>
     </div>
   </div>
 
-  <div class="relative group perspective-1000">
-    <div class="absolute -inset-1 bg-gradient-to-r from-sky-500 to-indigo-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-    
-    <div class="relative rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden shadow-2xl">
-      <div class="absolute inset-0 bg-indigo-900/10 mix-blend-overlay z-10"></div>
-      
-      <img src="https://plus.unsplash.com/premium_photo-1661872817492-fd0c30404d74?q=80&w=1487&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-           alt="Angel Aldair Burgos - Software Engineer" 
-           class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105">
-      
-      <div class="absolute bottom-4 left-4 right-4 z-20">
-        <div class="bg-slate-900/90 backdrop-blur-md border border-slate-700/50 p-4 rounded-xl flex items-center justify-between shadow-lg">
+	  <!-- Image / status card -->
+	  <div class="relative group perspective-1000">
+	    <div class="absolute -inset-1 bg-gradient-to-r from-sky-500 to-indigo-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+	    
+	    <div class="relative rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden shadow-2xl">
+	      <div class="absolute inset-0 bg-indigo-900/10 mix-blend-overlay z-10"></div>
+	      
+	      <img src="{{ url_for('static', filename='img/imgen.png') }}"
+	           alt="Angel Aldair Burgos - Data Engineer"
+	           class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105">
+	      
+	      
+	    </div>
+
+      <div class="mt-4">
+        <div class="card p-4 rounded-xl shadow-lg">
           <div class="flex items-center gap-3">
-            <div class="h-10 w-10 rounded-lg bg-green-500/10 border border-green-500/20 grid place-items-center text-green-400">
+            <div class="h-10 w-10 rounded-lg bg-green-500/10 border border-green-500/20 grid place-items-center text-green-500">
               <i class="bi bi-check-lg text-lg"></i>
             </div>
             <div>
-              <p class="text-white font-medium text-sm">Currently interviewing</p>
-              <p class="text-slate-400 text-xs">Full-time · Contract · Remote</p>
+              <p class="font-medium text-sm">Actively interviewing</p>
+              <p class="muted text-xs">Full-time · Contract · Remote</p>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+	  </div>
+	</section>
 
+<!-- Stack section (sin cambios fuertes) -->
 <section class="mt-20 lg:mt-32">
   <div class="text-center max-w-2xl mx-auto mb-12">
     <h2 class="text-3xl font-bold text-white mb-4">My Technical Stack</h2>
@@ -96,32 +110,32 @@
 
   <div class="grid md:grid-cols-3 gap-6">
     <article class="group p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-sky-500/30 hover:bg-slate-900 transition-all duration-300 hover:-translate-y-1">
-      <div class="h-12 w-12 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400 grid place-items-center text-xl mb-5 group-hover:scale-110 transition-transform">
+      <div class="h-12 w-12 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400 grid place-items-center text-xl mb-5">
         <i class="bi bi-graph-up-arrow"></i>
       </div>
-      <h3 class="text-xl font-semibold text-white mb-3 group-hover:text-sky-400 transition-colors">Data Engineering & Science</h3>
-      <p class="text-slate-400 text-sm leading-relaxed">
-        Turning raw data into value. Designing ETLs, cleaning with Pandas/NumPy, and visualizing business-critical metrics.
+      <h3 class="text-xl font-semibold text-white mb-3">Data Engineering</h3>
+      <p class="text-slate-400 text-sm">
+        Designing ETLs, cleaning data with Pandas/NumPy, and turning raw data into business insight.
       </p>
     </article>
 
     <article class="group p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-indigo-500/30 hover:bg-slate-900 transition-all duration-300 hover:-translate-y-1">
-      <div class="h-12 w-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 grid place-items-center text-xl mb-5 group-hover:scale-110 transition-transform">
+      <div class="h-12 w-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 grid place-items-center text-xl mb-5">
         <i class="bi bi-code-slash"></i>
       </div>
-      <h3 class="text-xl font-semibold text-white mb-3 group-hover:text-indigo-400 transition-colors">Backend & API Development</h3>
-      <p class="text-slate-400 text-sm leading-relaxed">
-        Building solid business logic with Flask/Django. Secure REST APIs, JWT authentication, and database integrations.
+      <h3 class="text-xl font-semibold text-white mb-3">Backend & APIs</h3>
+      <p class="text-slate-400 text-sm">
+        Building secure, scalable APIs with Flask/Django, authentication, and database integrations.
       </p>
     </article>
 
     <article class="group p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-rose-500/30 hover:bg-slate-900 transition-all duration-300 hover:-translate-y-1">
-      <div class="h-12 w-12 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 grid place-items-center text-xl mb-5 group-hover:scale-110 transition-transform">
+      <div class="h-12 w-12 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 grid place-items-center text-xl mb-5">
         <i class="bi bi-hdd-rack"></i>
       </div>
-      <h3 class="text-xl font-semibold text-white mb-3 group-hover:text-rose-400 transition-colors">DevOps & Cloud</h3>
-      <p class="text-slate-400 text-sm leading-relaxed">
-        Code matters only if it runs in production. Linux servers, Docker containers, Nginx reverse proxies, and cloud deployments.
+      <h3 class="text-xl font-semibold text-white mb-3">DevOps & Cloud</h3>
+      <p class="text-slate-400 text-sm">
+        Linux servers, Docker, Nginx, and deployments that keep code alive in production.
       </p>
     </article>
   </div>

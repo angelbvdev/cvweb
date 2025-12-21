@@ -51,6 +51,36 @@ body {
   transition: background-color 180ms ease, color 180ms ease;
 }
 
+/* Light-mode fixes for pages using fixed Tailwind "dark" utilities */
+:root[data-theme="light"] .resume-page .bg-slate-950,
+:root[data-theme="light"] .resume-page .bg-slate-900,
+:root[data-theme="light"] .resume-page .bg-slate-950\/60,
+:root[data-theme="light"] .resume-page .bg-slate-950\/50,
+:root[data-theme="light"] .resume-page .bg-slate-900\/50 {
+  background: var(--app-surface) !important;
+}
+
+:root[data-theme="light"] .resume-page .bg-slate-950\/30 {
+  background: var(--app-surface-2) !important;
+}
+
+:root[data-theme="light"] .resume-page .border-slate-800,
+:root[data-theme="light"] .resume-page .border-slate-700,
+:root[data-theme="light"] .resume-page .border-slate-800\/50,
+:root[data-theme="light"] .resume-page .border-indigo-500\/30 {
+  border-color: var(--app-border) !important;
+}
+
+:root[data-theme="light"] .resume-page .text-white {
+  color: var(--app-fg) !important;
+}
+
+:root[data-theme="light"] .resume-page .text-slate-300,
+:root[data-theme="light"] .resume-page .text-slate-400,
+:root[data-theme="light"] .resume-page .text-slate-500 {
+  color: var(--app-muted) !important;
+}
+
 .app-header {
   background: var(--app-header);
   border-bottom: 1px solid var(--app-border);
